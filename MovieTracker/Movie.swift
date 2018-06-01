@@ -9,11 +9,13 @@
 import Foundation
 import CoreLocation
 
-class Movie {
+class Movie: NSObject {
     var id: UInt
     var title: String
     var releaseDate: Date
     var poster: String?
+    var overview: String?
+    var rating: Float?
     var viewed: Bool
 
     init(json: [String: Any]) throws {
@@ -50,27 +52,46 @@ class Movie {
         } else {
             self.poster = nil
         }
+        
+        // Extract overview
+        if let overview = json["overview"] as? String {
+            self.overview = overview
+        }
+        
+        // Extract rating
+        if let rating = json["vote_average"] as? String {
+            self.rating = (rating as NSString).floatValue
+        }
+    }
+}
+
+// MARK: - Print all values
+extension Movie {
+    override var description : String {
+        return "\(self.id) | \(self.title) (\(self.rating ?? 0.0)): \(self.releaseDate)"
     }
 }
 
 extension Movie {
-    static func nowShowing(results: Int, completion: @escaping ([Movie]) -> Void) {
-        self.fetch(path: "/filmsNowShowing/", results: String(results), completion: completion);
+    static func nowShowing(completion: @escaping ([DateComponents : [Movie]]) -> Void) {
+        self.fetch(path: "movie/now_playing", sort: "release_date.desc", completion: completion);
     }
     
-    static func comingSoon(results: Int, completion: @escaping ([Movie]) -> Void) {
-        self.fetch(path: "movie/upcoming", results: String(results), completion: completion);
+    static func comingSoon(completion: @escaping ([DateComponents : [Movie]]) -> Void) {
+        self.fetch(path: "movie/upcoming", sort: "release_date.desc", completion: completion);
     }
 }
 
 extension Movie {
-    private static func fetch(path: String, results query: String, completion: @escaping ([Movie]) -> Void) {
+    private static func fetch(path: String, sort: String, completion: @escaping ([DateComponents : [Movie]]) -> Void) {
         var searchURLComponents = URLComponents(string: "https://api.themoviedb.org/")!
         searchURLComponents.path = "/3/\(path)"
         searchURLComponents.queryItems = [
             URLQueryItem(name: "api_key", value: "da99299f02cd39e2736c97d08b459731"),
-            URLQueryItem(name: "sort_by", value: "release_date.asc"),
-            URLQueryItem(name: "region", value: "US")
+            URLQueryItem(name: "sort_by", value: sort),
+            URLQueryItem(name: "region", value: "US"),
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "include_adult", value: "false")
         ]
         
         guard let searchURL = searchURLComponents.url else {
@@ -94,7 +115,19 @@ extension Movie {
                 }
             }
             
-            completion(movies)
+            // Ensure movies are sorted correctly when using dates
+            switch sort {
+            case "release_date.asc":
+                movies.sort { $0.releaseDate.compare($1.releaseDate) == .orderedAscending }
+            case "release_date.desc":
+                movies.sort { $0.releaseDate.compare($1.releaseDate) == .orderedDescending }
+            default: break
+            }
+            
+            // Split movies up based on Month
+            let moviesDict = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
+            
+            completion(moviesDict)
         }.resume()
     }
 }
@@ -106,34 +139,22 @@ enum SerializationError: Error {
 
 // Sample JSON output for a movie
 // {
-//    "film_id": 213940,
-//    "film_name": "Solo: A Star Wars Story",
-//    "release_date": "2018-05-24",
-//    "age_rating": "12A ",
-//    "age_rating_image": "https://d2z9fe5yu2p0av.cloudfront.net/age_rating_logos/uk/12a.png",
-//    "film_trailer": "https://dzm1iom8kpoas.cloudfront.net/213940_high_V3.mp4",
-//    "synopsis_long": "Board the Millennium Falcon and ...",
-//    "images": {
-//        "poster": {
-//            "1": {
-//                "image_orientation": "portrait",
-//                "region": "US",
-//                "medium": {
-//                    "film_image": "https://d3ltpb4h29tx4j.cloudfront.net/213940/213940h1.jpg",
-//                    "width": 200,
-//                    "height": 300
-//                }
-//            }
-//        },
-//        "still": {
-//            "2": {
-//                "image_orientation": "landscape",
-//                "medium": {
-//                    "film_image": "https://d3ltpb4h29tx4j.cloudfront.net/213940/213940h2.jpg",
-//                    "width": 300,
-//                    "height": 200
-//                }
-//            }
-//        }
-//    }
+//    "adult" = 0,
+//    "backdrop_path" = "/3P52oz9HPQWxcwHOwxtyrVV1LKi.jpg",
+//    "genre_ids" = {
+//        28,
+//        35,
+//        878
+//    },
+//    "id" = 383498,
+//    "original_language" = en,
+//    "original_title" = "Deadpool 2",
+//    "overview" = "Wisecracking mercenary Deadpool battles ...",
+//    "popularity" = "321.086589",
+//    "poster_path" = "/to0spRl1CMDvyUbOnbb4fTk3VAd.jpg",
+//    "release_date" = "2018-05-17",
+//    "title" = "Deadpool 2",
+//    "video" = 0,
+//    "vote_average" = "7.9",
+//    "vote_count" = 1579
 // }, ...
