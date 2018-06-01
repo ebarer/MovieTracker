@@ -15,6 +15,8 @@
 		CE78BD6020C087F4001E6DB6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE78BD5E20C087F4001E6DB6 /* LaunchScreen.storyboard */; };
 		CE78BD6B20C087F4001E6DB6 /* MovieTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD6A20C087F4001E6DB6 /* MovieTrackerTests.swift */; };
 		CE78BD7620C087F4001E6DB6 /* MovieTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD7520C087F4001E6DB6 /* MovieTrackerUITests.swift */; };
+		CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8320C112D8001E6DB6 /* Movie.swift */; };
+		CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		CE78BD7120C087F4001E6DB6 /* MovieTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE78BD7520C087F4001E6DB6 /* MovieTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTrackerUITests.swift; sourceTree = "<group>"; };
 		CE78BD7720C087F4001E6DB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE78BD8320C112D8001E6DB6 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
+		CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +104,9 @@
 			isa = PBXGroup;
 			children = (
 				CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */,
+				CE78BD8320C112D8001E6DB6 /* Movie.swift */,
 				CE78BD5420C087F2001E6DB6 /* ViewController.swift */,
+				CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */,
 				CE78BD5620C087F2001E6DB6 /* Main.storyboard */,
 				CE78BD5C20C087F4001E6DB6 /* Assets.xcassets */,
 				CE78BD5E20C087F4001E6DB6 /* LaunchScreen.storyboard */,
@@ -259,8 +265,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */,
 				CE78BD5B20C087F2001E6DB6 /* MovieTracker.xcdatamodeld in Sources */,
 				CE78BD5520C087F2001E6DB6 /* ViewController.swift in Sources */,
+				CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */,
 				CE78BD5320C087F2001E6DB6 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
