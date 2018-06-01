@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 class Movie {
     var id: UInt
@@ -17,13 +18,13 @@ class Movie {
 
     init(json: [String: Any]) throws {
         // Extract id
-        guard let id = json["film_id"] as? UInt else {
-            throw SerializationError.missing("film_id")
+        guard let id = json["id"] as? UInt else {
+            throw SerializationError.missing("id")
         }
         
         // Extract title
-        guard let title = json["film_name"] as? String else {
-            throw SerializationError.missing("film_name")
+        guard let title = json["title"] as? String else {
+            throw SerializationError.missing("title")
         }
         
         // Extract and validate release date
@@ -32,7 +33,7 @@ class Movie {
         }
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-DD"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         guard let releaseDate = dateFormatter.date(from: releaseDateString) else {
             throw SerializationError.invalid("date", releaseDateString)
         }
@@ -44,28 +45,40 @@ class Movie {
         self.viewed = false
         
         // Extract poster
-        if let images = json["images"] as? [String: Any],
-            let poster = images["poster"] as? [String: Any],
-            let image = ((poster["1"] as! [String: Any])["medium"] as! [String: Any])["film_image"] as? String
-        {
-                self.poster = image
+        if let posterString = json["poster_path"] as? String {
+            self.poster = "https://image.tmdb.org/t/p/w185/\(posterString)"
+        } else {
+            self.poster = nil
         }
     }
 }
 
 extension Movie {
-    static func nowShowing(results query: String, completion: @escaping ([Movie]) -> Void) {
-        var searchURLComponents = URLComponents(string: "https://api-gate.movieglu.com")!
-        searchURLComponents.path = "/filmsNowShowing/"
-        searchURLComponents.queryItems = [URLQueryItem(name: "n", value: query)]
-        let searchURL = searchURLComponents.url!
+    static func nowShowing(results: Int, completion: @escaping ([Movie]) -> Void) {
+        self.fetch(path: "/filmsNowShowing/", results: String(results), completion: completion);
+    }
+    
+    static func comingSoon(results: Int, completion: @escaping ([Movie]) -> Void) {
+        self.fetch(path: "movie/upcoming", results: String(results), completion: completion);
+    }
+}
+
+extension Movie {
+    private static func fetch(path: String, results query: String, completion: @escaping ([Movie]) -> Void) {
+        var searchURLComponents = URLComponents(string: "https://api.themoviedb.org/")!
+        searchURLComponents.path = "/3/\(path)"
+        searchURLComponents.queryItems = [
+            URLQueryItem(name: "api_key", value: "da99299f02cd39e2736c97d08b459731"),
+            URLQueryItem(name: "sort_by", value: "release_date.asc"),
+            URLQueryItem(name: "region", value: "US")
+        ]
+        
+        guard let searchURL = searchURLComponents.url else {
+            return
+        }
         
         var request = URLRequest(url: searchURL)
         request.httpMethod = "GET"
-        request.addValue("ELLI", forHTTPHeaderField: "client")
-        request.addValue("twqLoKclpG7UDla7MNrcT360xCXDbef96OY7bxdM", forHTTPHeaderField: "x-api-key")
-        request.addValue("v102", forHTTPHeaderField: "api-version")
-//        request.cachePolicy = URLRequest.CachePolicy.reloadRevalidatingCacheData
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             var movies: [Movie] = []
@@ -74,7 +87,7 @@ extension Movie {
                 let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                 let json = jsonObject
             {
-                for case let result in json["films"] as! [[String: Any]] {
+                for case let result in json["results"] as! [[String: Any]] {
                     if let movie = try? Movie(json: result) {
                         movies.append(movie)
                     }
