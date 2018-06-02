@@ -27,8 +27,8 @@ class NowPlayingTableViewController: UITableViewController {
         case 0:
             Movie.nowShowing() { movies in
                 DispatchQueue.main.async {
-                    self.movies = movies
-                    self.sections = movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
+                    self.movies = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
+                    self.sections = self.movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
                     self.tableView.reloadData()
                 }
             }
@@ -36,8 +36,8 @@ class NowPlayingTableViewController: UITableViewController {
         case 1:
             Movie.comingSoon() { movies in
                 DispatchQueue.main.async {
-                    self.movies = movies
-                    self.sections = movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
+                    self.movies = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
+                    self.sections = self.movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
                     self.tableView.reloadData()
                 }
             }
@@ -59,7 +59,13 @@ class NowPlayingTableViewController: UITableViewController {
         return movies[sections[section]]?.count ?? 0
     }
     
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return sections.count > 1 ? 45.0 : 0.01
+    }
+    
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if sections.count <= 1 { return nil }
+        
         let components = sections[section]
         guard let date = Calendar.current.date(from: components) else {
             return nil
@@ -68,10 +74,6 @@ class NowPlayingTableViewController: UITableViewController {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM YYYY"
         return dateFormatter.string(from: date)
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 45.0
     }
 
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -112,11 +114,6 @@ class NowPlayingTableViewController: UITableViewController {
         return 95.0
     }
     
-    // TODO: Temproarily disable selection
-    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-    
     // MARK: - Table view actions
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -132,16 +129,16 @@ class NowPlayingTableViewController: UITableViewController {
         
         return actions
     }
-
     
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "showDetail" {
+            guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
+            guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
+            
+            movieDetailsVC.movie = movies[self.sections[indexPath.section]]?[indexPath.item]
+        }
     }
-    */
 
 }

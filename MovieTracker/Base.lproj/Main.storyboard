@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14253.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Q6p-hC-5Xa">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Q6p-hC-5Xa">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14241.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Segues with Peek and Pop" minToolsVersion="7.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -33,16 +37,16 @@
                                             </constraints>
                                         </imageView>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="EcB-as-kjr">
-                                            <rect key="frame" x="77.333333333333343" y="29" width="272.66666666666663" height="37"/>
+                                            <rect key="frame" x="77.333333333333343" y="29" width="297.66666666666663" height="37"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7op-mX-xj2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="272.66666666666669" height="20.333333333333332"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="297.66666666666669" height="20.333333333333332"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Fw-Jt-gQh">
-                                                    <rect key="frame" x="0.0" y="21.333333333333336" width="272.66666666666669" height="15.666666666666664"/>
+                                                    <rect key="frame" x="0.0" y="21.333333333333336" width="297.66666666666669" height="15.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" white="0.40000000000000002" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -52,7 +56,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="EcB-as-kjr" firstAttribute="leading" secondItem="fjS-Md-Bjw" secondAttribute="trailing" constant="10" id="1uj-04-HpX"/>
-                                        <constraint firstAttribute="trailing" secondItem="EcB-as-kjr" secondAttribute="trailing" constant="25" id="DdW-3c-1vg"/>
+                                        <constraint firstAttribute="trailing" secondItem="EcB-as-kjr" secondAttribute="trailing" id="DdW-3c-1vg"/>
                                         <constraint firstItem="fjS-Md-Bjw" firstAttribute="top" secondItem="SeR-D6-Yrr" secondAttribute="topMargin" constant="-2" id="KHE-6t-Q2V"/>
                                         <constraint firstItem="fjS-Md-Bjw" firstAttribute="leading" secondItem="SeR-D6-Yrr" secondAttribute="leadingMargin" id="eLc-NO-dpK"/>
                                         <constraint firstItem="EcB-as-kjr" firstAttribute="centerY" secondItem="fjS-Md-Bjw" secondAttribute="centerY" id="pt9-mD-NzT"/>
@@ -64,6 +68,10 @@
                                     <outlet property="moviePoster" destination="fjS-Md-Bjw" id="w4F-JB-45e"/>
                                     <outlet property="movieReleaseDate" destination="0Fw-Jt-gQh" id="EdX-b4-1uA"/>
                                     <outlet property="movieTitle" destination="7op-mX-xj2" id="sVY-ar-81T"/>
+                                    <segue destination="1Ij-SN-spY" kind="show" identifier="showDetail" id="GS6-c8-D4J">
+                                        <segue key="commit" inheritsFrom="parent" id="NB0-jp-FiM"/>
+                                        <segue key="preview" inheritsFrom="commit" id="0Ta-GL-YiR"/>
+                                    </segue>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -81,7 +89,7 @@
                                 <segment title="Now Playing"/>
                                 <segment title="Coming Soon"/>
                             </segments>
-                            <color key="tintColor" red="0.89292603731155396" green="0.79315441846847534" blue="0.50575834512710571" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <color key="tintColor" red="0.87058823529411766" green="0.74117647058823533" blue="0.46274509803921571" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             <connections>
                                 <action selector="updateMovies:" destination="izE-fi-Fhf" eventType="valueChanged" id="zSB-6m-YqG"/>
                             </connections>
@@ -91,6 +99,35 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rmb-w9-GJA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2160.8000000000002" y="154.43349753694582"/>
+        </scene>
+        <!--Movie Detail View Controller-->
+        <scene sceneID="co8-ai-nBh">
+            <objects>
+                <viewController id="1Ij-SN-spY" customClass="MovieDetailViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Nyf-fn-CaN">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PJw-2W-VTL">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="PJw-2W-VTL" firstAttribute="leading" secondItem="aUZ-Du-qRa" secondAttribute="leading" id="KhO-eS-PbV"/>
+                            <constraint firstAttribute="bottom" secondItem="PJw-2W-VTL" secondAttribute="bottom" id="dJe-ek-6SR"/>
+                            <constraint firstAttribute="trailing" secondItem="PJw-2W-VTL" secondAttribute="trailing" id="e8c-qX-QMy"/>
+                            <constraint firstItem="PJw-2W-VTL" firstAttribute="top" secondItem="aUZ-Du-qRa" secondAttribute="top" constant="-88" id="imO-pz-Occ"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="aUZ-Du-qRa"/>
+                    </view>
+                    <connections>
+                        <outlet property="backgroundImage" destination="PJw-2W-VTL" id="C3U-yW-Er5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aZ9-a5-Lgp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3064.8000000000002" y="153.69458128078819"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="jJv-Y9-gMY">
@@ -147,6 +184,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="VpH-d9-VnX">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" red="0.87058823529999996" green="0.74117647060000003" blue="0.46274509800000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -166,7 +204,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="selectedImageTintColor" red="0.89292603729999998" green="0.79315441850000001" blue="0.50575834509999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="selectedImageTintColor" red="0.87058823529411766" green="0.74117647058823533" blue="0.46666666666666667" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </tabBar>
                     <connections>
                         <segue destination="cfh-5G-Qt1" kind="relationship" relationship="viewControllers" id="RbE-go-3ab"/>
@@ -178,4 +216,7 @@
             <point key="canvasLocation" x="273" y="514"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="GS6-c8-D4J"/>
+    </inferredMetricsTieBreakers>
 </document>

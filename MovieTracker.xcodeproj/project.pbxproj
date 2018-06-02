@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		56E37CFE20C2005D00471547 /* UIColor+ProjectColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */; };
+		CE5B575520C2206E007540DD /* MovieDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B575420C2206E007540DD /* MovieDetailViewController.swift */; };
 		CE78BD5320C087F2001E6DB6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */; };
 		CE78BD5820C087F2001E6DB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE78BD5620C087F2001E6DB6 /* Main.storyboard */; };
 		CE78BD5B20C087F2001E6DB6 /* MovieTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD5920C087F2001E6DB6 /* MovieTracker.xcdatamodeld */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+ProjectColors.swift"; sourceTree = "<group>"; };
+		CE5B575420C2206E007540DD /* MovieDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailViewController.swift; sourceTree = "<group>"; };
 		CE78BD4F20C087F2001E6DB6 /* MovieTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE78BD5720C087F2001E6DB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */,
 				CE78BD8320C112D8001E6DB6 /* Movie.swift */,
 				CE78BD5620C087F2001E6DB6 /* Main.storyboard */,
+				CE5B575420C2206E007540DD /* MovieDetailViewController.swift */,
 				CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */,
 				CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */,
 				CE78BD5C20C087F4001E6DB6 /* Assets.xcassets */,
@@ -272,6 +275,7 @@
 				CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */,
 				CE78BD5B20C087F2001E6DB6 /* MovieTracker.xcdatamodeld in Sources */,
 				56E37CFE20C2005D00471547 /* UIColor+ProjectColors.swift in Sources */,
+				CE5B575520C2206E007540DD /* MovieDetailViewController.swift in Sources */,
 				CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */,
 				CE78BD5320C087F2001E6DB6 /* AppDelegate.swift in Sources */,
 			);

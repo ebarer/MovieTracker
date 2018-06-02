@@ -73,17 +73,17 @@ extension Movie {
 }
 
 extension Movie {
-    static func nowShowing(completion: @escaping ([DateComponents : [Movie]]) -> Void) {
+    static func nowShowing(completion: @escaping ([Movie]) -> Void) {
         self.fetch(path: "movie/now_playing", sort: "release_date.desc", completion: completion);
     }
     
-    static func comingSoon(completion: @escaping ([DateComponents : [Movie]]) -> Void) {
+    static func comingSoon(completion: @escaping ([Movie]) -> Void) {
         self.fetch(path: "movie/upcoming", sort: "release_date.desc", completion: completion);
     }
 }
 
 extension Movie {
-    private static func fetch(path: String, sort: String, completion: @escaping ([DateComponents : [Movie]]) -> Void) {
+    private static func fetch(path: String, sort: String, completion: @escaping ([Movie]) -> Void) {
         var searchURLComponents = URLComponents(string: "https://api.themoviedb.org/")!
         searchURLComponents.path = "/3/\(path)"
         searchURLComponents.queryItems = [
@@ -114,7 +114,7 @@ extension Movie {
                     }
                 }
             }
-            
+
             // Ensure movies are sorted correctly when using dates
             switch sort {
             case "release_date.asc":
@@ -124,10 +124,7 @@ extension Movie {
             default: break
             }
             
-            // Split movies up based on Month
-            let moviesDict = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
-            
-            completion(moviesDict)
+            completion(movies)
         }.resume()
     }
 }
