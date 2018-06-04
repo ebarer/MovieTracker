@@ -26,4 +26,15 @@ class MovieTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
+    @IBInspectable var selectionColor: UIColor = .gray {
+        didSet {
+            setSelectionColor()
+        }
+    }
+    
+    func setSelectionColor() {
+        let view = UIView()
+        view.backgroundColor = selectionColor
+        selectedBackgroundView = view
+    }
 }

@@ -6,93 +6,142 @@
 //  Copyright © 2018 ebarer. All rights reserved.
 //
 
-import Foundation
-import CoreLocation
+import UIKit
 
-class Movie: NSObject {
-    var id: UInt
+struct Root : Codable {
+    var movies: [Movie]
+
+    private enum CodingKeys : String, CodingKey {
+        case movies = "results"
+    }
+}
+
+class Movie: NSObject, Codable {
+    var id: Int
     var title: String
     var releaseDate: Date
     var poster: String?
+    var background: String?
     var overview: String?
+    var runtime: Int?
     var rating: Float?
-    var viewed: Bool
-
-    init(json: [String: Any]) throws {
-        // Extract id
-        guard let id = json["id"] as? UInt else {
-            throw SerializationError.missing("id")
-        }
-        
-        // Extract title
-        guard let title = json["title"] as? String else {
-            throw SerializationError.missing("title")
-        }
-        
-        // Extract and validate release date
-        guard let releaseDateString = json["release_date"] as? String else {
-            throw SerializationError.missing("release_date")
-        }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        guard let releaseDate = dateFormatter.date(from: releaseDateString) else {
-            throw SerializationError.invalid("date", releaseDateString)
-        }
-        
-        // Initialize properties
-        self.id = id
-        self.title = title
-        self.releaseDate = releaseDate
-        self.viewed = false
-        
-        // Extract poster
-        if let posterString = json["poster_path"] as? String {
-            self.poster = "https://image.tmdb.org/t/p/w185/\(posterString)"
-        } else {
-            self.poster = nil
-        }
-        
-        // Extract overview
-        if let overview = json["overview"] as? String {
-            self.overview = overview
-        }
-        
-        // Extract rating
-        if let rating = json["vote_average"] as? String {
-            self.rating = (rating as NSString).floatValue
-        }
-    }
-}
-
-// MARK: - Print all values
-extension Movie {
-    override var description : String {
-        return "\(self.id) | \(self.title) (\(self.rating ?? 0.0)): \(self.releaseDate)"
-    }
-}
-
-extension Movie {
-    static func nowShowing(completion: @escaping ([Movie]) -> Void) {
-        self.fetch(path: "movie/now_playing", sort: "release_date.desc", completion: completion);
+    var certification: String?
+    var viewed: Bool?
+    
+    private enum CodingKeys : String, CodingKey {
+        case id, title, overview
+        case releaseDate = "release_date"
+        case poster = "poster_path"
+        case background = "backdrop_path"
+        case rating = "vote_average"
     }
     
-    static func comingSoon(completion: @escaping ([Movie]) -> Void) {
-        self.fetch(path: "movie/upcoming", sort: "release_date.desc", completion: completion);
+    override init() {
+        self.id = 0
+        self.title = ""
+        self.releaseDate = Date()
+        super.init()
+    }
+    
+    override var description: String {
+        return "[\(id)] \(title) - \(releaseDate) - \(rating ?? 0.0)"
     }
 }
 
+// MARK: - Static REST API Methods
+
 extension Movie {
-    private static func fetch(path: String, sort: String, completion: @escaping ([Movie]) -> Void) {
+    static func get(movieID: Int, completionHandler: @escaping (Movie?, Error?) -> Void) {
+        self.fetchData(path: "movie/\(movieID)") { (data, error) in
+            guard error == nil, let data = data else {
+                completionHandler(nil, error)
+                return
+            }
+            
+            let movie = try? decoder.decode(Movie.self, from: data)
+            completionHandler(movie, nil)
+        }
+    }
+    
+    static func nowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?) -> Void) {
+        self.fetchData(path: "movie/now_playing", sort: "popularity.desc", page: page) { (data, error) in
+            guard error == nil, let data = data else {
+                completionHandler(nil, error)
+                return
+            }
+            
+            let movies = try? decoder.decode(Root.self, from: data).movies
+            completionHandler(movies, nil)
+        }
+    }
+    
+    static func comingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?) -> Void) {
+        self.fetchData(path: "movie/upcoming", sort: "release_date.desc", page: page) { (data, error) in
+            guard error == nil, let data = data else {
+                completionHandler(nil, error)
+                return
+            }
+            
+            let movies = try? decoder.decode(Root.self, from: data).movies
+            completionHandler(movies, nil)
+        }
+    }
+}
+
+// MARK: - Instance REST API Methods
+
+extension Movie {
+    func getDetails(completionHandler: @escaping ([Movie]?, Error?) -> Void) {
+        completionHandler(nil, nil)
+//        Movie.get(movieID: self.id, completionHandler: completionHandler)
+    }
+    
+    func getPoster(width: PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        self.fetchImage(width: width, completionHandler: completionHandler)
+    }
+    
+    func getBackground(width: BackgroundSize = .w1280, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        self.fetchImage(width: width, completionHandler: completionHandler)
+    }
+}
+
+// MARK: - REST API Helpers
+
+extension Movie {
+    private static var decoder: JSONDecoder {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd"
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+        
+        return decoder
+    }
+    
+    private static func fetchData(path: String, sort: String? = nil, page: Int? = nil, appendTo: String? = nil, completionHandler: @escaping (Data?, Error?) -> Void) {
         var searchURLComponents = URLComponents(string: "https://api.themoviedb.org/")!
         searchURLComponents.path = "/3/\(path)"
         searchURLComponents.queryItems = [
             URLQueryItem(name: "api_key", value: "da99299f02cd39e2736c97d08b459731"),
-            URLQueryItem(name: "sort_by", value: sort),
             URLQueryItem(name: "region", value: "US"),
             URLQueryItem(name: "language", value: "en-US"),
             URLQueryItem(name: "include_adult", value: "false")
         ]
+        
+        if let sort = sort {
+            let query = URLQueryItem(name: "sort_by", value: sort)
+            searchURLComponents.queryItems?.append(query)
+        }
+        
+        if let page = page {
+            let query = URLQueryItem(name: "page", value: String(page))
+            searchURLComponents.queryItems?.append(query)
+        }
+        
+        if let appendTo = appendTo {
+            let query = URLQueryItem(name: "append_to_response", value: appendTo)
+            searchURLComponents.queryItems?.append(query)
+        }
         
         guard let searchURL = searchURLComponents.url else {
             return
@@ -100,38 +149,75 @@ extension Movie {
         
         var request = URLRequest(url: searchURL)
         request.httpMethod = "GET"
+        request.cachePolicy = URLRequest.CachePolicy.useProtocolCachePolicy
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
-            var movies: [Movie] = []
+            guard error == nil else {
+                completionHandler(nil, error)
+                return
+            }
             
-            if let data = data,
-                let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                let json = jsonObject
-            {
-                for case let result in json["results"] as! [[String: Any]] {
-                    if let movie = try? Movie(json: result) {
-                        movies.append(movie)
-                    }
+            guard let responseData = data else {
+                completionHandler(nil, FetchError.noData("Response didn't contain any data."))
+                return
+            }
+            
+            completionHandler(responseData, nil)
+        }.resume()
+    }
+    
+//    private static func fetchDetails(path: String, sort: String? = nil, page: String? = nil, completionHandler: @escaping (Movie?, Error?) -> Void) {
+//        URLQueryItem(name: "append_to_response", value: "release_dates")
+//    }
+    
+    private func fetchImage(width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        var posterURL: URL?
+        if let width = width as? PosterSize, let poster = self.poster {
+            posterURL = URL(string: "https://image.tmdb.org/t/p/\(width.rawValue)/\(poster)")
+        } else if let width = width as? BackgroundSize, let background = self.background {
+            posterURL = URL(string: "https://image.tmdb.org/t/p/\(width.rawValue)/\(background)")
+        }
+        
+        guard posterURL != nil else {
+            completionHandler(nil, FetchError.poster("Couldn't generate movie image URL"))
+            return
+        }
+        
+        URLSession.shared.dataTask(with: posterURL!) { (data, response, error) in
+            if let imageData = data {
+                let poster = UIImage(data: imageData)
+                DispatchQueue.main.async {
+                    completionHandler(poster, nil)
                 }
             }
-
-            // Ensure movies are sorted correctly when using dates
-            switch sort {
-            case "release_date.asc":
-                movies.sort { $0.releaseDate.compare($1.releaseDate) == .orderedAscending }
-            case "release_date.desc":
-                movies.sort { $0.releaseDate.compare($1.releaseDate) == .orderedDescending }
-            default: break
-            }
-            
-            completion(movies)
         }.resume()
     }
 }
 
-enum SerializationError: Error {
-    case missing(String)
-    case invalid(String, Any)
+// MARK: - Helper Enums
+
+protocol ImageSize {}
+
+enum PosterSize: String, ImageSize {
+    case w92  = "w92"
+    case w154 = "w154"
+    case w185 = "w185"
+    case w342 = "w342"
+    case w500 = "w500"
+    case w780 = "w780"
+    case orig = "original"
+}
+
+enum BackgroundSize: String, ImageSize {
+    case w300  = "w300"
+    case w780  = "w780"
+    case w1280 = "w1280"
+    case orig  = "original"
+}
+
+enum FetchError: Error {
+    case noData(String)
+    case poster(String)
 }
 
 // Sample JSON output for a movie

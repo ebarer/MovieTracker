@@ -8,14 +8,41 @@
 
 import UIKit
 
-class MovieDetailViewController: UIViewController {
+class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
 
     var movie: Movie?
+    @IBOutlet var moviePoster: UIImageView!
     @IBOutlet var backgroundImage: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadBackground()
+        
+        movie?.getDetails(completionHandler: { (movies, error) in
+            guard let movie = movies?[0] else { return }
+            print(movie)
+        })
+        
+        movie?.getBackground(completionHandler: { (background, error) in
+            self.backgroundImage.image = background
+        })
+        
+        movie?.getPoster(width: .w500, completionHandler: { (poster, _) in
+            self.moviePoster.image = poster
+            self.moviePoster.layer.masksToBounds = true
+            self.moviePoster.layer.cornerRadius = 5
+            self.moviePoster.layer.borderWidth = 1
+            self.moviePoster.layer.borderColor = UIColor(white: 0.25, alpha: 1).cgColor
+        })
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        self.navigationController?.navigationBar.shadowImage = nil
     }
 
     override func didReceiveMemoryWarning() {

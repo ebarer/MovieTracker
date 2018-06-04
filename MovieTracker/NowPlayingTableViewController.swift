@@ -8,6 +8,8 @@
 
 import UIKit
 
+private let reuseIdentifier = "movieCell"
+
 class NowPlayingTableViewController: UITableViewController {
     
     var movies: [DateComponents : [Movie]] = [:]
@@ -15,7 +17,8 @@ class NowPlayingTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateMovies(index: 0)
+        
+        Movie.nowShowing(page: 1, completionHandler: getMovies)
     }
     
     @IBAction func updateMovies(_ sender: UISegmentedControl) {
@@ -25,22 +28,9 @@ class NowPlayingTableViewController: UITableViewController {
     func updateMovies(index: Int) {
         switch index {
         case 0:
-            Movie.nowShowing() { movies in
-                DispatchQueue.main.async {
-                    self.movies = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
-                    self.sections = self.movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
-                    self.tableView.reloadData()
-                }
-            }
-            
+            Movie.nowShowing(page: 1, completionHandler: getMovies)
         case 1:
-            Movie.comingSoon() { movies in
-                DispatchQueue.main.async {
-                    self.movies = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
-                    self.sections = self.movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
-                    self.tableView.reloadData()
-                }
-            }
+            Movie.comingSoon(page: 1, completionHandler: getMovies)
         default: break
         }
     }
@@ -81,7 +71,7 @@ class NowPlayingTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "movieCell", for: indexPath) as! MovieTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! MovieTableViewCell
         guard let movie = movies[sections[indexPath.section]]?[indexPath.item] else {
             return cell
         }
@@ -93,18 +83,10 @@ class NowPlayingTableViewController: UITableViewController {
         cell.movieReleaseDate.text = dateFormatter.string(from: movie.releaseDate)
         
         cell.moviePoster.image = nil
-        if let posterURLString = movie.poster,
-           let posterURL = URL(string: posterURLString)
-        {
-            URLSession.shared.dataTask(with: posterURL) { (data, response, error) in
-                if let poster = data {
-                    DispatchQueue.main.async {
-                        cell.moviePoster.image = UIImage(data: poster)
-                        cell.moviePoster.layer.borderWidth = 0.5
-                        cell.moviePoster.layer.borderColor = UIColor(white: 0.15, alpha: 1).cgColor
-                    }
-                }
-            }.resume()
+        movie.getPoster { (poster, _) in
+            cell.moviePoster.image = poster
+            cell.moviePoster.layer.borderWidth = 0.5
+            cell.moviePoster.layer.borderColor = UIColor(white: 0.15, alpha: 1).cgColor
         }
 
         return cell
@@ -114,7 +96,7 @@ class NowPlayingTableViewController: UITableViewController {
         return 95.0
     }
     
-    // MARK: - Table view actions
+    // MARK: - Table Cell Actions
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         var actions = [UITableViewRowAction]()
@@ -140,5 +122,23 @@ class NowPlayingTableViewController: UITableViewController {
             movieDetailsVC.movie = movies[self.sections[indexPath.section]]?[indexPath.item]
         }
     }
-
+    
+    // MARK: - Movie helper functions
+    func getMovies(movies: [Movie]?, error: Error?) {
+        guard let movies = movies else {
+            return
+        }
+        
+        guard error == nil else {
+            print("Error: \(error!)")
+            return
+        }
+        
+        DispatchQueue.main.async {
+            self.movies = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
+            self.sections = self.movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
+            self.tableView.reloadData()
+        }
+    }
+    
 }

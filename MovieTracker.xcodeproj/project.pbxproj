@@ -19,6 +19,8 @@
 		CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8320C112D8001E6DB6 /* Movie.swift */; };
 		CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */; };
 		CE78BD8820C148B8001E6DB6 /* MovieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */; };
+		CEC19A0720C4BF3E003BD653 /* NowPlayingCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC19A0620C4BF3E003BD653 /* NowPlayingCollectionViewController.swift */; };
+		CEC19A0920C4BF68003BD653 /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		CE78BD8320C112D8001E6DB6 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingTableViewController.swift; sourceTree = "<group>"; };
 		CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTableViewCell.swift; sourceTree = "<group>"; };
+		CEC19A0620C4BF3E003BD653 /* NowPlayingCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCollectionViewController.swift; sourceTree = "<group>"; };
+		CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,9 +115,11 @@
 				56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */,
 				CE78BD8320C112D8001E6DB6 /* Movie.swift */,
 				CE78BD5620C087F2001E6DB6 /* Main.storyboard */,
+				CEC19A0620C4BF3E003BD653 /* NowPlayingCollectionViewController.swift */,
+				CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */,
 				CE5B575420C2206E007540DD /* MovieDetailViewController.swift */,
-				CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */,
 				CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */,
+				CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */,
 				CE78BD5C20C087F4001E6DB6 /* Assets.xcassets */,
 				CE78BD5E20C087F4001E6DB6 /* LaunchScreen.storyboard */,
 				CE78BD6120C087F4001E6DB6 /* Info.plist */,
@@ -277,6 +283,8 @@
 				56E37CFE20C2005D00471547 /* UIColor+ProjectColors.swift in Sources */,
 				CE5B575520C2206E007540DD /* MovieDetailViewController.swift in Sources */,
 				CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */,
+				CEC19A0920C4BF68003BD653 /* MovieCollectionViewCell.swift in Sources */,
+				CEC19A0720C4BF3E003BD653 /* NowPlayingCollectionViewController.swift in Sources */,
 				CE78BD5320C087F2001E6DB6 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
