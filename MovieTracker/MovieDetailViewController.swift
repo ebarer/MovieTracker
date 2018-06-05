@@ -10,12 +10,26 @@ import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
 
+    // MARK: - Properties
+    
     var movie: Movie?
     @IBOutlet var moviePoster: UIImageView!
     @IBOutlet var backgroundImage: UIImageView!
+    @IBOutlet weak var movieTitle: UILabel!
+    @IBOutlet weak var movieDescription: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.movieTitle.text = movie?.title
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        
+        if let date = movie?.releaseDate {
+            let dateString = dateFormatter.string(from: date)
+            self.movieDescription.text = "\(dateString) — Genres"
+        }
         
         movie?.getDetails(completionHandler: { (movies, error) in
             guard let movie = movies?[0] else { return }
@@ -30,8 +44,6 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
             self.moviePoster.image = poster
             self.moviePoster.layer.masksToBounds = true
             self.moviePoster.layer.cornerRadius = 5
-            self.moviePoster.layer.borderWidth = 1
-            self.moviePoster.layer.borderColor = UIColor(white: 0.25, alpha: 1).cgColor
         })
     }
     
@@ -47,7 +59,6 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func loadBackground() {
