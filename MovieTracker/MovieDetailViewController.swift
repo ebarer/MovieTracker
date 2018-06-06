@@ -9,16 +9,20 @@
 import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
-
-    // MARK: - Properties
-    
     var movie: Movie?
+    
+    // MARK: - Outlets
+    
     @IBOutlet var moviePoster: UIImageView!
     @IBOutlet var backgroundImage: UIImageView!
     @IBOutlet weak var movieTitle: UILabel!
     @IBOutlet weak var movieDescription: UILabel!
     @IBOutlet var movieOverview: UILabel!
-    
+}
+
+// MARK: - Lifecycle
+
+extension MovieDetailViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,7 +66,11 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+}
+
+// MARK: - Asset methods
+
+extension MovieDetailViewController {
     func loadBackground() {
         guard let movie = movie else { return }
         
@@ -78,16 +86,4 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
             }.resume()
         }
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

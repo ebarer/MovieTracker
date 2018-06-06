@@ -20,19 +20,19 @@ class Movie: NSObject, Codable {
     var certification: String?
     var viewed: Bool?
     
+    override var description: String {
+        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A")"
+    }
+    
     override init() {
         self.id = 0
         self.title = ""
         self.releaseDate = Date()
         super.init()
     }
-    
-    override var description: String {
-        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A")"
-    }
 }
 
-// MARK: - Static REST API Methods
+// MARK: - Static REST API methods
 
 extension Movie {
     static func get(movieID: Int, completionHandler: @escaping (Movie?, Error?) -> Void) {
@@ -122,7 +122,7 @@ extension Movie {
     }
 }
 
-// MARK: - Instance REST API Methods
+// MARK: - Instance REST API methods
 
 extension Movie {
     func getDetails(completionHandler: @escaping (Movie?, Error?) -> Void) {
@@ -138,7 +138,7 @@ extension Movie {
     }
 }
 
-// MARK: - Private properties and REST API helper methods
+// MARK: - Private REST API helper methods
 
 private extension Movie {
     private static let dateFormat = "yyyy-MM-dd"
@@ -238,36 +238,38 @@ private extension Movie {
             }
         }.resume()
     }
+    
+    private enum FetchError: Error {
+        case noData(String)
+        case decode(String)
+        case poster(String)
+    }
 }
 
-// MARK: - Helper Enums
+// MARK: - Image Size Enumerations
 
 protocol ImageSize {}
+extension Movie {
+    enum PosterSize: String, ImageSize {
+        case w92  = "w92"
+        case w154 = "w154"
+        case w185 = "w185"
+        case w342 = "w342"
+        case w500 = "w500"
+        case w780 = "w780"
+        case orig = "original"
+    }
 
-enum PosterSize: String, ImageSize {
-    case w92  = "w92"
-    case w154 = "w154"
-    case w185 = "w185"
-    case w342 = "w342"
-    case w500 = "w500"
-    case w780 = "w780"
-    case orig = "original"
+    enum BackgroundSize: String, ImageSize {
+        case w300  = "w300"
+        case w780  = "w780"
+        case w1280 = "w1280"
+        case orig  = "original"
+    }
 }
 
-enum BackgroundSize: String, ImageSize {
-    case w300  = "w300"
-    case w780  = "w780"
-    case w1280 = "w1280"
-    case orig  = "original"
-}
-
-private enum FetchError: Error {
-    case noData(String)
-    case decode(String)
-    case poster(String)
-}
-
-// Sample JSON output for a movie
+// MARK: - Sample JSON output for a movie
+//
 // {
 //    "adult" = 0,
 //    "backdrop_path" = "/3P52oz9HPQWxcwHOwxtyrVV1LKi.jpg",

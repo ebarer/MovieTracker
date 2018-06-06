@@ -8,12 +8,7 @@
 
 import UIKit
 
-private let reuseIdentifier = "movieCell"
-
 class NowPlayingCollectionViewController: UICollectionViewController {
-    
-    // MARK: - Properties
-
     var movies = [Movie]()
     var movieCount: Int = 0
     var totalPages: Int = 0
@@ -25,10 +20,14 @@ class NowPlayingCollectionViewController: UICollectionViewController {
     let cellRatio: CGFloat = 1.5
     let cellLabel: CGFloat = 35
     
+    // MARK: - Outlets
+    
     @IBOutlet var loadingView: UIStackView!
-    
-    // MARK: - View Controller
-    
+}
+
+// MARK: - Lifecycle
+
+extension NowPlayingCollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGrid()
@@ -40,9 +39,11 @@ class NowPlayingCollectionViewController: UICollectionViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+}
 
-    // MARK: - UICollectionViewDataSource
+// MARK: - UICollectionView Data Source
 
+extension NowPlayingCollectionViewController {
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -52,8 +53,8 @@ class NowPlayingCollectionViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? MovieCollectionViewCell else {
-            fatalError("Expected MovieCollectionViewCell type for reuseIdentifier \(reuseIdentifier). Check the configuration in Main.storyboard.")
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.reuseIdentifier, for: indexPath) as? MovieCollectionViewCell else {
+            fatalError("Expected MovieCollectionViewCell type for reuseIdentifier \(MovieCollectionViewCell.reuseIdentifier). Check the configuration in Main.storyboard.")
         }
 
         if indexPath.item < movies.count {
@@ -70,26 +71,9 @@ class NowPlayingCollectionViewController: UICollectionViewController {
         
         return cell
     }
-    
-    // MARK: - Navigation
-    
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return indexPath.item < movies.count
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
-            guard let cell = sender as? UICollectionViewCell,
-                  let indexPath = self.collectionView?.indexPath(for: cell),
-                  let movieDetailsVC = segue.destination as? MovieDetailViewController
-            else {
-                return
-            }
-            
-            movieDetailsVC.movie = movies[indexPath.item]
-        }
-    }
 }
+
+// MARK: - UICollectionView Layout
 
 extension NowPlayingCollectionViewController: UICollectionViewDelegateFlowLayout {
     func setupGrid() {
@@ -108,44 +92,71 @@ extension NowPlayingCollectionViewController: UICollectionViewDelegateFlowLayout
     }
 }
 
-// Handle fetching data
+// MARK: - Navigation
+
+extension NowPlayingCollectionViewController {
+    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return indexPath.item < movies.count
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetail" {
+            guard let cell = sender as? UICollectionViewCell,
+                let indexPath = self.collectionView?.indexPath(for: cell),
+                let movieDetailsVC = segue.destination as? MovieDetailViewController
+                else {
+                    return
+            }
+            
+            movieDetailsVC.movie = movies[indexPath.item]
+        }
+    }
+}
+
+// MARK: - Data Prefetching
+
 extension NowPlayingCollectionViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         fetchMovies()
     }
 
     func fetchMovies(completionHandler: (() -> Void)? = nil) {
-        if !fetchingData && (totalPages == 0 || lastPageFetched <= totalPages) {
-            fetchingData = true
-            lastPageFetched += 1
-            print("Fetching page: \(lastPageFetched)")
-            Movie.nowShowing(page: lastPageFetched) { (data, error, total) in
-                guard let newMovies = data else {
-                    print("Error: unable to fetch movies")
-                    return
+        guard fetchingData == false,
+            (totalPages == 0 || lastPageFetched <= totalPages)
+        else {
+            return
+        }
+        
+        fetchingData = true
+        lastPageFetched += 1
+        
+        print("Fetching page: \(lastPageFetched)")
+        Movie.nowShowing(page: lastPageFetched) { (data, error, total) in
+            guard let newMovies = data else {
+                print("Error: unable to fetch movies")
+                return
+            }
+            
+            guard error == nil else {
+                print("Error: \(error!)")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                if let total = total, self.movieCount == 0 {
+                    self.movieCount = total.results
+                    self.totalPages = total.pages
                 }
                 
-                guard error == nil else {
-                    print("Error: \(error!)")
-                    return
-                }
+                self.movies.append(contentsOf: newMovies)
+
+                self.fetchingData = false
                 
-                DispatchQueue.main.async {
-                    if let total = total, self.movieCount == 0 {
-                        self.movieCount = total.results
-                        self.totalPages = total.pages
-                    }
-                    
-                    self.movies.append(contentsOf: newMovies)
-
-                    self.fetchingData = false
-                    
-                    if self.lastPageFetched == 1 {
-                        self.collectionView?.reloadData()
-                    }
-
-                    completionHandler?()
+                if self.lastPageFetched == 1 {
+                    self.collectionView?.reloadData()
                 }
+
+                completionHandler?()
             }
         }
     }

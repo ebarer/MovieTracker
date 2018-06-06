@@ -16,7 +16,7 @@ class MovieTableViewCell: UITableViewCell {
     @IBOutlet var movieReleaseDate: UILabel!
     @IBOutlet var moviePoster: UIImageView!
     
-    // MARK: -
+    // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -28,13 +28,9 @@ class MovieTableViewCell: UITableViewCell {
     
     @IBInspectable var selectionColor: UIColor = .gray {
         didSet {
-            setSelectionColor()
+            let view = UIView()
+            view.backgroundColor = selectionColor
+            selectedBackgroundView = view
         }
-    }
-    
-    func setSelectionColor() {
-        let view = UIView()
-        view.backgroundColor = selectionColor
-        selectedBackgroundView = view
     }
 }

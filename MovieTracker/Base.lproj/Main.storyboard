@@ -232,7 +232,7 @@ Movie Title</string>
                             </constraints>
                         </view>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="movieCell" id="22Z-wj-kWP" customClass="MovieCollectionViewCell" customModule="MovieTracker" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="movieCollectionViewCell" id="22Z-wj-kWP" customClass="MovieCollectionViewCell" customModule="MovieTracker" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="120" height="212"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -266,7 +266,10 @@ Title</string>
                                 <connections>
                                     <outlet property="moviePoster" destination="7a2-0C-NMM" id="NCL-uK-W1N"/>
                                     <outlet property="movieTitle" destination="ILo-Nd-Kxd" id="VHf-ms-tZF"/>
-                                    <segue destination="fVR-qT-4O4" kind="show" identifier="showDetail" id="hJR-No-fLa"/>
+                                    <segue destination="fVR-qT-4O4" kind="show" identifier="showDetail" id="hJR-No-fLa">
+                                        <segue key="commit" inheritsFrom="parent" id="zEh-Xt-yhR"/>
+                                        <segue key="preview" inheritsFrom="commit" id="X5r-aT-oLy"/>
+                                    </segue>
                                 </connections>
                             </collectionViewCell>
                         </cells>

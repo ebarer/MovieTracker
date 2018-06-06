@@ -9,20 +9,25 @@
 import UIKit
 
 class MovieCollectionViewCell: UICollectionViewCell {
+    static let reuseIdentifier = "movieCollectionViewCell"
     
     // MARK: - Outlets
     
     @IBOutlet var movieTitle: UILabel!
     @IBOutlet var moviePoster: UIImageView!
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+}
     
-    // MARK: -
-    
+// MARK: - Lifecycle
+
+extension MovieCollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
+}
     
-    // Configure cell
+// MARK: - Configuration
+
+extension MovieCollectionViewCell {
     func configure(with movie: Movie?) {
         self.movieTitle.text = movie?.title
         
@@ -45,5 +50,4 @@ class MovieCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
 }
