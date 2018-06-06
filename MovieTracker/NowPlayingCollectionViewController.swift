@@ -11,8 +11,6 @@ import UIKit
 private let reuseIdentifier = "movieCell"
 
 class NowPlayingCollectionViewController: UICollectionViewController {
-
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - Properties
 
@@ -31,9 +29,6 @@ class NowPlayingCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.activityIndicator.stopAnimating()
-        
         setupGrid()
         fetchMovies()
     }
@@ -54,7 +49,7 @@ class NowPlayingCollectionViewController: UICollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? MovieCollectionViewCell else {
-            fatalError("Expected `MovieCollectionViewCell type for reuseIdentifier \(reuseIdentifier). Check the configuration in Main.storyboard.")
+            fatalError("Expected MovieCollectionViewCell type for reuseIdentifier \(reuseIdentifier). Check the configuration in Main.storyboard.")
         }
 
         if indexPath.item < movies.count {
@@ -112,7 +107,7 @@ extension NowPlayingCollectionViewController: UICollectionViewDelegateFlowLayout
 // Handle fetching data
 extension NowPlayingCollectionViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//        fetchMovies()
+        fetchMovies()
     }
 
     func fetchMovies(completionHandler: (() -> Void)? = nil) {
@@ -133,27 +128,12 @@ extension NowPlayingCollectionViewController: UICollectionViewDataSourcePrefetch
                 
                 DispatchQueue.main.async {
                     if let total = total, self.movieCount == 0 {
-                        print("Totals: \(total)")
                         self.movieCount = total.results
                         self.totalPages = total.pages
                     }
                     
                     self.movies.append(contentsOf: newMovies)
-                    
-                    print("Movie count: \(self.movies.count)")
-                    
-                    let duplicates = (Dictionary(grouping: self.movies, by: { $0.title }).filter { $1.count > 1})
-                    if duplicates.count > 0 {
-                        for dupe in duplicates {
-                            print(dupe.key)
-                        }
-                    }
-                    
-                    for (index, movie) in newMovies.enumerated() {
-                        print("\(index): \(movie.title) - \(movie.rating) - \(movie.certification)")
-                    }
-                    
-    //                self.activityIndicator.stopAnimating()
+
                     self.fetchingData = false
                     
                     if self.lastPageFetched == 1 {

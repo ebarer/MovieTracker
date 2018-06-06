@@ -32,10 +32,13 @@ class MovieCollectionViewCell: UICollectionViewCell {
         self.moviePoster.layer.cornerRadius = 5
         self.moviePoster.layer.borderWidth = 1
         self.moviePoster.layer.borderColor = UIColor(white: 0.15, alpha: 1).cgColor
-        self.activityIndicator.startAnimating()
         
-        movie?.getPoster(width: .w342) { (poster, _) in
-            self.activityIndicator.stopAnimating()
+        movie?.getPoster(width: .w342) { (image, error) in
+            guard error == nil, let poster = image else {
+                print("Error: \(error!)")
+                return
+            }
+
             self.moviePoster.image = poster
             UIView.animate(withDuration: 0.5) {
                 self.moviePoster.alpha = 1.0

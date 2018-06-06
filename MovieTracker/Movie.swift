@@ -8,18 +8,6 @@
 
 import UIKit
 
-struct Root : Codable {
-    var movies: [Movie]
-    var totalResults: Int
-    var totalPages: Int
-
-    private enum CodingKeys : String, CodingKey {
-        case movies = "results"
-        case totalResults = "total_results"
-        case totalPages = "total_pages"
-    }
-}
-
 class Movie: NSObject, Codable {
     var id: Int
     var title: String
@@ -31,16 +19,6 @@ class Movie: NSObject, Codable {
     var rating: Float?
     var certification: String?
     var viewed: Bool?
-    
-    private static let dateFormat = "yyyy-MM-dd"
-    
-    private enum CodingKeys : String, CodingKey {
-        case id, title, overview
-        case releaseDate = "release_date"
-        case poster = "poster_path"
-        case background = "backdrop_path"
-        case rating = "vote_average"
-    }
     
     override init() {
         self.id = 0
@@ -160,9 +138,31 @@ extension Movie {
     }
 }
 
-// MARK: - REST API Helpers
+// MARK: - Private properties and REST API helper methods
 
-extension Movie {
+private extension Movie {
+    private static let dateFormat = "yyyy-MM-dd"
+    
+    private enum CodingKeys : String, CodingKey {
+        case id, title, overview
+        case releaseDate = "release_date"
+        case poster = "poster_path"
+        case background = "backdrop_path"
+        case rating = "vote_average"
+    }
+    
+    private struct Root : Codable {
+        var movies: [Movie]
+        var totalResults: Int
+        var totalPages: Int
+        
+        private enum CodingKeys : String, CodingKey {
+            case movies = "results"
+            case totalResults = "total_results"
+            case totalPages = "total_pages"
+        }
+    }
+
     private static var decoder: JSONDecoder {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = Movie.dateFormat
@@ -261,7 +261,7 @@ enum BackgroundSize: String, ImageSize {
     case orig  = "original"
 }
 
-enum FetchError: Error {
+private enum FetchError: Error {
     case noData(String)
     case decode(String)
     case poster(String)
