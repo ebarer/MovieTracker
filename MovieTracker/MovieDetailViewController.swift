@@ -17,6 +17,7 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var backgroundImage: UIImageView!
     @IBOutlet weak var movieTitle: UILabel!
     @IBOutlet weak var movieDescription: UILabel!
+    @IBOutlet var movieOverview: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,9 +32,11 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
             self.movieDescription.text = "\(dateString) — Genres"
         }
         
-        movie?.getDetails(completionHandler: { (movie, _) in
-            print(movie)
-        })
+        self.movieOverview.text = movie?.overview
+        
+//        movie?.getDetails(completionHandler: { (movie, _) in
+//            print(movie)
+//        })
         
         movie?.getBackground(completionHandler: { (background, error) in
             self.backgroundImage.image = background

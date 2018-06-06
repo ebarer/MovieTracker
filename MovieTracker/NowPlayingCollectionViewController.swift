@@ -25,12 +25,16 @@ class NowPlayingCollectionViewController: UICollectionViewController {
     let cellRatio: CGFloat = 1.5
     let cellLabel: CGFloat = 35
     
+    @IBOutlet var loadingView: UIStackView!
+    
     // MARK: - View Controller
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupGrid()
-        fetchMovies()
+        fetchMovies {
+            self.loadingView.isHidden = true
+        }
     }
 
     override func didReceiveMemoryWarning() {
