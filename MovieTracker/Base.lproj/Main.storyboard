@@ -81,11 +81,11 @@
                     <navigationItem key="navigationItem" id="5d4-NR-bc9">
                         <nil key="title"/>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="6jb-en-BVu">
-                            <rect key="frame" x="91" y="7.6666666666666679" width="193" height="29.000000000000004"/>
+                            <rect key="frame" x="91" y="7" width="193" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
-                                <segment title="Now Playing"/>
                                 <segment title="Coming Soon"/>
+                                <segment title="?"/>
                             </segments>
                             <color key="tintColor" red="0.87058823529411766" green="0.74117647058823533" blue="0.46274509803921571" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             <connections>
@@ -354,6 +354,6 @@ Title</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="hJR-No-fLa"/>
+        <segue reference="llt-Dt-nmn"/>
     </inferredMetricsTieBreakers>
 </document>

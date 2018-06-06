@@ -18,7 +18,33 @@ class NowPlayingTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        Movie.comingSoon(page: 1, completionHandler: getMovies)
+        Movie.comingSoon(page: 1) { (data, error, _) in
+            guard let newMovies = data else {
+                print("Error: unable to fetch movies")
+                return
+            }
+            
+            guard error == nil else {
+                print("Error: \(error!)")
+                return
+            }
+            
+            // Split data into dictionary and sort
+            var movieDict = Dictionary(grouping: newMovies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
+            let months = movieDict.keys.sorted { (a, b) -> Bool in
+                return a.year! > b.year! ? false : a.month! < b.month!
+            }
+            
+            for key in months {
+                movieDict[key]?.sort { $0.releaseDate.compare($1.releaseDate) == .orderedAscending }
+            }
+            
+            DispatchQueue.main.async {
+                self.movies = movieDict
+                self.sections = months
+                self.tableView.reloadData()
+            }
+        }
     }
     
     @IBAction func updateMovies(_ sender: UISegmentedControl) {
@@ -41,7 +67,7 @@ class NowPlayingTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return sections.count > 1 ? 45.0 : 0.01
+        return sections.count > 1 ? 55.0 : 0.01
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -111,24 +137,6 @@ class NowPlayingTableViewController: UITableViewController {
             guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
             
             movieDetailsVC.movie = movies[self.sections[indexPath.section]]?[indexPath.item]
-        }
-    }
-    
-    // MARK: - Movie helper functions
-    func getMovies(movies: [Movie]?, error: Error?) {
-        guard let movies = movies else {
-            return
-        }
-        
-        guard error == nil else {
-            print("Error: \(error!)")
-            return
-        }
-        
-        DispatchQueue.main.async {
-            self.movies = Dictionary(grouping: movies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
-            self.sections = self.movies.keys.sorted { $0.year! > $1.year! || $0.month! > $1.month! }
-            self.tableView.reloadData()
         }
     }
     
