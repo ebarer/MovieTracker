@@ -11,27 +11,31 @@ import UIKit
 private let reuseIdentifier = "movieCell"
 
 class NowPlayingCollectionViewController: UICollectionViewController {
+
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - Properties
-    
+
     var movies = [Movie]()
+    var movieCount: Int = 0
+    var totalPages: Int = 0
+    var lastPageFetched: Int = 0
+    var fetchingData: Bool = false
+    
     let estimatedWidth: CGFloat = 120.0
     let cellMargin: CGFloat = 10
     let cellRatio: CGFloat = 1.5
     let cellLabel: CGFloat = 35
     
+    // MARK: - View Controller
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        Movie.nowShowing(page: 1, completionHandler: getMovies)
+        
+        self.activityIndicator.stopAnimating()
+        
         setupGrid()
-    }
-    
-    func setupGrid() {
-        let verticalMargin = cellMargin + 1
-        let layout = self.collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
-        layout?.sectionInset = UIEdgeInsetsMake(verticalMargin, cellMargin, verticalMargin, cellMargin)
-        layout?.minimumLineSpacing = cellMargin
-        layout?.minimumInteritemSpacing = cellMargin
+        fetchMovies()
     }
 
     override func didReceiveMemoryWarning() {
@@ -44,40 +48,35 @@ class NowPlayingCollectionViewController: UICollectionViewController {
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movies.count
+        return movieCount
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let dequeuedCell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        guard let cell = dequeuedCell as? MovieCollectionViewCell else {
-            return dequeuedCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? MovieCollectionViewCell else {
+            fatalError("Expected `MovieCollectionViewCell type for reuseIdentifier \(reuseIdentifier). Check the configuration in Main.storyboard.")
         }
 
-        let movie = movies[indexPath.item]
-        cell.movieTitle.text = movie.title
-        
-        cell.moviePoster.layer.masksToBounds = true
-        cell.moviePoster.layer.cornerRadius = 5
-        cell.moviePoster.layer.borderWidth = 1
-        cell.moviePoster.layer.borderColor = UIColor(white: 0.15, alpha: 1).cgColor
-        cell.activityIndicator.startAnimating()
+        if indexPath.item < movies.count {
+            cell.configure(with: movies[indexPath.item])
+        } else {
+            cell.configure(with: nil)
 
-        movie.getPoster(width: .w342) { (poster, error) in
-            if error == nil {
-                cell.moviePoster.image = poster
-            } else {
-                cell.moviePoster.image = nil
+            fetchMovies {
+                guard indexPath.item < self.movies.count else { return }
+                
+                cell.configure(with: self.movies[indexPath.item])
             }
-            
-            cell.activityIndicator.stopAnimating()
         }
         
         return cell
     }
     
     // MARK: - Navigation
+    
+    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return indexPath.item < movies.count
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
@@ -91,31 +90,79 @@ class NowPlayingCollectionViewController: UICollectionViewController {
             movieDetailsVC.movie = movies[indexPath.item]
         }
     }
-    
-    // MARK: - Movie helper functions
-    
-    func getMovies(movies: [Movie]?, error: Error?) {
-        guard let movies = movies else {
-            return
-        }
-        
-        guard error == nil else {
-            print("Error: \(error!)")
-            return
-        }
-        
-        DispatchQueue.main.async {
-            self.movies = movies
-            self.collectionView?.reloadData()
-        }
-    }
 }
 
 extension NowPlayingCollectionViewController: UICollectionViewDelegateFlowLayout {
+    func setupGrid() {
+        let verticalMargin = cellMargin + 1
+        let layout = self.collectionView?.collectionViewLayout as? UICollectionViewFlowLayout
+        layout?.sectionInset = UIEdgeInsets(top: verticalMargin, left: cellMargin, bottom: verticalMargin, right: cellMargin)
+        layout?.minimumLineSpacing = cellMargin
+        layout?.minimumInteritemSpacing = cellMargin
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let cellCount = floor(self.view.frame.size.width / estimatedWidth)
         let cellWidth = (self.view.frame.size.width - (cellMargin * (cellCount + 1))) / cellCount
         let cellHeight = (cellRatio * cellWidth) + cellLabel
         return CGSize(width: cellWidth, height: cellHeight)
+    }
+}
+
+// Handle fetching data
+extension NowPlayingCollectionViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+//        fetchMovies()
+    }
+
+    func fetchMovies(completionHandler: (() -> Void)? = nil) {
+        if !fetchingData && (totalPages == 0 || lastPageFetched <= totalPages) {
+            fetchingData = true
+            lastPageFetched += 1
+            print("Fetching page: \(lastPageFetched)")
+            Movie.nowShowing(page: lastPageFetched) { (data, error, total) in
+                guard let newMovies = data else {
+                    print("Error: unable to fetch movies")
+                    return
+                }
+                
+                guard error == nil else {
+                    print("Error: \(error!)")
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    if let total = total, self.movieCount == 0 {
+                        print("Totals: \(total)")
+                        self.movieCount = total.results
+                        self.totalPages = total.pages
+                    }
+                    
+                    self.movies.append(contentsOf: newMovies)
+                    
+                    print("Movie count: \(self.movies.count)")
+                    
+                    let duplicates = (Dictionary(grouping: self.movies, by: { $0.title }).filter { $1.count > 1})
+                    if duplicates.count > 0 {
+                        for dupe in duplicates {
+                            print(dupe.key)
+                        }
+                    }
+                    
+                    for (index, movie) in newMovies.enumerated() {
+                        print("\(index): \(movie.title) - \(movie.rating) - \(movie.certification)")
+                    }
+                    
+    //                self.activityIndicator.stopAnimating()
+                    self.fetchingData = false
+                    
+                    if self.lastPageFetched == 1 {
+                        self.collectionView?.reloadData()
+                    }
+
+                    completionHandler?()
+                }
+            }
+        }
     }
 }

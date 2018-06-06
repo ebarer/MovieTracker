@@ -18,21 +18,12 @@ class NowPlayingTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Movie.nowShowing(page: 1, completionHandler: getMovies)
+//        Movie.comingSoon(page: 1, completionHandler: getMovies)
     }
     
     @IBAction func updateMovies(_ sender: UISegmentedControl) {
-        updateMovies(index: sender.selectedSegmentIndex)
-    }
-    
-    func updateMovies(index: Int) {
-        switch index {
-        case 0:
-            Movie.nowShowing(page: 1, completionHandler: getMovies)
-        case 1:
-            Movie.comingSoon(page: 1, completionHandler: getMovies)
-        default: break
-        }
+//        updateMovies(index: sender.selectedSegmentIndex)
+        print("Segment controller clicked")
     }
     
     override func didReceiveMemoryWarning() {
@@ -62,7 +53,7 @@ class NowPlayingTableViewController: UITableViewController {
         }
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM YYYY"
+        dateFormatter.dateFormat = "MMMM yyyy"
         return dateFormatter.string(from: date)
     }
 
@@ -101,7 +92,7 @@ class NowPlayingTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         var actions = [UITableViewRowAction]()
         
-        let addAction = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "Add") { (action, indexPath) in
+        let addAction = UITableViewRowAction(style: UITableViewRowAction.Style.normal, title: "Add") { (action, indexPath) in
             print(self.movies[self.sections[indexPath.section]]?[indexPath.item] ?? "Unknown movie")
         }
         

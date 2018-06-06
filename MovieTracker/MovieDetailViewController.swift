@@ -31,8 +31,7 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
             self.movieDescription.text = "\(dateString) — Genres"
         }
         
-        movie?.getDetails(completionHandler: { (movies, error) in
-            guard let movie = movies?[0] else { return }
+        movie?.getDetails(completionHandler: { (movie, _) in
             print(movie)
         })
         

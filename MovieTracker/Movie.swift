@@ -10,9 +10,13 @@ import UIKit
 
 struct Root : Codable {
     var movies: [Movie]
+    var totalResults: Int
+    var totalPages: Int
 
     private enum CodingKeys : String, CodingKey {
         case movies = "results"
+        case totalResults = "total_results"
+        case totalPages = "total_pages"
     }
 }
 
@@ -27,6 +31,8 @@ class Movie: NSObject, Codable {
     var rating: Float?
     var certification: String?
     var viewed: Bool?
+    
+    private static let dateFormat = "yyyy-MM-dd"
     
     private enum CodingKeys : String, CodingKey {
         case id, title, overview
@@ -44,7 +50,7 @@ class Movie: NSObject, Codable {
     }
     
     override var description: String {
-        return "[\(id)] \(title) - \(releaseDate) - \(rating ?? 0.0)"
+        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A")"
     }
 }
 
@@ -52,38 +58,88 @@ class Movie: NSObject, Codable {
 
 extension Movie {
     static func get(movieID: Int, completionHandler: @escaping (Movie?, Error?) -> Void) {
-        self.fetchData(path: "movie/\(movieID)") { (data, error) in
+        var searchURLComponents = URLComponents(string: "https://api.themoviedb.org")!
+        searchURLComponents.path = "/3/movie/\(movieID)"
+        
+        self.fetchData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error)
                 return
             }
             
-            let movie = try? decoder.decode(Movie.self, from: data)
-            completionHandler(movie, nil)
+            do {
+                let movie = try decoder.decode(Movie.self, from: data)
+                completionHandler(movie, nil)
+            } catch {
+                completionHandler(nil, FetchError.decode("Couldn't decode JSON data"))
+            }
         }
     }
     
-    static func nowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?) -> Void) {
-        self.fetchData(path: "movie/now_playing", sort: "popularity.desc", page: page) { (data, error) in
+    static func nowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        let today = Date()
+        let startDate = Calendar.current.date(byAdding: .month, value: -2, to: today) ?? today
+        let endDate = Calendar.current.nextWeekend(startingAfter: today, direction: Calendar.SearchDirection.forward)?.end ?? today
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = Movie.dateFormat
+        
+        var searchURLComponents = URLComponents(string: "https://api.themoviedb.org")!
+        searchURLComponents.path = "/3/discover/movie"
+        searchURLComponents.queryItems = [
+            URLQueryItem(name: "with_release_type", value: "3|2"),
+            URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
+            URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
+            URLQueryItem(name: "sort_by", value: "popularity.desc"),
+            URLQueryItem(name: "vote_count.gte", value: "10"),
+            URLQueryItem(name: "page", value: String(page))
+        ]
+        
+        self.fetchData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
-                completionHandler(nil, error)
+                completionHandler(nil, error, nil)
                 return
             }
             
-            let movies = try? decoder.decode(Root.self, from: data).movies
-            completionHandler(movies, nil)
+            do {
+                let root = try decoder.decode(Root.self, from: data)
+                completionHandler(root.movies, nil, (root.totalResults, root.totalPages))
+            } catch {
+                completionHandler(nil, FetchError.decode("Couldn't decode JSON data"), nil)
+            }
         }
     }
     
-    static func comingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?) -> Void) {
-        self.fetchData(path: "movie/upcoming", sort: "release_date.desc", page: page) { (data, error) in
+    static func comingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        let today = Date()
+        let startDate = Calendar.current.date(byAdding: Calendar.Component.day, value: 7, to: today) ?? today
+        let endDate = Calendar.current.date(byAdding: Calendar.Component.month, value: 3, to: startDate) ?? startDate
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = Movie.dateFormat
+        
+        var searchURLComponents = URLComponents(string: "https://api.themoviedb.org")!
+        searchURLComponents.path = "/3/discover/movie"
+        searchURLComponents.queryItems = [
+            URLQueryItem(name: "with_release_type", value: "3|2"),
+            URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
+            URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
+            URLQueryItem(name: "sort_by", value: "popularity.desc"),
+            URLQueryItem(name: "page", value: String(page))
+        ]
+        
+        self.fetchData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
-                completionHandler(nil, error)
+                completionHandler(nil, error, nil)
                 return
             }
             
-            let movies = try? decoder.decode(Root.self, from: data).movies
-            completionHandler(movies, nil)
+            do {
+                let root = try decoder.decode(Root.self, from: data)
+                completionHandler(root.movies, nil, (root.totalResults, root.totalPages))
+            } catch {
+                completionHandler(nil, FetchError.decode("Couldn't decode JSON data"), nil)
+            }
         }
     }
 }
@@ -91,9 +147,8 @@ extension Movie {
 // MARK: - Instance REST API Methods
 
 extension Movie {
-    func getDetails(completionHandler: @escaping ([Movie]?, Error?) -> Void) {
-        completionHandler(nil, nil)
-//        Movie.get(movieID: self.id, completionHandler: completionHandler)
+    func getDetails(completionHandler: @escaping (Movie?, Error?) -> Void) {
+        Movie.get(movieID: self.id, completionHandler: completionHandler)
     }
     
     func getPoster(width: PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?) -> Void) {
@@ -110,7 +165,7 @@ extension Movie {
 extension Movie {
     private static var decoder: JSONDecoder {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-MM-dd"
+        dateFormatter.dateFormat = Movie.dateFormat
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(dateFormatter)
@@ -118,29 +173,24 @@ extension Movie {
         return decoder
     }
     
-    private static func fetchData(path: String, sort: String? = nil, page: Int? = nil, appendTo: String? = nil, completionHandler: @escaping (Data?, Error?) -> Void) {
-        var searchURLComponents = URLComponents(string: "https://api.themoviedb.org/")!
-        searchURLComponents.path = "/3/\(path)"
-        searchURLComponents.queryItems = [
+    private static func fetchData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
+        let regionCode = NSLocale.current.regionCode ?? "US"
+        let languageCode = NSLocale.current.languageCode ?? "en"
+        
+        let queryItems = [
             URLQueryItem(name: "api_key", value: "da99299f02cd39e2736c97d08b459731"),
-            URLQueryItem(name: "region", value: "US"),
-            URLQueryItem(name: "language", value: "en-US"),
-            URLQueryItem(name: "include_adult", value: "false")
+            URLQueryItem(name: "include_adult", value: "false"),
+            URLQueryItem(name: "with_original_language", value: languageCode),
+            URLQueryItem(name: "language", value: "\(languageCode)-\(regionCode)"),
+            URLQueryItem(name: "region", value: regionCode),
+            URLQueryItem(name: "certification_country", value: regionCode)
         ]
         
-        if let sort = sort {
-            let query = URLQueryItem(name: "sort_by", value: sort)
-            searchURLComponents.queryItems?.append(query)
-        }
-        
-        if let page = page {
-            let query = URLQueryItem(name: "page", value: String(page))
-            searchURLComponents.queryItems?.append(query)
-        }
-        
-        if let appendTo = appendTo {
-            let query = URLQueryItem(name: "append_to_response", value: appendTo)
-            searchURLComponents.queryItems?.append(query)
+        var searchURLComponents = url
+        if searchURLComponents.queryItems == nil {
+            searchURLComponents.queryItems = queryItems
+        } else {
+            searchURLComponents.queryItems?.append(contentsOf: queryItems)
         }
         
         guard let searchURL = searchURLComponents.url else {
@@ -149,7 +199,7 @@ extension Movie {
         
         var request = URLRequest(url: searchURL)
         request.httpMethod = "GET"
-        request.cachePolicy = URLRequest.CachePolicy.useProtocolCachePolicy
+        request.cachePolicy = .useProtocolCachePolicy
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard error == nil else {
@@ -165,10 +215,6 @@ extension Movie {
             completionHandler(responseData, nil)
         }.resume()
     }
-    
-//    private static func fetchDetails(path: String, sort: String? = nil, page: String? = nil, completionHandler: @escaping (Movie?, Error?) -> Void) {
-//        URLQueryItem(name: "append_to_response", value: "release_dates")
-//    }
     
     private func fetchImage(width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
         var posterURL: URL?
@@ -217,6 +263,7 @@ enum BackgroundSize: String, ImageSize {
 
 enum FetchError: Error {
     case noData(String)
+    case decode(String)
     case poster(String)
 }
 
