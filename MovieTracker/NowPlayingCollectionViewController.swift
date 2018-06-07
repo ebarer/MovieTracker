@@ -22,7 +22,7 @@ class NowPlayingCollectionViewController: UICollectionViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet var loadingView: UIStackView!
+    @IBOutlet var loadingView: UIView!
 }
 
 // MARK: - Lifecycle

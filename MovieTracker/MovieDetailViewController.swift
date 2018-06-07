@@ -10,10 +10,11 @@ import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     var movie: Movie?
+    var navigationBarVisible: Bool = true
     
     // MARK: - Outlets
-    
-    @IBOutlet var moviePoster: UIImageView!
+
+    @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var backgroundImage: UIImageView!
     @IBOutlet weak var movieTitle: UILabel!
     @IBOutlet weak var movieDescription: UILabel!
@@ -25,15 +26,18 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
 extension MovieDetailViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        // Setup view
+        self.scrollView.contentInsetAdjustmentBehavior = .never
+
         self.movieTitle.text = movie?.title
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
+        dateFormatter.dateFormat = "MMMM dd, yyyy"
         
         if let date = movie?.releaseDate {
             let dateString = dateFormatter.string(from: date)
-            self.movieDescription.text = "\(dateString) — Genres"
+            self.movieDescription.text = "\(dateString)  •  2 hr 43 min"
         }
         
         self.movieOverview.text = movie?.overview
@@ -41,30 +45,71 @@ extension MovieDetailViewController {
 //        movie?.getDetails(completionHandler: { (movie, _) in
 //            print(movie)
 //        })
-        
+
         movie?.getBackground(completionHandler: { (background, error) in
             self.backgroundImage.image = background
-        })
-        
-        movie?.getPoster(width: .w500, completionHandler: { (poster, _) in
-            self.moviePoster.image = poster
-            self.moviePoster.layer.masksToBounds = true
-            self.moviePoster.layer.cornerRadius = 5
         })
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
+        hideNavigationBar()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        self.navigationController?.navigationBar.shadowImage = nil
+        showNavigationBar()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+}
+
+// MARK: - Scroll View Delegate
+extension MovieDetailViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let navBarHeight = view.safeAreaInsets.top
+        let titleOffset = movieTitle.frame.origin.y - navBarHeight
+        let scrollViewOffset = scrollView.contentOffset.y
+        let backgroundImageRatio: CGFloat = 2/3
+        let backgroundImageHeight = backgroundImageRatio * scrollView.frame.width
+        
+        if scrollViewOffset < 0 {
+            // TODO: resolve math for offset
+            print(backgroundImageHeight)
+            let translateOffset = -scrollViewOffset / 2
+            var transform = CATransform3DTranslate(CATransform3DIdentity, 0, -scrollViewOffset / 2, 0)
+            let scaleFactor: CGFloat = 1 + (-scrollViewOffset / backgroundImageHeight)
+            transform = CATransform3DScale(transform, scaleFactor, scaleFactor, 1)
+            self.backgroundImage.layer.transform = transform
+            print("offset: \(scrollViewOffset)\tscaleFactor: \(scaleFactor)")
+            print("layer: \(self.backgroundImage.layer.frame)")
+        } else {
+            self.backgroundImage.layer.transform = CATransform3DIdentity
+        }
+        
+        if scrollViewOffset > titleOffset {
+            showNavigationBar()
+        } else {
+            hideNavigationBar()
+        }
+    }
+    
+    func showNavigationBar() {
+        if !navigationBarVisible {
+            self.title = movie?.title
+            self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+            self.navigationController?.navigationBar.shadowImage = nil
+            self.navigationBarVisible = true
+        }
+    }
+    
+    func hideNavigationBar() {
+        if navigationBarVisible {
+            self.title = nil
+            self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            self.navigationBarVisible = false
+        }
     }
 }
 
