@@ -35,8 +35,8 @@ extension MovieCollectionViewCell {
         self.moviePoster.alpha = 0
         self.moviePoster.layer.masksToBounds = true
         self.moviePoster.layer.cornerRadius = 5
-        self.moviePoster.layer.borderWidth = 1
-        self.moviePoster.layer.borderColor = UIColor(white: 0.15, alpha: 1).cgColor
+        self.moviePoster.layer.borderWidth = 0.5
+        self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
         movie?.getPoster(width: .w342) { (image, error) in
             guard error == nil, let poster = image else {

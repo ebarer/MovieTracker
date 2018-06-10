@@ -55,9 +55,9 @@ extension Movie {
     }
     
     static func nowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
-        let today = Date()
+        let today = Calendar.current.startOfDay(for: Date())
         let startDate = Calendar.current.date(byAdding: .month, value: -2, to: today) ?? today
-        let endDate = Calendar.current.nextWeekend(startingAfter: today, direction: Calendar.SearchDirection.forward)?.end ?? today
+        let endDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = Movie.dateFormat
@@ -69,7 +69,7 @@ extension Movie {
             URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
             URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
             URLQueryItem(name: "sort_by", value: "popularity.desc"),
-            URLQueryItem(name: "vote_count.gte", value: "10"),
+            URLQueryItem(name: "vote_count.gte", value: "1"),
             URLQueryItem(name: "page", value: String(page))
         ]
         
@@ -89,8 +89,8 @@ extension Movie {
     }
     
     static func comingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
-        let today = Date()
-        let startDate = Calendar.current.date(byAdding: Calendar.Component.day, value: 7, to: today) ?? today
+        let today = Calendar.current.startOfDay(for: Date())
+        let startDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
         let endDate = Calendar.current.date(byAdding: Calendar.Component.month, value: 3, to: startDate) ?? startDate
         
         let dateFormatter = DateFormatter()
@@ -103,6 +103,7 @@ extension Movie {
             URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
             URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
             URLQueryItem(name: "sort_by", value: "popularity.desc"),
+            URLQueryItem(name: "vote_count.gte", value: "1"),
             URLQueryItem(name: "page", value: String(page))
         ]
         

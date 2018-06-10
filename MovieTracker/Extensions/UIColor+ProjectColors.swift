@@ -16,5 +16,6 @@ extension UIColor {
         self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
     }
     
+    static let bg = UIColor(red: 12, green: 12, blue: 12)
     static let gold = UIColor(red: 222, green: 189, blue: 118)
 }

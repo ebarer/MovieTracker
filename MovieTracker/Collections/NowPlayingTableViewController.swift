@@ -48,7 +48,6 @@ class NowPlayingTableViewController: UITableViewController {
     }
     
     @IBAction func updateMovies(_ sender: UISegmentedControl) {
-//        updateMovies(index: sender.selectedSegmentIndex)
         print("Segment controller clicked")
     }
     
