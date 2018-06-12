@@ -9,6 +9,7 @@
 import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
+    var id: Int?
     var movie: Movie?
     var navigationBarVisible: Bool = true
     
@@ -23,7 +24,7 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var posterContainer: UIView!
     @IBOutlet var movieTitle: UILabel!
     @IBOutlet var movieDescription: UILabel!
-    @IBOutlet var actionBar: UIView!
+    @IBOutlet var actionBar: UIStackView!
     @IBOutlet var actionTrack: UIButton!
     @IBOutlet var actionSeen: UIButton!
     @IBOutlet var actionTrailer: UIButton!
@@ -36,49 +37,65 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
 extension MovieDetailViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Setup view
+        
+        guard let movieID = id else { return }
+        
+        Movie.get(id: movieID) { (movie, error) in
+            guard error == nil, let movie = movie else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.movie = movie
+                self.populateData()
+            }
+        }
+    }
+    
+    func setupView() {
         self.scrollView.contentInsetAdjustmentBehavior = .never
 
-        // Setup actions
-        actionTrack.layer.cornerRadius = 15
-        actionTrack.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        actionSeen.layer.cornerRadius = 15
-        actionSeen.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        actionPlay.layer.cornerRadius = 25
-        actionPlay.clipsToBounds = true
+        self.movieTitle.sizeToFit()
+        
+        // Configure action buttons
+        actionTrack.layer.cornerRadius = 9
+        actionSeen.layer.cornerRadius = 9
+        actionTrailer.layer.cornerRadius = 9
         actionTrailer.alpha = 0
         
-        // Setup details
-        self.movieTitle.text = movie?.title
-        
-        if let date = movie?.releaseDate {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MMMM dd, yyyy"
-            let dateString = dateFormatter.string(from: date)
-            self.movieDescription.text = "\(dateString)  •  2 hr 43 min"
-        }
-        
-        self.movieOverview.text = movie?.overview
-        
-//        movie?.getDetails(completionHandler: { (movie, _) in
-//            print(movie)
-//        })
-        
-        // Setup artwork
+        // Setup images
+        actionPlay.layer.cornerRadius = 25
+        actionPlay.clipsToBounds = true
         posterAI.startAnimating()
         backgroundAI.startAnimating()
+    }
+    
+    func populateData() {
+        guard let movie = movie else { return }
         
-        movie?.getPoster(completionHandler: { (poster, error) in
+        self.movieTitle.text = movie.title
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM dd, yyyy"
+        let dateString = dateFormatter.string(from: movie.releaseDate)
+        if let duration = movie.duration {
+            self.movieDescription.text = "\(dateString)  •  \(duration)"
+        } else {
+            self.movieDescription.text = "\(dateString)"
+        }
+        
+        self.movieOverview.text = movie.overview
+        
+        movie.getPoster(completionHandler: { (poster, error) in
             self.moviePoster.image = poster
             self.moviePoster.layer.masksToBounds = true
-            self.moviePoster.layer.cornerRadius = 5
+            self.moviePoster.layer.cornerRadius = 9
             self.moviePoster.layer.borderWidth = 0.5
             self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
             self.posterAI.stopAnimating()
         })
-
-        movie?.getBackground(completionHandler: { (background, error) in
+        
+        movie.getBackground(completionHandler: { (background, error) in
             self.backgroundImage.image = background
             self.backgroundImage.addGradient(
                 colors: [.bg, .clear, .clear, .bg],
@@ -102,10 +119,15 @@ extension MovieDetailViewController {
 extension MovieDetailViewController {
     @IBAction func trackMovie(_ sender: UIButton) {
         print("[Tracked] \(movie?.title ?? "Unknown")")
+        sender.isSelected = !sender.isSelected
+        sender.backgroundColor = sender.isSelected ? .gold : .inactive
     }
     
     @IBAction func seenMovie(_ sender: UIButton) {
         print("[Seen] \(movie?.title ?? "Unknown")")
+        sender.isSelected = !sender.isSelected
+        sender.backgroundColor = sender.isSelected ? .gold : .inactive
+        actionTrack.isHidden = sender.isSelected
     }
     
     @IBAction func watchTrailer(_ sender: Any) {

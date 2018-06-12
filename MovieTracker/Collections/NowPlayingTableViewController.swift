@@ -19,13 +19,13 @@ class NowPlayingTableViewController: UITableViewController {
         super.viewDidLoad()
         
         Movie.comingSoon(page: 1) { (data, error, _) in
-            guard let newMovies = data else {
-                print("Error: unable to fetch movies")
+            guard error == nil else {
+                print("Error: \(error!)")
                 return
             }
             
-            guard error == nil else {
-                print("Error: \(error!)")
+            guard let newMovies = data else {
+                print("Error: unable to fetch movies")
                 return
             }
             

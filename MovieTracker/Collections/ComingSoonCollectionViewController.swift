@@ -135,15 +135,15 @@ extension ComingSoonCollectionViewController: UICollectionViewDataSourcePrefetch
         fetchingData = true
         lastPageFetched += 1
         
-        print("[ComingSoon] Fetching Page: \(lastPageFetched) ...")
+//        print("[ComingSoon] Fetching Page: \(lastPageFetched) ...")
         Movie.comingSoon(page: lastPageFetched) { (data, error, total) in
-            guard let newMovies = data else {
-                print("Error: unable to fetch movies")
+            guard error == nil else {
+                print("Error: \(error!)")
                 return
             }
             
-            guard error == nil else {
-                print("Error: \(error!)")
+            guard let newMovies = data else {
+                print("Error: unable to fetch movies")
                 return
             }
             

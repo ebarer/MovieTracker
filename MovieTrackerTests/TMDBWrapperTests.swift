@@ -9,7 +9,7 @@
 import XCTest
 @testable import MovieTracker
 
-class MovieTrackerTests: XCTestCase {
+class TMDBWrapperTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
@@ -17,6 +17,13 @@ class MovieTrackerTests: XCTestCase {
     
     override func tearDown() {
         super.tearDown()
+    }
+    
+    func testGetMovie() {
+        let movieID = 299536  // Avengers: Infinity War (2018)
+        TMDBWrapper.getMovie(id: movieID) { (movie, error) in
+            
+        }
     }
     
 }

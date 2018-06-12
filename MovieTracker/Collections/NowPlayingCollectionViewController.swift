@@ -113,7 +113,7 @@ extension NowPlayingCollectionViewController {
                     return
             }
             
-            movieDetailsVC.movie = movies[indexPath.item]
+            movieDetailsVC.id = movies[indexPath.item].id
         }
     }
 }
@@ -135,15 +135,15 @@ extension NowPlayingCollectionViewController: UICollectionViewDataSourcePrefetch
         fetchingData = true
         lastPageFetched += 1
         
-        print("[NowPlaying] Fetching Page: \(lastPageFetched) ...")
+//        print("[NowPlaying] Fetching Page: \(lastPageFetched) ...")
         Movie.nowShowing(page: lastPageFetched) { (data, error, total) in
-            guard let newMovies = data else {
-                print("Error: unable to fetch movies")
+            guard error == nil else {
+                print("Error: \(error!)")
                 return
             }
             
-            guard error == nil else {
-                print("Error: \(error!)")
+            guard let newMovies = data else {
+                print("Error: unable to fetch movies")
                 return
             }
             
