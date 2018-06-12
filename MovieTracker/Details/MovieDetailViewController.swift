@@ -10,7 +10,7 @@ import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     var id: Int?
-    var movie: Movie?
+    private var movie: Movie?
     var navigationBarVisible: Bool = true
     
     // MARK: - Outlets
@@ -40,8 +40,11 @@ extension MovieDetailViewController {
         
         guard let movieID = id else { return }
         
+        setupView()
+        
         Movie.get(id: movieID) { (movie, error) in
             guard error == nil, let movie = movie else {
+                print("Error: \(error!)")
                 return
             }
             
@@ -52,11 +55,60 @@ extension MovieDetailViewController {
         }
     }
     
-    func setupView() {
-        self.scrollView.contentInsetAdjustmentBehavior = .never
+    override func viewWillAppear(_ animated: Bool) {
+        hideNavigationBar()
+    }
 
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+}
+
+// MARK: - View Methods
+
+extension MovieDetailViewController {
+    func populateData() {
+        guard let movie = movie else { return }
+        
+        print("Rating: \(movie.certification ?? "Unknown")")
+        
+        self.movieTitle.text = movie.title
         self.movieTitle.sizeToFit()
         
+        let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
+        if let duration = movie.duration {
+            self.movieDescription.text = "\(dateString)  •  \(duration)"
+        } else {
+            self.movieDescription.text = "\(dateString)"
+        }
+        
+        self.movieOverview.text = movie.overview
+        
+        movie.getPoster(width: .w342) { (poster, error) in
+            self.moviePoster.image = poster
+            self.moviePoster.layer.masksToBounds = true
+            self.moviePoster.layer.cornerRadius = 9
+            self.moviePoster.layer.borderWidth = 0.5
+            self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
+            self.posterAI.stopAnimating()
+            self.actionPlay.isHidden = false
+        }
+        
+        movie.getBackground() { (background, error) in
+            self.backgroundImage.image = background
+            self.backgroundImage.addGradient(
+                colors: [.bg, .clear, .clear, .bg],
+                locations: [0.0, 0.3, 0.6, 1.0]
+            )
+            self.backgroundAI.stopAnimating()
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            self.scrollView.alpha = 1
+        }
+    }
+    
+    func setupView() {
         // Configure action buttons
         actionTrack.layer.cornerRadius = 9
         actionSeen.layer.cornerRadius = 9
@@ -66,51 +118,20 @@ extension MovieDetailViewController {
         // Setup images
         actionPlay.layer.cornerRadius = 25
         actionPlay.clipsToBounds = true
+        actionPlay.isHidden = true
         posterAI.startAnimating()
         backgroundAI.startAnimating()
+        
+        // Configure scroll view
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.alpha = 0
     }
     
-    func populateData() {
-        guard let movie = movie else { return }
-        
-        self.movieTitle.text = movie.title
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM dd, yyyy"
-        let dateString = dateFormatter.string(from: movie.releaseDate)
-        if let duration = movie.duration {
-            self.movieDescription.text = "\(dateString)  •  \(duration)"
-        } else {
-            self.movieDescription.text = "\(dateString)"
+    func adjustOverview() {
+        movieOverview.numberOfLines = (movieOverview.numberOfLines == 0) ? 5 : 0
+        UIView.animate(withDuration: 0.5) {
+            self.movieOverview.superview?.layoutIfNeeded()
         }
-        
-        self.movieOverview.text = movie.overview
-        
-        movie.getPoster(completionHandler: { (poster, error) in
-            self.moviePoster.image = poster
-            self.moviePoster.layer.masksToBounds = true
-            self.moviePoster.layer.cornerRadius = 9
-            self.moviePoster.layer.borderWidth = 0.5
-            self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
-            self.posterAI.stopAnimating()
-        })
-        
-        movie.getBackground(completionHandler: { (background, error) in
-            self.backgroundImage.image = background
-            self.backgroundImage.addGradient(
-                colors: [.bg, .clear, .clear, .bg],
-                locations: [0.0, 0.3, 0.6, 1.0]
-            )
-            self.backgroundAI.stopAnimating()
-        })
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        hideNavigationBar()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
 }
 
@@ -132,6 +153,7 @@ extension MovieDetailViewController {
     
     @IBAction func watchTrailer(_ sender: Any) {
         print("Playing trailer: \(movie?.title ?? "Unknown")")
+        adjustOverview()
     }
     
     func hideNavigationBar() {

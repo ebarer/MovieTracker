@@ -9,7 +9,6 @@
 import UIKit
 
 class TMDBWrapper {
-    static let dateFormat = "yyyy-MM-dd"
     static let baseURL = "https://api.themoviedb.org"
     static let imageBaseURL = "https://image.tmdb.org/t/p"
     static let apiVersion = "/3"
@@ -20,10 +19,12 @@ class TMDBWrapper {
 
 extension TMDBWrapper {
     static func getMovie(id: Int, completionHandler: @escaping (Movie?, Error?) -> Void) {
+        let appendString = "videos,release_dates,credits,keywords"
         var searchURLComponents = URLComponents(string: self.baseURL)!
         searchURLComponents.path = "\(self.apiVersion)/movie/\(id)"
         searchURLComponents.queryItems = [
-            URLQueryItem(name: "append_to_response", value: "videos,release_dates,credits")
+            URLQueryItem(name: "with_release_type", value: "3|2"),
+            URLQueryItem(name: "append_to_response", value: appendString)
         ]
         
         self.fetchData(url: searchURLComponents) { (data, error) in
@@ -34,7 +35,7 @@ extension TMDBWrapper {
             
             do {
                 let movieRaw = try decoder.decode(MovieRaw.self, from: data)
-                let movie = self.transformMovies(from: movieRaw)
+                let movie = self.translate(movie: movieRaw)
                 completionHandler(movie, nil)
             } catch {
                 completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"))
@@ -43,12 +44,10 @@ extension TMDBWrapper {
     }
     
     static func getMoviesNowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        let dateFormatter = DateFormatter.iso8601DAw
         let today = Calendar.current.startOfDay(for: Date())
         let startDate = Calendar.current.date(byAdding: .month, value: -2, to: today) ?? today
         let endDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = self.dateFormat
         
         var searchURLComponents = URLComponents(string: self.baseURL)!
         searchURLComponents.path = "\(self.apiVersion)/discover/movie"
@@ -69,7 +68,7 @@ extension TMDBWrapper {
             
             do {
                 let root = try decoder.decode(RootRaw.self, from: data)
-                let movies = self.transformMovies(from: root)
+                let movies = self.translate(movies: root.movies)
                 completionHandler(movies, nil, (root.totalResults, root.totalPages))
             } catch {
                 completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"), nil)
@@ -78,12 +77,10 @@ extension TMDBWrapper {
     }
     
     static func getMoviesComingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        let dateFormatter = DateFormatter.iso8601DAw
         let today = Calendar.current.startOfDay(for: Date())
         let startDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
         let endDate = Calendar.current.date(byAdding: Calendar.Component.month, value: 3, to: startDate) ?? startDate
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = self.dateFormat
         
         var searchURLComponents = URLComponents(string: self.baseURL)!
         searchURLComponents.path = "\(self.apiVersion)/discover/movie"
@@ -104,7 +101,7 @@ extension TMDBWrapper {
             
             do {
                 let root = try decoder.decode(RootRaw.self, from: data)
-                let movies = self.transformMovies(from: root)
+                let movies = self.translate(movies: root.movies)
                 completionHandler(movies, nil, (root.totalResults, root.totalPages))
             } catch {
                 completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"), nil)
@@ -193,24 +190,69 @@ extension TMDBWrapper {
 
 extension TMDBWrapper {
     private static var decoder: JSONDecoder {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = TMDBWrapper.dateFormat
-        
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
+        decoder.dateDecodingStrategy = JSONDecoder.DateDecodingStrategy.custom({ (decoder) -> Date in
+            do {
+                let container = try decoder.singleValueContainer()
+                let dateString = try container.decode(String.self)
+            
+                if let date = DateFormatter.iso8601DAw.date(from: dateString) {
+                    return date
+                }
+                
+                if let date = DateFormatter.iso8601DTw.date(from: dateString) {
+                    return date
+                }
+                
+                print("Unable to create data object for string: \(dateString)")
+            } catch {
+                print("Error: \(error)")
+            }
+            
+            return Date()
+        })
         
         return decoder
     }
     
-    private static func transformMovies(from root: RootRaw) -> [Movie] {
+    private static func translate(movies rootMovies: [MovieRaw]) -> [Movie] {
         var movies = [Movie]()
+        
+        for mv in rootMovies {
+            let movie = Movie(id: mv.id, title: mv.title)
+            movie.poster = mv.poster
+            movie.releaseDate = mv.releaseDate
+            movies.append(movie)
+        }
         
         return movies
     }
     
-    private static func transformMovies(from movieRaw: MovieRaw) -> Movie? {
+    private static func translate(movie mv: MovieRaw) -> Movie? {
+        let movie = Movie(id: mv.id, title: mv.title)
+        movie.overview = mv.overview
+        movie.poster = mv.poster
+        movie.background = mv.background
+        movie.runtime = mv.runtime
+        movie.rating = mv.rating
         
-        return nil
+        let releaseInfo = mv.certification()
+        movie.releaseDate = releaseInfo.1 ?? mv.releaseDate
+        movie.certification = releaseInfo.0
+        print(releaseInfo.1, mv.releaseDate)
+        movie.imdbID = mv.imdbID
+        
+        // TODO : Parse genres and trailers
+        movie.genres = nil
+        movie.trailers = nil
+        
+        // TODO: Parse bonus scenes
+        // duringcreditsstinger -> During Credits
+        movie.bonusDuringCredits = false
+        // aftercreditsstinger -> After Credits
+        movie.bonusAfterCredits = false
+        
+        return movie
     }
 }
 
@@ -238,10 +280,31 @@ extension TMDBWrapper {
         var background: String?
         var runtime: Int?
         var rating: Float?
-        var certification: [ReleaseDatesRaw]?
+        var releaseDates: ReleaseDatesRaw?
         var genres: [GenreRaw]?
         var trailers: Videos?
         var imdbID: String?
+        
+        func certification() -> (String?, Date?) {
+            let regionCode = NSLocale.current.regionCode ?? "US"
+            
+            guard let regionReleases = self.releaseDates?.releases.filter({
+                $0.country == regionCode
+            })[0] else {
+                return (nil, nil)
+            }
+
+            var release = regionReleases.dates.filter({ $0.type == .Theatrical })
+            if release.count < 1 {
+                release = regionReleases.dates.filter({ $0.type == .TheatricalLimited })
+            }
+            
+            guard release.count > 0 else {
+                return (nil, nil)
+            }
+            
+            return (release[0].certification, release[0].releaseDate)
+        }
         
         enum CodingKeys: String, CodingKey {
             case id, title, overview, runtime, genres
@@ -250,7 +313,7 @@ extension TMDBWrapper {
             case poster = "poster_path"
             case background = "backdrop_path"
             case rating = "vote_average"
-            case certification = "release_dates"
+            case releaseDates = "release_dates"
             case trailers = "videos"
         }
 
@@ -274,13 +337,22 @@ extension TMDBWrapper {
                 }
                 
                 struct ReleaseDateRaw: Codable {
-                    var type: Int
+                    var type: ReleaseType
                     var releaseDate: Date
                     var certification: String
                     
-                    private enum CodingKeys : String, CodingKey {
+                    enum CodingKeys : String, CodingKey {
                         case type, certification
                         case releaseDate = "release_date"
+                    }
+                    
+                    enum ReleaseType: Int, Codable {
+                        case Premiere = 1
+                        case TheatricalLimited = 2
+                        case Theatrical = 3
+                        case Digital = 4
+                        case Physical = 5
+                        case TV = 6
                     }
                 }
             }

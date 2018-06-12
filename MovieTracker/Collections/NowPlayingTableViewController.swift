@@ -76,10 +76,8 @@ class NowPlayingTableViewController: UITableViewController {
         guard let date = Calendar.current.date(from: components) else {
             return nil
         }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM yyyy"
-        return dateFormatter.string(from: date)
+
+        return DateFormatter.sectionHeader.string(from: date)
     }
 
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -93,10 +91,9 @@ class NowPlayingTableViewController: UITableViewController {
         }
         
         cell.movieTitle.text = movie.title
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        cell.movieReleaseDate.text = dateFormatter.string(from: movie.releaseDate)
+
+        let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
+        cell.movieReleaseDate.text = dateString
         
         cell.moviePoster.image = nil
         movie.getPoster { (poster, _) in
@@ -135,7 +132,7 @@ class NowPlayingTableViewController: UITableViewController {
             guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
             guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
             
-            movieDetailsVC.movie = movies[self.sections[indexPath.section]]?[indexPath.item]
+            movieDetailsVC.id = movies[self.sections[indexPath.section]]?[indexPath.item].id
         }
     }
     

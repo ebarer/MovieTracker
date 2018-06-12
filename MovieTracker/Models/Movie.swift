@@ -18,11 +18,15 @@ class Movie: NSObject {
     var runtime: Int?
     var rating: Float?
     var certification: String?
+    var imdbID: String?
     var genres: [String]?
     var trailers: [String]?
-    var imdbID: String?
+    var bonusDuringCredits: Bool = false
+    var bonusAfterCredits: Bool = false
     var tracked: Bool = false
     var watched: Bool = false
+    
+    static let overviewCutoff = 150
     
     var duration: String? {
         guard runtime != nil else { return nil }
@@ -40,12 +44,10 @@ class Movie: NSObject {
         super.init()
     }
     
-    convenience init(id: Int, title: String, releaseDate: Date, poster: String) {
+    convenience init(id: Int, title: String) {
         self.init()
         self.id = id
         self.title = title
-        self.poster = poster
-        self.releaseDate = releaseDate
     }
 }
 

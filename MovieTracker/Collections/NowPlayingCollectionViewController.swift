@@ -160,8 +160,8 @@ extension NowPlayingCollectionViewController: UICollectionViewDataSourcePrefetch
                     self.collectionView?.reloadData()
                 }
                 
-                print("[NowPlaying] Fetched Page: \(self.lastPageFetched) / \(self.totalPages)")
-                print("[NowPlaying] Results: \(self.movies.count) / \(self.movieCount)")
+//                print("[NowPlaying] Fetched Page: \(self.lastPageFetched) / \(self.totalPages)")
+//                print("[NowPlaying] Results: \(self.movies.count) / \(self.movieCount)")
 
                 completionHandler?()
             }

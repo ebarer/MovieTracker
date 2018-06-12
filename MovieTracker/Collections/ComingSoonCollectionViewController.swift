@@ -113,7 +113,7 @@ extension ComingSoonCollectionViewController {
                     return
             }
             
-            movieDetailsVC.movie = movies[indexPath.item]
+            movieDetailsVC.id = movies[indexPath.item].id
         }
     }
 }
@@ -160,8 +160,8 @@ extension ComingSoonCollectionViewController: UICollectionViewDataSourcePrefetch
                     self.collectionView?.reloadData()
                 }
                 
-                print("[ComingSoon] Fetched Page: \(self.lastPageFetched) / \(self.totalPages)")
-                print("[ComingSoon] Results: \(self.movies.count) / \(self.movieCount)")
+//                print("[ComingSoon] Fetched Page: \(self.lastPageFetched) / \(self.totalPages)")
+//                print("[ComingSoon] Results: \(self.movies.count) / \(self.movieCount)")
                 
                 completionHandler?()
             }

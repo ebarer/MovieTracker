@@ -220,8 +220,9 @@ Title</string>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XHd-kA-SPB" userLabel="Poster">
                                                 <rect key="frame" x="261" y="237.66666666666663" width="99" height="148.33333333333337"/>
                                                 <subviews>
-                                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qmj-z3-hzl">
+                                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="qmj-z3-hzl">
                                                         <rect key="frame" x="0.0" y="0.0" width="99" height="148.33333333333334"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="99" id="0DX-my-xp6"/>
                                                             <constraint firstAttribute="width" secondItem="qmj-z3-hzl" secondAttribute="height" multiplier="2:3" id="Yjv-Wx-Z1R"/>
@@ -237,7 +238,7 @@ Title</string>
                                                             <constraint firstAttribute="width" constant="50" id="9NO-pD-pg2"/>
                                                             <constraint firstAttribute="height" constant="50" id="XYV-HX-mhu"/>
                                                         </constraints>
-                                                        <blurEffect style="dark"/>
+                                                        <blurEffect style="light"/>
                                                     </visualEffectView>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EpC-K5-yPC" userLabel="Poster Button">
                                                         <rect key="frame" x="0.0" y="0.0" width="99" height="148.33333333333334"/>
@@ -251,8 +252,9 @@ Title</string>
                                                             <action selector="watchTrailer:" destination="fVR-qT-4O4" eventType="touchUpInside" id="vii-lT-PTw"/>
                                                         </connections>
                                                     </button>
-                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="Nn9-lZ-17g">
-                                                        <rect key="frame" x="39.666666666666686" y="64.000000000000028" width="20" height="20"/>
+                                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="Nn9-lZ-17g">
+                                                        <rect key="frame" x="0.0" y="0.0" width="99" height="148.33333333333334"/>
+                                                        <color key="backgroundColor" white="0.050000000000000003" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     </activityIndicatorView>
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -260,8 +262,11 @@ Title</string>
                                                     <constraint firstItem="EpC-K5-yPC" firstAttribute="leading" secondItem="XHd-kA-SPB" secondAttribute="leading" id="5Ar-V4-0SI"/>
                                                     <constraint firstItem="Nn9-lZ-17g" firstAttribute="centerX" secondItem="XHd-kA-SPB" secondAttribute="centerX" id="AXu-o0-flx"/>
                                                     <constraint firstAttribute="width" constant="99" id="GP7-ke-9qp"/>
+                                                    <constraint firstAttribute="trailing" secondItem="Nn9-lZ-17g" secondAttribute="trailing" id="Na9-GP-vQ0"/>
+                                                    <constraint firstAttribute="bottom" secondItem="Nn9-lZ-17g" secondAttribute="bottom" id="R3C-au-xhX"/>
                                                     <constraint firstAttribute="trailing" secondItem="qmj-z3-hzl" secondAttribute="trailing" id="RxB-jb-48T"/>
                                                     <constraint firstAttribute="trailing" secondItem="EpC-K5-yPC" secondAttribute="trailing" id="SrB-C6-Rak"/>
+                                                    <constraint firstItem="Nn9-lZ-17g" firstAttribute="top" secondItem="XHd-kA-SPB" secondAttribute="top" id="U7U-aE-pdy"/>
                                                     <constraint firstAttribute="bottom" secondItem="qmj-z3-hzl" secondAttribute="bottom" id="bYH-J0-gfj"/>
                                                     <constraint firstItem="xFY-4P-nII" firstAttribute="centerX" secondItem="XHd-kA-SPB" secondAttribute="centerX" id="dae-Sy-h1P"/>
                                                     <constraint firstAttribute="width" secondItem="XHd-kA-SPB" secondAttribute="height" multiplier="2:3" id="mkV-Je-0Vl"/>
@@ -271,9 +276,10 @@ Title</string>
                                                     <constraint firstItem="Nn9-lZ-17g" firstAttribute="centerY" secondItem="XHd-kA-SPB" secondAttribute="centerY" id="uWT-rY-r9o"/>
                                                     <constraint firstAttribute="bottom" secondItem="EpC-K5-yPC" secondAttribute="bottom" id="vkS-hT-rCK"/>
                                                     <constraint firstItem="qmj-z3-hzl" firstAttribute="leading" secondItem="XHd-kA-SPB" secondAttribute="leading" id="zB8-8P-3s4"/>
+                                                    <constraint firstItem="Nn9-lZ-17g" firstAttribute="leading" secondItem="XHd-kA-SPB" secondAttribute="leading" id="zQt-fQ-yuM"/>
                                                 </constraints>
                                             </view>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is the movie overview." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u3V-3J-HUQ">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is the movie overview." lineBreakMode="middleTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u3V-3J-HUQ">
                                                 <rect key="frame" x="15" y="419" width="345" height="18"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
