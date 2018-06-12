@@ -30,6 +30,7 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var actionTrailer: UIButton!
     @IBOutlet var actionPlay: UIVisualEffectView!
     @IBOutlet var movieOverview: UILabel!
+    @IBOutlet var detailTable: UITableView!
 }
 
 // MARK: - Lifecycle
@@ -83,6 +84,7 @@ extension MovieDetailViewController {
         }
         
         self.movieOverview.text = movie.overview
+        self.detailTable.reloadData()
         
         movie.getPoster(width: .w342) { (poster, error) in
             self.moviePoster.image = poster
@@ -133,6 +135,39 @@ extension MovieDetailViewController {
             self.movieOverview.superview?.layoutIfNeeded()
         }
     }
+}
+
+// MARK: - Table View Delegate
+
+extension MovieDetailViewController: UITableViewDelegate {
+    
+}
+
+// MARK: - Table View Data Source
+
+extension MovieDetailViewController: UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.01
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "castCell", for: indexPath)
+        
+        cell.textLabel?.text = "Rating"
+        cell.detailTextLabel?.text = movie?.certification ?? "Unavailable"
+        
+        return cell
+    }
+    
+    
 }
 
 // MARK: - Movie Actions

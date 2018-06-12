@@ -303,7 +303,12 @@ extension TMDBWrapper {
                 return (nil, nil)
             }
             
-            return (release[0].certification, release[0].releaseDate)
+            
+            if !release[0].certification.isEmpty {
+                return (release[0].certification, release[0].releaseDate)
+            } else {
+                return ("Unavailable", release[0].releaseDate)
+            }
         }
         
         enum CodingKeys: String, CodingKey {
