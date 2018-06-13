@@ -67,13 +67,17 @@ extension Movie {
     
     func getPoster(width: Movie.PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
         TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
-            completionHandler(image, error, self.id)
+            if image != nil {
+                completionHandler(image, error, self.id)
+            }
         }
     }
     
     func getBackground(width: Movie.BackgroundSize = .w1280, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
         TMDBWrapper.fetchImage(url: self.background, width: width) { (image, error) in
-            completionHandler(image, error, self.id)
+            if image !=  nil {
+                completionHandler(image, error, self.id)
+            }
         }
     }
 }

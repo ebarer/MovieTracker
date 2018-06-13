@@ -178,6 +178,7 @@ extension TMDBWrapper {
         URLSession.shared.dataTask(with: imageURL!) { (data, response, error) in
             if let imageData = data {
                 let poster = UIImage(data: imageData)
+                
                 DispatchQueue.main.async {
                     completionHandler(poster, nil)
                 }

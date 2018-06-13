@@ -10,6 +10,7 @@ import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     var movie: Movie?
+    var timer: Timer?
     var navigationBarVisible: Bool = true
     
     // MARK: - Outlets
@@ -27,7 +28,8 @@ class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var actionTrack: UIButton!
     @IBOutlet var actionSeen: UIButton!
     @IBOutlet var actionTrailer: UIButton!
-    @IBOutlet var actionPlay: UIVisualEffectView!
+    @IBOutlet var actionPlay: UIView!
+    @IBOutlet var actionPlayBlur: UIVisualEffectView!
     @IBOutlet var movieOverview: UILabel!
     @IBOutlet var detailTable: UITableView!
 }
@@ -54,6 +56,16 @@ extension MovieDetailViewController {
                 self.populateData()
             }
         }
+        
+        NSLog("Timer started")
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
+    }
+    
+    @objc func imageTimeout() {
+        NSLog("Timer ended")
+        timer?.invalidate()
+        backgroundAI.stopAnimating()
+        posterAI.stopAnimating()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,12 +110,16 @@ extension MovieDetailViewController {
         
         movie.getBackground() { (background, error, _) in
             self.backgroundImage.image = background
+            self.backgroundImage.alpha = 0
             self.backgroundImage.addGradient(
                 colors: [.bg, .clear, .clear, .bg],
                 locations: [0.0, 0.3, 0.6, 1.0]
             )
             
             self.backgroundAI.stopAnimating()
+            UIView.animate(withDuration: 0.5) {
+                self.backgroundImage.alpha = 1
+            }
         }
     }
     
@@ -115,15 +131,14 @@ extension MovieDetailViewController {
         actionTrailer.alpha = 0
         
         // Setup images
-        actionPlay.layer.cornerRadius = 25
-        actionPlay.clipsToBounds = true
+        actionPlayBlur.layer.cornerRadius = 25
+        actionPlayBlur.clipsToBounds = true
         actionPlay.isHidden = true
         posterAI.startAnimating()
         backgroundAI.startAnimating()
         
         // Configure scroll view
         scrollView.contentInsetAdjustmentBehavior = .never
-        scrollView.alpha = 0
     }
     
     func adjustOverview() {
