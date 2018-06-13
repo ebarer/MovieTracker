@@ -86,7 +86,7 @@ extension MovieDetailViewController {
         self.movieOverview.text = movie.overview
         self.detailTable.reloadData()
         
-        movie.getPoster(width: .w342) { (poster, error) in
+        movie.getPoster(width: .w342) { (poster, error, _) in
             self.moviePoster.image = poster
             self.moviePoster.layer.masksToBounds = true
             self.moviePoster.layer.cornerRadius = 9
@@ -96,12 +96,13 @@ extension MovieDetailViewController {
             self.actionPlay.isHidden = false
         }
         
-        movie.getBackground() { (background, error) in
+        movie.getBackground() { (background, error, _) in
             self.backgroundImage.image = background
             self.backgroundImage.addGradient(
                 colors: [.bg, .clear, .clear, .bg],
                 locations: [0.0, 0.3, 0.6, 1.0]
             )
+            
             self.backgroundAI.stopAnimating()
         }
     }
@@ -162,8 +163,6 @@ extension MovieDetailViewController: UITableViewDataSource {
         
         return cell
     }
-    
-    
 }
 
 // MARK: - Movie Actions

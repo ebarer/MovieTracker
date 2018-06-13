@@ -38,9 +38,17 @@ extension MovieCollectionViewCell {
         self.moviePoster.layer.borderWidth = 0.5
         self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
-        movie?.getPoster(width: .w342) { (image, error) in
+        movie?.getPoster(width: .w342) { (image, error, id) in
             guard error == nil, let poster = image else {
                 print("Error: \(error!)")
+                return
+            }
+            
+            guard let currentID = movie?.id,
+                let fetchID = id,
+                currentID == fetchID
+            else {
+                print("Retrieved poster for previous movie - invalidated.")
                 return
             }
 

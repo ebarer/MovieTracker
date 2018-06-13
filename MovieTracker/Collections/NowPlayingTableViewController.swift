@@ -96,7 +96,11 @@ class NowPlayingTableViewController: UITableViewController {
         cell.movieReleaseDate.text = dateString
         
         cell.moviePoster.image = nil
-        movie.getPoster { (poster, _) in
+        movie.getPoster { (poster, _, id) in
+            guard movie.id == id else {
+                return
+            }
+            
             cell.moviePoster.image = poster
             cell.moviePoster.layer.borderWidth = 0.5
             cell.moviePoster.layer.borderColor = UIColor(white: 0.15, alpha: 1).cgColor
