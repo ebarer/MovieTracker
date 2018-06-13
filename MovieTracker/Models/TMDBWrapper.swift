@@ -239,7 +239,6 @@ extension TMDBWrapper {
         let releaseInfo = mv.certification()
         movie.releaseDate = releaseInfo.1 ?? mv.releaseDate
         movie.certification = releaseInfo.0
-        print(releaseInfo.1, mv.releaseDate)
         movie.imdbID = mv.imdbID
         
         // TODO : Parse genres and trailers

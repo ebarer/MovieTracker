@@ -76,7 +76,7 @@ class NowPlayingTableViewController: UITableViewController {
         guard let date = Calendar.current.date(from: components) else {
             return nil
         }
-
+        
         return DateFormatter.sectionHeader.string(from: date)
     }
 
@@ -132,7 +132,7 @@ class NowPlayingTableViewController: UITableViewController {
             guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
             guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
             
-            movieDetailsVC.id = movies[self.sections[indexPath.section]]?[indexPath.item].id
+            movieDetailsVC.movie = movies[self.sections[indexPath.section]]?[indexPath.item]
         }
     }
     

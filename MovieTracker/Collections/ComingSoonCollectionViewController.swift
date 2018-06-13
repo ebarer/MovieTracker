@@ -113,7 +113,7 @@ extension ComingSoonCollectionViewController {
                     return
             }
             
-            movieDetailsVC.id = movies[indexPath.item].id
+            movieDetailsVC.movie = movies[indexPath.item]
         }
     }
 }

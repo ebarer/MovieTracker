@@ -9,8 +9,7 @@
 import UIKit
 
 class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
-    var id: Int?
-    private var movie: Movie?
+    var movie: Movie?
     var navigationBarVisible: Bool = true
     
     // MARK: - Outlets
@@ -39,11 +38,12 @@ extension MovieDetailViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let movieID = id else { return }
+        guard let movie = movie else { return }
         
         setupView()
+        populateData()
         
-        Movie.get(id: movieID) { (movie, error) in
+        Movie.get(id: movie.id) { (movie, error) in
             guard error == nil, let movie = movie else {
                 print("Error: \(error!)")
                 return
@@ -103,10 +103,6 @@ extension MovieDetailViewController {
                 locations: [0.0, 0.3, 0.6, 1.0]
             )
             self.backgroundAI.stopAnimating()
-        }
-        
-        UIView.animate(withDuration: 0.5) {
-            self.scrollView.alpha = 1
         }
     }
     

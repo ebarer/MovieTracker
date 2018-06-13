@@ -18,5 +18,5 @@ extension UIColor {
     
     static let bg = UIColor(red: 12, green: 12, blue: 12)
     static let inactive = UIColor(red: 37, green: 37, blue: 37)
-    static let gold = UIColor(red: 222, green: 189, blue: 118)
+    static let gold = UIColor(red: 218, green: 193, blue: 148)
 }
