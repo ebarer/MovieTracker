@@ -65,12 +65,16 @@ extension Movie {
         TMDBWrapper.getMoviesComingSoon(page: page, completionHandler: completionHandler)
     }
     
-    func getPoster(width: Movie.PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?) -> Void) {
-        TMDBWrapper.fetchImage(url: self.poster, width: width, completionHandler: completionHandler)
+    func getPoster(width: Movie.PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
+        TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
+            completionHandler(image, error, self.id)
+        }
     }
     
-    func getBackground(width: Movie.BackgroundSize = .w1280, completionHandler: @escaping (UIImage?, Error?) -> Void) {
-        TMDBWrapper.fetchImage(url: self.background, width: width, completionHandler: completionHandler)
+    func getBackground(width: Movie.BackgroundSize = .w1280, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
+        TMDBWrapper.fetchImage(url: self.background, width: width) { (image, error) in
+            completionHandler(image, error, self.id)
+        }
     }
 }
 

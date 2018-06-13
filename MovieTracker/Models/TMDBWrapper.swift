@@ -235,12 +235,11 @@ extension TMDBWrapper {
         movie.background = mv.background
         movie.runtime = mv.runtime
         movie.rating = mv.rating
+        movie.imdbID = mv.imdbID
         
         let releaseInfo = mv.certification()
         movie.releaseDate = releaseInfo.1 ?? mv.releaseDate
         movie.certification = releaseInfo.0
-        print(releaseInfo.1, mv.releaseDate)
-        movie.imdbID = mv.imdbID
         
         // TODO : Parse genres and trailers
         movie.genres = nil
