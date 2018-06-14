@@ -16,7 +16,7 @@ class Movie: NSObject {
     var poster: String?
     var background: String?
     var runtime: Int?
-    var rating: Float?
+    var rating: Double?
     var certification: String?
     var imdbID: String?
     var genres: [String]?
@@ -82,7 +82,7 @@ extension Movie {
     }
 }
 
-// MARK: - Image Size Enumerations, Trailer Structure
+// MARK: - Image Size Enumerations
 
 protocol ImageSize {}
 extension Movie {
@@ -102,6 +102,4 @@ extension Movie {
         case w1280 = "w1280"
         case orig  = "original"
     }
-    
-    
 }

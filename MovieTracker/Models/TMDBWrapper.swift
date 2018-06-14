@@ -243,7 +243,7 @@ extension TMDBWrapper {
         movie.certification = releaseInfo.0
         
         // TODO : Parse genres and trailers
-        movie.genres = nil
+        movie.genres = mv.genres()
         movie.trailers = nil
         
         // TODO: Parse bonus scenes
@@ -279,9 +279,9 @@ extension TMDBWrapper {
         var poster: String?
         var background: String?
         var runtime: Int?
-        var rating: Float?
+        var rating: Double?
         var releaseDates: ReleaseDatesRaw?
-        var genres: [GenreRaw]?
+        var genresRaw: [GenreRaw]?
         var trailers: Videos?
         var imdbID: String?
         
@@ -311,14 +311,27 @@ extension TMDBWrapper {
             }
         }
         
+        func genres() -> [String]? {
+            guard let genres = genresRaw else {
+                return nil
+            }
+            
+            if genres.count > 2 {
+                return genres[0..<2].map({ $0.name })
+            } else{
+                return genres.map({ $0.name })
+            }
+        }
+        
         enum CodingKeys: String, CodingKey {
-            case id, title, overview, runtime, genres
+            case id, title, overview, runtime
             case imdbID = "imdb_id"
             case releaseDate = "release_date"
             case poster = "poster_path"
             case background = "backdrop_path"
             case rating = "vote_average"
             case releaseDates = "release_dates"
+            case genresRaw = "genres"
             case trailers = "videos"
         }
 

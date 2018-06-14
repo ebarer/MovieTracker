@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MovieDetailViewController: UIViewController, UIGestureRecognizerDelegate {
+class MovieDetailViewController: UIViewController {
     var movie: Movie?
     var timer: Timer?
     var navigationBarVisible: Bool = true
@@ -56,24 +56,38 @@ extension MovieDetailViewController {
                 self.populateData()
             }
         }
-        
-        NSLog("Timer started")
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
+
+        // Setup timer to hide activity indicators on failure
+        timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
     }
     
     @objc func imageTimeout() {
-        NSLog("Timer ended")
         timer?.invalidate()
         backgroundAI.stopAnimating()
         posterAI.stopAnimating()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        hideNavigationBar()
+//        hideNavigationBar()
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        // enable slide-back
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+}
+
+extension MovieDetailViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
 
@@ -82,8 +96,6 @@ extension MovieDetailViewController {
 extension MovieDetailViewController {
     func populateData() {
         guard let movie = movie else { return }
-        
-        print("Rating: \(movie.certification ?? "Unknown")")
         
         self.movieTitle.text = movie.title
         self.movieTitle.sizeToFit()
@@ -167,14 +179,28 @@ extension MovieDetailViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "castCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
         
-        cell.textLabel?.text = "Rating"
-        cell.detailTextLabel?.text = movie?.certification ?? "Unavailable"
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = "Certification"
+            cell.detailTextLabel?.text = movie?.certification ?? "Unavailable"
+        case 1:
+            cell.textLabel?.text = "Genres"
+            cell.detailTextLabel?.text = movie?.genres?.joined(separator: ", ") ?? "Unavailable"
+        case 2:
+            cell.textLabel?.text = "Rating"
+            cell.detailTextLabel?.text = "Unknown"
+            if let rating = movie?.rating {
+                cell.detailTextLabel?.text = String(format: "%.1f / 5", rating / 2)
+            }
+        default:
+            break
+        }
         
         return cell
     }
@@ -186,13 +212,11 @@ extension MovieDetailViewController {
     @IBAction func trackMovie(_ sender: UIButton) {
         print("[Tracked] \(movie?.title ?? "Unknown")")
         sender.isSelected = !sender.isSelected
-        sender.backgroundColor = sender.isSelected ? .gold : .inactive
     }
     
     @IBAction func seenMovie(_ sender: UIButton) {
         print("[Seen] \(movie?.title ?? "Unknown")")
         sender.isSelected = !sender.isSelected
-        sender.backgroundColor = sender.isSelected ? .gold : .inactive
         actionTrack.isHidden = sender.isSelected
     }
     
@@ -217,13 +241,13 @@ extension MovieDetailViewController {
 extension MovieDetailViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let navBarHeight = view.safeAreaInsets.top
-        let titleOffset = movieTitle.frame.origin.y - navBarHeight
+        let additionalOffset: CGFloat = 25
+        let titleOffsetTop = movieTitle.frame.origin.y - navBarHeight - additionalOffset
+        let titleOffsetBottom = titleOffsetTop + (movieTitle.frame.height / 2)
         
         let scrollViewOffset = scrollView.contentOffset.y
         let backgroundImageRatio: CGFloat = 2/3
         let backgroundImageHeight = backgroundImageRatio * scrollView.frame.width
-        
-        print(scrollViewOffset)
         
         if scrollViewOffset < 0 {
             let translateOffset = scrollViewOffset
@@ -235,7 +259,14 @@ extension MovieDetailViewController: UIScrollViewDelegate {
             self.backgroundImage.layer.transform = CATransform3DIdentity
         }
         
-        if scrollViewOffset > titleOffset {
+        let m = -1 / (titleOffsetBottom - titleOffsetTop)
+        let b = 1 - m * titleOffsetTop
+        let alpha = m * scrollViewOffset + b
+        print(scrollViewOffset)
+        print(m, b, alpha)
+        movieTitle.alpha = alpha
+        
+        if scrollViewOffset > titleOffsetBottom {
             self.title = movie?.title
             showNavigationBar()
         } else {

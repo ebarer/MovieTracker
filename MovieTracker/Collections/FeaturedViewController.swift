@@ -29,12 +29,26 @@ extension FeaturedViewController {
 extension FeaturedViewController {
     @IBAction func featureChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
+        // Switching to Now Playing view
         case 0:
-            containerNowPlaying.isHidden = false
-            containerComingSoon.isHidden = true
+            self.containerNowPlaying.isHidden = false
+            self.containerNowPlaying.alpha = 0
+            UIView.animate(withDuration: 0.5, animations: {
+                self.containerComingSoon.alpha = 0
+                self.containerNowPlaying.alpha = 1
+            }) { (_) in
+                self.containerComingSoon.isHidden = true
+            }
+        // Switching to Coming Soon view
         case 1:
-            containerNowPlaying.isHidden = true
-            containerComingSoon.isHidden = false
+            self.containerComingSoon.isHidden = false
+            self.containerComingSoon.alpha = 0
+            UIView.animate(withDuration: 0.5, animations: {
+                self.containerNowPlaying.alpha = 0
+                self.containerComingSoon.alpha = 1
+            }) { (_) in
+                self.containerNowPlaying.isHidden = true
+            }
         default: break
         }
     }
