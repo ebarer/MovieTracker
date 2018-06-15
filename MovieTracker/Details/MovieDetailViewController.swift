@@ -11,26 +11,39 @@ import UIKit
 class MovieDetailViewController: UIViewController {
     var movie: Movie?
     var timer: Timer?
-    var navigationBarVisible: Bool = true
+    var actionBarFrame = CGRect()
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     // MARK: - Outlets
 
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var navItem: UINavigationItem!
+    
     @IBOutlet var scrollView: UIScrollView!
+    
+    @IBOutlet var backgroundContainer: UIView!
     @IBOutlet var backgroundAI: UIActivityIndicatorView!
     @IBOutlet var backgroundImage: UIImageView!
-    @IBOutlet var backgroundContainer: UIView!
+    
+    @IBOutlet var posterContainer: UIView!
     @IBOutlet var posterAI: UIActivityIndicatorView!
     @IBOutlet var moviePoster: UIImageView!
-    @IBOutlet var posterContainer: UIView!
-    @IBOutlet var movieTitle: UILabel!
-    @IBOutlet var movieDescription: UILabel!
-    @IBOutlet var actionBar: UIStackView!
-    @IBOutlet var actionTrack: UIButton!
-    @IBOutlet var actionSeen: UIButton!
-    @IBOutlet var actionTrailer: UIButton!
     @IBOutlet var actionPlay: UIView!
     @IBOutlet var actionPlayBlur: UIVisualEffectView!
+    
+    @IBOutlet var movieTitle: UILabel!
+    @IBOutlet var movieDescription: UILabel!
+    
+    @IBOutlet var actionBar: UIView!
+    @IBOutlet var actionTrack: UIButton!
+    @IBOutlet var actionSeen: UIButton!
+    
     @IBOutlet var movieOverview: UILabel!
+    
+    @IBOutlet var detailMask: UIView!
     @IBOutlet var detailTable: UITableView!
 }
 
@@ -61,39 +74,51 @@ extension MovieDetailViewController {
         timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
     }
     
-    @objc func imageTimeout() {
-        timer?.invalidate()
-        backgroundAI.stopAnimating()
-        posterAI.stopAnimating()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
-//        hideNavigationBar()
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        
-        // enable slide-back
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
+//        self.transitionCoordinator?.animate(alongsideTransition: { (tcc) in
+//            self.navigationController?.navigationBar.alpha = 0
+//        }, completion: nil)
     }
-
+    
+    @IBAction func navigateBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-    }
-}
-
-extension MovieDetailViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
 }
 
 // MARK: - View Methods
 
 extension MovieDetailViewController {
+    func setupView() {
+        // Configure scroll view
+        scrollView.contentInsetAdjustmentBehavior = .never
+        
+        // Configure nav bar
+        navBar.alpha = 0
+        navItem.title = movie?.title
+        
+        // Setup images
+        actionPlayBlur.layer.cornerRadius = 25
+        actionPlayBlur.clipsToBounds = true
+        actionPlay.isHidden = true
+        posterAI.startAnimating()
+        backgroundAI.startAnimating()
+        
+        // Configure action buttons
+        actionTrack.layer.cornerRadius = 9
+        actionSeen.layer.cornerRadius = 9
+    }
+    
     func populateData() {
         guard let movie = movie else { return }
         
@@ -107,8 +132,16 @@ extension MovieDetailViewController {
             self.movieDescription.text = "\(dateString)"
         }
         
-        self.movieOverview.text = movie.overview
+        // Ensure movie details have been fetched
+        guard let overview = movie.overview else { return }
+        self.movieOverview.text = overview
         self.detailTable.reloadData()
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            self.detailMask.alpha = 0
+        }) { (_) in
+            self.detailMask.isHidden = true
+        }
         
         movie.getPoster(width: .w342) { (poster, error, _) in
             self.moviePoster.image = poster
@@ -135,28 +168,93 @@ extension MovieDetailViewController {
         }
     }
     
-    func setupView() {
-        // Configure action buttons
-        actionTrack.layer.cornerRadius = 9
-        actionSeen.layer.cornerRadius = 9
-        actionTrailer.layer.cornerRadius = 9
-        actionTrailer.alpha = 0
-        
-        // Setup images
-        actionPlayBlur.layer.cornerRadius = 25
-        actionPlayBlur.clipsToBounds = true
-        actionPlay.isHidden = true
-        posterAI.startAnimating()
-        backgroundAI.startAnimating()
-        
-        // Configure scroll view
-        scrollView.contentInsetAdjustmentBehavior = .never
+    @objc func imageTimeout() {
+        timer?.invalidate()
+        backgroundAI.stopAnimating()
+        posterAI.stopAnimating()
     }
     
     func adjustOverview() {
         movieOverview.numberOfLines = (movieOverview.numberOfLines == 0) ? 5 : 0
         UIView.animate(withDuration: 0.5) {
             self.movieOverview.superview?.layoutIfNeeded()
+        }
+    }
+}
+
+// MARK: - Movie Actions
+
+extension MovieDetailViewController {
+    @IBAction func trackMovie(_ sender: UIButton) {
+        print("[Tracked] \(movie?.title ?? "Unknown")")
+        sender.isSelected = !sender.isSelected
+    }
+    
+    @IBAction func seenMovie(_ sender: UIButton) {
+        print("[Seen] \(movie?.title ?? "Unknown")")
+        sender.isSelected = !sender.isSelected
+        actionTrack.isHidden = sender.isSelected
+    }
+    
+    @IBAction func watchTrailer(_ sender: Any) {
+        print("Playing trailer: \(movie?.title ?? "Unknown")")
+        adjustOverview()
+    }
+}
+
+// MARK: - UINavigationBar Delegates
+
+extension MovieDetailViewController: UINavigationBarDelegate, UIGestureRecognizerDelegate {
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return .topAttached
+    }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+}
+
+// MARK: - Scroll View Delegate
+
+extension MovieDetailViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scrollViewOffset = scrollView.contentOffset.y
+        let navBarOffset = view.safeAreaInsets.top + navBar.frame.height
+        
+        // Adjust height of background image based on offset
+        let backgroundImageRatio: CGFloat = 3/4
+        let backgroundImageHeight = backgroundImageRatio * scrollView.frame.width
+        
+        if scrollViewOffset < 0 {
+            let translateOffset = scrollViewOffset
+            var transform = CATransform3DTranslate(CATransform3DIdentity, 0, translateOffset / 2, 0)
+            let scaleFactor: CGFloat = 1 + (-scrollViewOffset / backgroundImageHeight)
+            transform = CATransform3DScale(transform, scaleFactor, scaleFactor, 1)
+            self.backgroundImage.layer.transform = transform
+        } else {
+            self.backgroundImage.layer.transform = CATransform3DIdentity
+        }
+        
+        // Adjust title and navBar alphas based on offset
+        let titleOffsetTop = movieTitle.frame.origin.y - navBarOffset
+        let titleOffsetBottom = titleOffsetTop + (movieTitle.frame.height / 2)
+        
+        let ratio = -1 / (titleOffsetBottom - titleOffsetTop)
+        let offset = 1 - ratio * titleOffsetTop
+        let alpha = ratio * scrollViewOffset + offset
+        
+        movieTitle.alpha = alpha
+        navBar.alpha = 1 - alpha
+        
+        // Make Action Bar sticky
+        if actionBarFrame.origin.y == 0 {
+            actionBarFrame = actionBar.frame
+        }
+
+        let actionBarOffset = actionBarFrame.origin.y - navBarOffset
+        let translateY: CGFloat = scrollViewOffset - actionBarOffset
+        if translateY > 0 {
+            actionBar.frame = actionBarFrame.offsetBy(dx: 0, dy: translateY)
         }
     }
 }
@@ -191,11 +289,11 @@ extension MovieDetailViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = movie?.certification ?? "Unavailable"
         case 1:
             cell.textLabel?.text = "Genres"
-            cell.detailTextLabel?.text = movie?.genres?.joined(separator: ", ") ?? "Unavailable"
+            cell.detailTextLabel?.text = movie?.genres?.joined(separator: ", ") ?? "N/A"
         case 2:
             cell.textLabel?.text = "Rating"
-            cell.detailTextLabel?.text = "Unknown"
-            if let rating = movie?.rating {
+            cell.detailTextLabel?.text = "N/A"
+            if let rating = movie?.rating, rating > 0 {
                 cell.detailTextLabel?.text = String(format: "%.1f / 5", rating / 2)
             }
         default:
@@ -203,75 +301,5 @@ extension MovieDetailViewController: UITableViewDataSource {
         }
         
         return cell
-    }
-}
-
-// MARK: - Movie Actions
-
-extension MovieDetailViewController {
-    @IBAction func trackMovie(_ sender: UIButton) {
-        print("[Tracked] \(movie?.title ?? "Unknown")")
-        sender.isSelected = !sender.isSelected
-    }
-    
-    @IBAction func seenMovie(_ sender: UIButton) {
-        print("[Seen] \(movie?.title ?? "Unknown")")
-        sender.isSelected = !sender.isSelected
-        actionTrack.isHidden = sender.isSelected
-    }
-    
-    @IBAction func watchTrailer(_ sender: Any) {
-        print("Playing trailer: \(movie?.title ?? "Unknown")")
-        adjustOverview()
-    }
-    
-    func hideNavigationBar() {
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-    }
-    
-    func showNavigationBar() {
-        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        self.navigationController?.navigationBar.shadowImage = nil
-    }
-}
-
-// MARK: - Scroll View Delegate
-
-extension MovieDetailViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let navBarHeight = view.safeAreaInsets.top
-        let additionalOffset: CGFloat = 25
-        let titleOffsetTop = movieTitle.frame.origin.y - navBarHeight - additionalOffset
-        let titleOffsetBottom = titleOffsetTop + (movieTitle.frame.height / 2)
-        
-        let scrollViewOffset = scrollView.contentOffset.y
-        let backgroundImageRatio: CGFloat = 2/3
-        let backgroundImageHeight = backgroundImageRatio * scrollView.frame.width
-        
-        if scrollViewOffset < 0 {
-            let translateOffset = scrollViewOffset
-            var transform = CATransform3DTranslate(CATransform3DIdentity, 0, translateOffset / 2, 0)
-            let scaleFactor: CGFloat = 1 + (-scrollViewOffset / backgroundImageHeight)
-            transform = CATransform3DScale(transform, scaleFactor, scaleFactor, 1)
-            self.backgroundImage.layer.transform = transform
-        } else {
-            self.backgroundImage.layer.transform = CATransform3DIdentity
-        }
-        
-        let m = -1 / (titleOffsetBottom - titleOffsetTop)
-        let b = 1 - m * titleOffsetTop
-        let alpha = m * scrollViewOffset + b
-        print(scrollViewOffset)
-        print(m, b, alpha)
-        movieTitle.alpha = alpha
-        
-        if scrollViewOffset > titleOffsetBottom {
-            self.title = movie?.title
-            showNavigationBar()
-        } else {
-            self.title = nil
-            hideNavigationBar()
-        }
     }
 }
