@@ -35,7 +35,7 @@ extension DateFormatter {
     
     static var detailPresentation: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM d, yyyy"
+        formatter.dateFormat = "MMM d, yyyy"
         formatter.calendar = Calendar(identifier: .iso8601)
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         return formatter
