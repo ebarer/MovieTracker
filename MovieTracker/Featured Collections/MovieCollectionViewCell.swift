@@ -48,7 +48,6 @@ extension MovieCollectionViewCell {
                 let fetchID = id,
                 currentID == fetchID
             else {
-                print("Retrieved poster for previous movie - invalidated.")
                 return
             }
 

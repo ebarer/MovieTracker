@@ -17,12 +17,12 @@ class Movie: NSObject {
     var background: String?
     var runtime: Int?
     var rating: Double?
+    var popularity: Double?
     var certification: String?
     var imdbID: String?
     var genres: [String]?
     var trailers: [String]?
-    var bonusDuringCredits: Bool = false
-    var bonusAfterCredits: Bool = false
+    var bonusCredits: Credits = Credits(during: false, after: false)
     var tracked: Bool = false
     var watched: Bool = false
     
@@ -34,7 +34,7 @@ class Movie: NSObject {
     }
     
     override var description: String {
-        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A")"
+        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
     }
     
     override init() {
@@ -66,7 +66,9 @@ extension Movie {
     }
     
     func getPoster(width: Movie.PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
-        TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
+//        TODO: Revert to non-local fetch
+//        TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
+        TMDBWrapper.fetchLocalImage(url: self.poster, width: width) { (image, error) in
             if image != nil {
                 completionHandler(image, error, self.id)
             }
@@ -86,6 +88,25 @@ extension Movie {
 
 protocol ImageSize {}
 extension Movie {
+    struct Credits {
+        var during: Bool
+        var after: Bool
+        
+        init(during: Bool, after: Bool) {
+            self.during = during
+            self.after = after
+        }
+        
+        init(_ val: (Bool, Bool)) {
+            self.during = val.0
+            self.after = val.1
+        }
+        
+        var raw: (Bool, Bool) {
+            return (self.during, self.after)
+        }
+    }
+    
     enum PosterSize: String, ImageSize {
         case w92  = "w92"
         case w154 = "w154"

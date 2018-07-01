@@ -22,11 +22,16 @@ class MovieDetailViewController: UIViewController {
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var navItem: UINavigationItem!
     
-    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var tableHeader: UIView!
     
     @IBOutlet var backgroundContainer: UIView!
     @IBOutlet var backgroundAI: UIActivityIndicatorView!
     @IBOutlet var backgroundImage: UIImageView!
+    
+    @IBOutlet var actionBar: UIView!
+    @IBOutlet var actionTrack: UIButton!
+    @IBOutlet var actionSeen: UIButton!
     
     @IBOutlet var posterContainer: UIView!
     @IBOutlet var posterAI: UIActivityIndicatorView!
@@ -36,15 +41,6 @@ class MovieDetailViewController: UIViewController {
     
     @IBOutlet var movieTitle: UILabel!
     @IBOutlet var movieDescription: UILabel!
-    
-    @IBOutlet var actionBar: UIView!
-    @IBOutlet var actionTrack: UIButton!
-    @IBOutlet var actionSeen: UIButton!
-    
-    @IBOutlet var movieOverview: UILabel!
-    
-    @IBOutlet var detailMask: UIView!
-    @IBOutlet var detailTable: UITableView!
 }
 
 // MARK: - Lifecycle
@@ -67,11 +63,40 @@ extension MovieDetailViewController {
             DispatchQueue.main.async {
                 self.movie = movie
                 self.populateData()
+                self.getImages()
             }
         }
 
         // Setup timer to hide activity indicators on failure
         timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
+    }
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//
+//        if let headerView = tableView.tableHeaderView {
+//
+//            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+//            var headerFrame = headerView.frame
+//
+//            //Comparison necessary to avoid infinite loop
+//            if headerFrame.size.height != height && height < 600 {
+//                headerFrame.size.height = height
+//                headerView.frame = headerFrame
+//                tableView.tableHeaderView = headerView
+//            }
+//        }
+//    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if movieTitle.frame.height < 79 &&
+            tableHeader.frame.size.height != 406.0
+        {
+            tableHeader.frame.size.height = 406.0
+            tableView.tableHeaderView = tableHeader
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -100,15 +125,22 @@ extension MovieDetailViewController {
 
 extension MovieDetailViewController {
     func setupView() {
-        // Configure scroll view
-        scrollView.contentInsetAdjustmentBehavior = .never
+        self.view.addGradientView(
+            colors: [.bg, .clear],
+            locations: [0.0, 0.3],
+            view: self.tableView,
+            frame: self.backgroundContainer.frame
+        )
         
+        // Setup table
+        tableView.contentInsetAdjustmentBehavior = .never
+
         // Configure nav bar
         navBar.alpha = 0
         navItem.title = movie?.title
         
         // Setup images
-        actionPlayBlur.layer.cornerRadius = 25
+        actionPlayBlur.layer.cornerRadius = 30
         actionPlayBlur.clipsToBounds = true
         actionPlay.isHidden = true
         posterAI.startAnimating()
@@ -121,45 +153,67 @@ extension MovieDetailViewController {
     
     func populateData() {
         guard let movie = movie else { return }
-        
+
         self.movieTitle.text = movie.title
         self.movieTitle.sizeToFit()
         
         let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
-        if let duration = movie.duration {
-            self.movieDescription.text = "\(dateString)  •  \(duration)"
-        } else {
-            self.movieDescription.text = "\(dateString)"
-        }
-        
+
         // Ensure movie details have been fetched
-        guard let overview = movie.overview else { return }
-        self.movieOverview.text = overview
-        self.detailTable.reloadData()
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            self.detailMask.alpha = 0
-        }) { (_) in
-            self.detailMask.isHidden = true
+        guard let duration = movie.duration,
+              let overview = movie.overview
+        else {
+//            self.movieOverview.text = nil
+            return
         }
+        
+        var creditString = ""
+        switch movie.bonusCredits.raw {
+        case (false, false):
+            creditString.append("Bonus: None")
+        case (false, true):
+            creditString.append("Bonus: After")
+        case (true, false):
+            creditString.append("Bonus: During")
+        case (true, true):
+            creditString.append("Bonus: During + After")
+        }
+        self.movieDescription.text = "\(dateString)  •  \(duration)\n\(creditString)"
+//        self.movieOverview.text = overview
+        self.tableView.reloadData()
+        
+//        UIView.animate(withDuration: 0.5, animations: {
+//            self.detailMask.alpha = 0
+//        }) { (_) in
+//            self.detailMask.isHidden = true
+//        }
+    }
+    
+    func getImages() {
+        guard let movie = movie else { return }
         
         movie.getPoster(width: .w342) { (poster, error, _) in
             self.moviePoster.image = poster
             self.moviePoster.layer.masksToBounds = true
-            self.moviePoster.layer.cornerRadius = 9
+            self.moviePoster.layer.cornerRadius = 5
             self.moviePoster.layer.borderWidth = 0.5
             self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
             self.posterAI.stopAnimating()
             self.actionPlay.isHidden = false
+            
+            print("\(movie.title): Retrieved poster")
         }
         
         movie.getBackground() { (background, error, _) in
             self.backgroundImage.image = background
             self.backgroundImage.alpha = 0
+            
             self.backgroundImage.addGradient(
-                colors: [.bg, .clear, .clear, .bg],
-                locations: [0.0, 0.3, 0.6, 1.0]
+                colors: [.clear, .bg],
+                locations: [0.6, 1.0]
             )
+            
+            print("\(movie.title): Retrieved background image")
             
             self.backgroundAI.stopAnimating()
             UIView.animate(withDuration: 0.5) {
@@ -172,12 +226,13 @@ extension MovieDetailViewController {
         timer?.invalidate()
         backgroundAI.stopAnimating()
         posterAI.stopAnimating()
+//        detailAI.stopAnimating()
     }
     
     func adjustOverview() {
-        movieOverview.numberOfLines = (movieOverview.numberOfLines == 0) ? 5 : 0
+//        movieOverview.numberOfLines = (movieOverview.numberOfLines == 0) ? 5 : 0
         UIView.animate(withDuration: 0.5) {
-            self.movieOverview.superview?.layoutIfNeeded()
+//            self.movieOverview.superview?.layoutIfNeeded()
         }
     }
 }
@@ -193,7 +248,13 @@ extension MovieDetailViewController {
     @IBAction func seenMovie(_ sender: UIButton) {
         print("[Seen] \(movie?.title ?? "Unknown")")
         sender.isSelected = !sender.isSelected
-        actionTrack.isHidden = sender.isSelected
+        if sender.isSelected {
+            actionTrack.alpha = 0.4
+            actionTrack.isEnabled = false
+        } else {
+            actionTrack.alpha = 1.0
+            actionTrack.isEnabled = true
+        }
     }
     
     @IBAction func watchTrailer(_ sender: Any) {
@@ -218,17 +279,17 @@ extension MovieDetailViewController: UINavigationBarDelegate, UIGestureRecognize
 
 extension MovieDetailViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let scrollViewOffset = scrollView.contentOffset.y
+        let scrollOffset = scrollView.contentOffset.y
         let navBarOffset = view.safeAreaInsets.top + navBar.frame.height
         
         // Adjust height of background image based on offset
         let backgroundImageRatio: CGFloat = 3/4
         let backgroundImageHeight = backgroundImageRatio * scrollView.frame.width
         
-        if scrollViewOffset < 0 {
-            let translateOffset = scrollViewOffset
+        if scrollOffset < 0 {
+            let translateOffset = scrollOffset
             var transform = CATransform3DTranslate(CATransform3DIdentity, 0, translateOffset / 2, 0)
-            let scaleFactor: CGFloat = 1 + (-scrollViewOffset / backgroundImageHeight)
+            let scaleFactor: CGFloat = 1 + (-scrollOffset / backgroundImageHeight)
             transform = CATransform3DScale(transform, scaleFactor, scaleFactor, 1)
             self.backgroundImage.layer.transform = transform
         } else {
@@ -241,7 +302,7 @@ extension MovieDetailViewController: UIScrollViewDelegate {
         
         let ratio = -1 / (titleOffsetBottom - titleOffsetTop)
         let offset = 1 - ratio * titleOffsetTop
-        let alpha = ratio * scrollViewOffset + offset
+        let alpha = ratio * scrollOffset + offset
         
         movieTitle.alpha = alpha
         navBar.alpha = 1 - alpha
@@ -252,10 +313,9 @@ extension MovieDetailViewController: UIScrollViewDelegate {
         }
 
         let actionBarOffset = actionBarFrame.origin.y - navBarOffset
-        let translateY: CGFloat = scrollViewOffset - actionBarOffset
-        if translateY > 0 {
-            actionBar.frame = actionBarFrame.offsetBy(dx: 0, dy: translateY)
-        }
+        var translateY = scrollOffset - actionBarOffset
+        translateY = translateY < 0 ? 0 : translateY
+        actionBar.frame = actionBarFrame.offsetBy(dx: 0, dy: translateY)
     }
 }
 
@@ -269,35 +329,56 @@ extension MovieDetailViewController: UITableViewDelegate {
 
 extension MovieDetailViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0.01
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 3
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return (section == 0) ? 0.0 : 75.0
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Section Title"
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return (section == 0) ? 8 : 5
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath == IndexPath(item: 0, section: 0) {
+            return UITableView.automaticDimension
+        } else if indexPath == IndexPath(item: 5, section: 0) {
+            return 120.0
+        }
         
-        switch indexPath.row {
-        case 0:
-            cell.textLabel?.text = "Certification"
-            cell.detailTextLabel?.text = movie?.certification ?? "Unavailable"
-        case 1:
-            cell.textLabel?.text = "Genres"
-            cell.detailTextLabel?.text = movie?.genres?.joined(separator: ", ") ?? "N/A"
-        case 2:
-            cell.textLabel?.text = "Rating"
-            cell.detailTextLabel?.text = "N/A"
-            if let rating = movie?.rating, rating > 0 {
-                cell.detailTextLabel?.text = String(format: "%.1f / 5", rating / 2)
+        return UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell: UITableViewCell
+        if indexPath == IndexPath(item: 0, section: 0) {
+            cell = tableView.dequeueReusableCell(withIdentifier: "overviewCell", for: indexPath)
+        } else if indexPath == IndexPath(item: 5, section: 0) {
+            cell = tableView.dequeueReusableCell(withIdentifier: "scrollableCell", for: indexPath)
+        } else {
+            cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+        
+            switch indexPath.item {
+            case 1:
+                cell.textLabel?.text = "Certification"
+                cell.detailTextLabel?.text = movie?.certification ?? "Unavailable"
+            case 2:
+                cell.textLabel?.text = "Genres"
+                cell.detailTextLabel?.text = movie?.genres?.joined(separator: ", ") ?? "N/A"
+            case 3:
+                cell.textLabel?.text = "Rating"
+                cell.detailTextLabel?.text = "N/A"
+                if let rating = movie?.rating, rating > 0 {
+                    cell.detailTextLabel?.text = String(format: "%.1f / 5", rating / 2)
+                }
+            default:
+                break
             }
-        default:
-            break
         }
         
         return cell

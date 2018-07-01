@@ -9,10 +9,13 @@
 import UIKit
 
 class TMDBWrapper {
-    static let baseURL = "https://api.themoviedb.org"
-    static let imageBaseURL = "https://image.tmdb.org/t/p"
-    static let apiVersion = "/3"
-    static let apiKey = "da99299f02cd39e2736c97d08b459731"
+    private static let baseURL = "https://api.themoviedb.org"
+    private static let imageBaseURL = "https://image.tmdb.org/t/p"
+    private static let apiVersion = "/3"
+    private static let apiKey = "da99299f02cd39e2736c97d08b459731"
+    
+    // Keywords to identify during/after credit extras
+    private static let bonusKeywords = ["during" : 179431, "after" : 179430]
 }
 
 // MARK: - API Movie Accessors
@@ -26,8 +29,10 @@ extension TMDBWrapper {
             URLQueryItem(name: "with_release_type", value: "3|2"),
             URLQueryItem(name: "append_to_response", value: appendString)
         ]
-        
-        self.fetchData(url: searchURLComponents) { (data, error) in
+
+//        TODO: Revert to non-local fetch
+//        self.fetchData(url: searchURLComponents) { (data, error) in
+        self.fetchLocalData(url: String(id)) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error)
                 return
@@ -56,11 +61,12 @@ extension TMDBWrapper {
             URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
             URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
             URLQueryItem(name: "sort_by", value: "popularity.desc"),
-            URLQueryItem(name: "vote_count.gte", value: "1"),
             URLQueryItem(name: "page", value: String(page))
         ]
-        
-        self.fetchData(url: searchURLComponents) { (data, error) in
+ 
+//        TODO: Revert to non-local fetch
+//        self.fetchData(url: searchURLComponents) { (data, error) in
+        self.fetchLocalData(url: "nowShowing") { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error, nil)
                 return
@@ -68,7 +74,7 @@ extension TMDBWrapper {
             
             do {
                 let root = try decoder.decode(RootRaw.self, from: data)
-                let movies = self.translate(movies: root.movies)
+                let movies = root.movies.map({ self.translate(movie: $0) })
                 completionHandler(movies, nil, (root.totalResults, root.totalPages))
             } catch {
                 completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"), nil)
@@ -89,7 +95,6 @@ extension TMDBWrapper {
             URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
             URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
             URLQueryItem(name: "sort_by", value: "popularity.desc"),
-            URLQueryItem(name: "vote_count.gte", value: "1"),
             URLQueryItem(name: "page", value: String(page))
         ]
         
@@ -101,7 +106,7 @@ extension TMDBWrapper {
             
             do {
                 let root = try decoder.decode(RootRaw.self, from: data)
-                let movies = self.translate(movies: root.movies)
+                let movies = root.movies.map({ self.translate(movie: $0) })
                 completionHandler(movies, nil, (root.totalResults, root.totalPages))
             } catch {
                 completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"), nil)
@@ -187,6 +192,45 @@ extension TMDBWrapper {
     }
 }
 
+// MARK: - Local JSON Fetch
+
+extension TMDBWrapper {
+    static func fetchLocalData(url: String, completionHandler: @escaping (Data?, Error?) -> Void) {
+        guard let path = Bundle.main.path(forResource: url, ofType: "json") else {
+            completionHandler(nil, FetchError.noData("Invalid JSON file"))
+            return
+        }
+        
+        do {
+            let responseData = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+            completionHandler(responseData, nil)
+        } catch {
+            completionHandler(nil, FetchError.noData("File didn't contain valid JSON data."))
+            return
+        }
+    }
+    
+    static func fetchLocalImage(url image: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        guard let image = image else {
+            completionHandler(nil, FetchError.poster("Invalid image URL supplied"))
+            return
+        }
+
+        guard let path = Bundle.main.path(forResource: image, ofType: nil) else {
+            completionHandler(nil, FetchError.noData("Invalid JSON file"))
+            return
+        }
+
+        if let imageData = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) {
+            let poster = UIImage(data: imageData)
+            
+            DispatchQueue.main.async {
+                completionHandler(poster, nil)
+            }
+        }
+    }
+}
+
 // MARK: - JSON Decoder and Transformer
 
 extension TMDBWrapper {
@@ -216,41 +260,25 @@ extension TMDBWrapper {
         return decoder
     }
     
-    private static func translate(movies rootMovies: [MovieRaw]) -> [Movie] {
-        var movies = [Movie]()
-        
-        for mv in rootMovies {
-            let movie = Movie(id: mv.id, title: mv.title)
-            movie.poster = mv.poster
-            movie.releaseDate = mv.releaseDate
-            movies.append(movie)
-        }
-        
-        return movies
-    }
-    
-    private static func translate(movie mv: MovieRaw) -> Movie? {
+    private static func translate(movie mv: MovieRaw) -> Movie {
         let movie = Movie(id: mv.id, title: mv.title)
         movie.overview = mv.overview
         movie.poster = mv.poster
         movie.background = mv.background
         movie.runtime = mv.runtime
         movie.rating = mv.rating
+        movie.popularity = mv.popularity
         movie.imdbID = mv.imdbID
         
         let releaseInfo = mv.certification()
         movie.releaseDate = releaseInfo.1 ?? mv.releaseDate
         movie.certification = releaseInfo.0
+
+        movie.bonusCredits = Movie.Credits(mv.bonusCredits())
         
         // TODO : Parse genres and trailers
         movie.genres = mv.genres()
         movie.trailers = nil
-        
-        // TODO: Parse bonus scenes
-        // duringcreditsstinger -> During Credits
-        movie.bonusDuringCredits = false
-        // aftercreditsstinger -> After Credits
-        movie.bonusAfterCredits = false
         
         return movie
     }
@@ -280,10 +308,12 @@ extension TMDBWrapper {
         var background: String?
         var runtime: Int?
         var rating: Double?
+        var popularity: Double?
         var releaseDates: ReleaseDatesRaw?
         var genresRaw: [GenreRaw]?
         var trailers: Videos?
         var imdbID: String?
+        var keywords: Keywords?
         
         func certification() -> (String?, Date?) {
             let regionCode = NSLocale.current.regionCode ?? "US"
@@ -323,8 +353,29 @@ extension TMDBWrapper {
             }
         }
         
+        func bonusCredits() -> (during: Bool, after: Bool) {
+            var duringCredits = false
+            var afterCredits = false
+            
+            guard keywords != nil, let keywords = keywords?.keywords else {
+                return (duringCredits, afterCredits)
+            }
+            
+            for keyword in keywords {
+                if keyword.id == TMDBWrapper.bonusKeywords["during"] {
+                    duringCredits = true
+                }
+                
+                if keyword.id == TMDBWrapper.bonusKeywords["after"] {
+                    afterCredits = true
+                }
+            }
+            
+            return (duringCredits, afterCredits)
+        }
+        
         enum CodingKeys: String, CodingKey {
-            case id, title, overview, runtime
+            case id, title, overview, runtime, popularity, keywords
             case imdbID = "imdb_id"
             case releaseDate = "release_date"
             case poster = "poster_path"
@@ -336,6 +387,15 @@ extension TMDBWrapper {
         }
 
         struct GenreRaw: Codable {
+            var name: String
+        }
+        
+        struct Keywords: Codable {
+            var keywords: [KeywordRaw]
+        }
+        
+        struct KeywordRaw: Codable {
+            var id: Int
             var name: String
         }
 

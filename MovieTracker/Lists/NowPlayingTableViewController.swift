@@ -47,10 +47,6 @@ class NowPlayingTableViewController: UITableViewController {
         }
     }
     
-    @IBAction func updateMovies(_ sender: UISegmentedControl) {
-        print("Segment controller clicked")
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
