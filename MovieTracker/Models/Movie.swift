@@ -66,9 +66,7 @@ extension Movie {
     }
     
     func getPoster(width: Movie.PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
-//        TODO: Revert to non-local fetch
-//        TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
-        TMDBWrapper.fetchLocalImage(url: self.poster, width: width) { (image, error) in
+        TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
             if image != nil {
                 completionHandler(image, error, self.id)
             }

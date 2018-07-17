@@ -16,10 +16,6 @@
 		CE1F628420CFB54C0075B686 /* TMDBWrapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F628320CFB54C0075B686 /* TMDBWrapperTests.swift */; };
 		CE59561220CA65840047BC39 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE59561120CA65840047BC39 /* UIView+Extension.swift */; };
 		CE5B575520C2206E007540DD /* MovieDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B575420C2206E007540DD /* MovieDetailViewController.swift */; };
-		CE6707B520E8BB54006A92FB /* nowShowing.json in Resources */ = {isa = PBXBuildFile; fileRef = CE6707B420E8BB54006A92FB /* nowShowing.json */; };
-		CE6707B720E8CFC1006A92FB /* 260513.json in Resources */ = {isa = PBXBuildFile; fileRef = CE6707B620E8CFC1006A92FB /* 260513.json */; };
-		CE6707BA20E8D1D0006A92FB /* x1txcDXkcM65gl7w20PwYSxAYah.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE6707B820E8D1CD006A92FB /* x1txcDXkcM65gl7w20PwYSxAYah.jpg */; };
-		CE6707BB20E8D1D0006A92FB /* mabuNsGJgRuCTuGqjFkWe1xdu19.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE6707B920E8D1CF006A92FB /* mabuNsGJgRuCTuGqjFkWe1xdu19.jpg */; };
 		CE78BD5320C087F2001E6DB6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */; };
 		CE78BD5820C087F2001E6DB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE78BD5620C087F2001E6DB6 /* Main.storyboard */; };
 		CE78BD5B20C087F2001E6DB6 /* MovieTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD5920C087F2001E6DB6 /* MovieTracker.xcdatamodeld */; };
@@ -62,10 +58,6 @@
 		CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
 		CE59561120CA65840047BC39 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		CE5B575420C2206E007540DD /* MovieDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailViewController.swift; sourceTree = "<group>"; };
-		CE6707B420E8BB54006A92FB /* nowShowing.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = nowShowing.json; sourceTree = "<group>"; };
-		CE6707B620E8CFC1006A92FB /* 260513.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = 260513.json; sourceTree = "<group>"; };
-		CE6707B820E8D1CD006A92FB /* x1txcDXkcM65gl7w20PwYSxAYah.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = x1txcDXkcM65gl7w20PwYSxAYah.jpg; sourceTree = "<group>"; };
-		CE6707B920E8D1CF006A92FB /* mabuNsGJgRuCTuGqjFkWe1xdu19.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mabuNsGJgRuCTuGqjFkWe1xdu19.jpg; sourceTree = "<group>"; };
 		CE78BD4F20C087F2001E6DB6 /* MovieTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CE78BD5720C087F2001E6DB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -120,10 +112,6 @@
 				CE78BD5920C087F2001E6DB6 /* MovieTracker.xcdatamodeld */,
 				CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */,
 				CE78BD8320C112D8001E6DB6 /* Movie.swift */,
-				CE6707B420E8BB54006A92FB /* nowShowing.json */,
-				CE6707B620E8CFC1006A92FB /* 260513.json */,
-				CE6707B920E8D1CF006A92FB /* mabuNsGJgRuCTuGqjFkWe1xdu19.jpg */,
-				CE6707B820E8D1CD006A92FB /* x1txcDXkcM65gl7w20PwYSxAYah.jpg */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -330,10 +318,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE6707B520E8BB54006A92FB /* nowShowing.json in Resources */,
-				CE6707BA20E8D1D0006A92FB /* x1txcDXkcM65gl7w20PwYSxAYah.jpg in Resources */,
-				CE6707BB20E8D1D0006A92FB /* mabuNsGJgRuCTuGqjFkWe1xdu19.jpg in Resources */,
-				CE6707B720E8CFC1006A92FB /* 260513.json in Resources */,
 				CE78BD6020C087F4001E6DB6 /* LaunchScreen.storyboard in Resources */,
 				CE78BD5D20C087F4001E6DB6 /* Assets.xcassets in Resources */,
 				CE78BD5820C087F2001E6DB6 /* Main.storyboard in Resources */,

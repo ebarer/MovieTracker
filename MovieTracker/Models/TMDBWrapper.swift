@@ -29,10 +29,8 @@ extension TMDBWrapper {
             URLQueryItem(name: "with_release_type", value: "3|2"),
             URLQueryItem(name: "append_to_response", value: appendString)
         ]
-
-//        TODO: Revert to non-local fetch
-//        self.fetchData(url: searchURLComponents) { (data, error) in
-        self.fetchLocalData(url: String(id)) { (data, error) in
+        
+        self.fetchData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error)
                 return
@@ -64,9 +62,7 @@ extension TMDBWrapper {
             URLQueryItem(name: "page", value: String(page))
         ]
  
-//        TODO: Revert to non-local fetch
-//        self.fetchData(url: searchURLComponents) { (data, error) in
-        self.fetchLocalData(url: "nowShowing") { (data, error) in
+        self.fetchData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error, nil)
                 return
@@ -273,11 +269,10 @@ extension TMDBWrapper {
         let releaseInfo = mv.certification()
         movie.releaseDate = releaseInfo.1 ?? mv.releaseDate
         movie.certification = releaseInfo.0
-
+        movie.genres = mv.genres()
         movie.bonusCredits = Movie.Credits(mv.bonusCredits())
         
-        // TODO : Parse genres and trailers
-        movie.genres = mv.genres()
+        // TODO : trailers
         movie.trailers = nil
         
         return movie

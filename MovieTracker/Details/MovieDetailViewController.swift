@@ -11,7 +11,7 @@ import UIKit
 class MovieDetailViewController: UIViewController {
     var movie: Movie?
     var timer: Timer?
-    var actionBarFrame = CGRect()
+    var tableHeaderFrame = CGRect()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -71,23 +71,6 @@ extension MovieDetailViewController {
         timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
     }
     
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//
-//        if let headerView = tableView.tableHeaderView {
-//
-//            let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-//            var headerFrame = headerView.frame
-//
-//            //Comparison necessary to avoid infinite loop
-//            if headerFrame.size.height != height && height < 600 {
-//                headerFrame.size.height = height
-//                headerView.frame = headerFrame
-//                tableView.tableHeaderView = headerView
-//            }
-//        }
-//    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -134,6 +117,7 @@ extension MovieDetailViewController {
         
         // Setup table
         tableView.contentInsetAdjustmentBehavior = .never
+        tableHeader.backgroundColor = UIColor.red
 
         // Configure nav bar
         navBar.alpha = 0
@@ -300,22 +284,25 @@ extension MovieDetailViewController: UIScrollViewDelegate {
         let titleOffsetTop = movieTitle.frame.origin.y - navBarOffset
         let titleOffsetBottom = titleOffsetTop + (movieTitle.frame.height / 2)
         
-        let ratio = -1 / (titleOffsetBottom - titleOffsetTop)
-        let offset = 1 - ratio * titleOffsetTop
-        let alpha = ratio * scrollOffset + offset
+        let alphaRatio = -1 / (titleOffsetBottom - titleOffsetTop)
+        let alphaOffset = 1 - alphaRatio * titleOffsetTop
+        let alpha = alphaRatio * scrollOffset + alphaOffset
         
         movieTitle.alpha = alpha
         navBar.alpha = 1 - alpha
         
+        let transform = CATransform3DTranslate(CATransform3DIdentity, 2, 2, 0)
+        self.tableHeader.layer.transform = transform
+        
         // Make Action Bar sticky
-        if actionBarFrame.origin.y == 0 {
-            actionBarFrame = actionBar.frame
-        }
-
-        let actionBarOffset = actionBarFrame.origin.y - navBarOffset
-        var translateY = scrollOffset - actionBarOffset
-        translateY = translateY < 0 ? 0 : translateY
-        actionBar.frame = actionBarFrame.offsetBy(dx: 0, dy: translateY)
+//        if tableHeaderFrame.origin.y == 0 {
+//            tableHeaderFrame = tableHeader.frame
+//        }
+//
+//        let tableHeaderOffset = actionBar.frame.origin.y - navBarOffset
+//        var translateY = scrollOffset - tableHeaderOffset
+//        translateY = translateY < 0 ? 0 : translateY
+//        tableHeader.frame = tableHeaderFrame.offsetBy(dx: 0, dy: translateY)
     }
 }
 
