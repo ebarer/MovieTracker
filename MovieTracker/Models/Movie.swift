@@ -26,17 +26,6 @@ class Movie: NSObject {
     var tracked: Bool = false
     var watched: Bool = false
     
-    static let overviewCutoff = 150
-    
-    var duration: String? {
-        guard runtime != nil else { return nil }
-        return "\(self.runtime! / 60) hr \(self.runtime! % 60) min"
-    }
-    
-    override var description: String {
-        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
-    }
-    
     override init() {
         self.id = 0
         self.title = ""
@@ -49,9 +38,44 @@ class Movie: NSObject {
         self.id = id
         self.title = title
     }
+    
+    override var description: String {
+        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
+    }
+
+    var duration: String? {
+        guard runtime != nil else { return nil }
+        return "\(self.runtime! / 60) hr \(self.runtime! % 60) min"
+    }
+    
+    var genresString: String {
+        switch self.genres?.count {
+        case 1:
+            return "\(self.genres![0].shorten())"
+        case 2:
+            return "\(self.genres![0].shorten()) &\n\(self.genres![1].shorten())"
+        default:
+            return "N/A"
+        }
+    }
+    
+    var bonusString: String {
+        switch self.bonusCredits.raw {
+        case (false, false):
+            return "None"
+        case (false, true):
+            return "After"
+        case (true, false):
+            return "During"
+        case (true, true):
+            return "During + After"
+        }
+    }
+
 }
 
 // MARK: - API Methods
+
 extension Movie {
     static func get(id: Int, completionHandler: @escaping (Movie?, Error?) -> Void) {
         TMDBWrapper.getMovie(id: id, completionHandler: completionHandler)
@@ -120,5 +144,11 @@ extension Movie {
         case w780  = "w780"
         case w1280 = "w1280"
         case orig  = "original"
+    }
+}
+
+extension String {
+    func shorten() -> String {
+        return self.replacingOccurrences(of: "Science Fiction", with: "Sci-Fi")
     }
 }

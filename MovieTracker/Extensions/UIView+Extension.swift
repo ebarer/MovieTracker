@@ -34,6 +34,41 @@ extension UIView {
     }
 }
 
+extension UIImage {
+    var averageColor: UIColor? {
+        guard let inputImage = CIImage(image: self) else { return nil }
+        guard let filter = CIFilter(name: "CIAreaAverage", parameters: [kCIInputImageKey: inputImage]) else { return nil }
+        guard let outputImage = filter.outputImage else { return nil }
+        
+        // Find average color
+        var bitmap = [UInt8](repeating: 0, count: 4)
+        let context = CIContext(options: [CIContextOption.workingColorSpace: kCFNull])
+        context.render(outputImage, toBitmap: &bitmap, rowBytes: 4,
+                       bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                       format: CIFormat.RGBA8,
+                       colorSpace: nil)
+        
+        let rgbColor = UIColor(red: CGFloat(bitmap[0]) / 255,
+                               green: CGFloat(bitmap[1]) / 255,
+                               blue: CGFloat(bitmap[2]) / 255,
+                               alpha: 255)
+        
+        var hue = CGFloat(), sat = CGFloat()
+        rgbColor.getHue(&hue, saturation: &sat, brightness: nil, alpha: nil)
+        
+        // If hue/sat are 0.0, return default color
+        if hue == 0.0 && sat == 0.0 {
+            return UIColor.gold
+        }
+        
+        // Generate custom color using hue of average color,
+        // with stronger brightness and saturation
+        print(Int(hue * 255), Int(sat * 255), sat)
+        sat = sat < 0.5 ? 0.5 : sat
+        return UIColor(hue: hue, saturation: sat, brightness: 1, alpha: 1)
+    }
+}
+
 class PassThroughView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return false

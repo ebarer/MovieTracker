@@ -9,7 +9,7 @@
 import Foundation
 
 extension DateFormatter {
-    static var iso8601DAw: DateFormatter {
+    public static var iso8601DAw: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.calendar = Calendar(identifier: .iso8601)
@@ -17,7 +17,7 @@ extension DateFormatter {
         return formatter
     }
     
-    static var iso8601DTw: DateFormatter {
+    public static var iso8601DTw: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         formatter.calendar = Calendar(identifier: .iso8601)
@@ -25,7 +25,7 @@ extension DateFormatter {
         return formatter
     }
     
-    static var sectionHeader: DateFormatter {
+    public static var sectionHeader: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         formatter.calendar = Calendar(identifier: .iso8601)
@@ -33,7 +33,7 @@ extension DateFormatter {
         return formatter
     }
     
-    static var detailPresentation: DateFormatter {
+    public static var detailPresentation: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, yyyy"
         formatter.calendar = Calendar(identifier: .iso8601)
