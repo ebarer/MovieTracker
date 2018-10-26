@@ -159,7 +159,7 @@ extension TMDBWrapper {
     
     static func fetchImage(url image: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
         guard let image = image else {
-            completionHandler(nil, FetchError.poster("Invalid image URL supplied"))
+            completionHandler(nil, FetchError.image("Invalid image URL supplied"))
             return
         }
         
@@ -172,7 +172,7 @@ extension TMDBWrapper {
         }
         
         guard imageURL != nil else {
-            completionHandler(nil, FetchError.poster("Couldn't generate movie image URL"))
+            completionHandler(nil, FetchError.image("Couldn't generate movie image URL"))
             return
         }
         
@@ -208,7 +208,7 @@ extension TMDBWrapper {
     
     static func fetchLocalImage(url image: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
         guard let image = image else {
-            completionHandler(nil, FetchError.poster("Invalid image URL supplied"))
+            completionHandler(nil, FetchError.image("Invalid image URL supplied"))
             return
         }
 
@@ -458,5 +458,5 @@ extension TMDBWrapper {
 enum FetchError: Error {
     case noData(String)
     case decode(String)
-    case poster(String)
+    case image(String)
 }

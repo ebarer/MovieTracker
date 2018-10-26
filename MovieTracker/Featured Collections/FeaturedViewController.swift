@@ -24,6 +24,15 @@ extension FeaturedViewController {
     }
 }
 
+// MARK: - Search Controller Delegate
+
+extension FeaturedViewController: UISearchResultsUpdating {
+    // MARK: - UISearchResultsUpdating Delegate
+    func updateSearchResults(for searchController: UISearchController) {
+        // TODO
+    }
+}
+
 // MARK: - Segment Event
 
 extension FeaturedViewController {

@@ -69,7 +69,6 @@ extension NowPlayingCollectionViewController {
 
             fetchMovies {
                 guard indexPath.item < self.movies.count else { return }
-                
                 cell.configure(with: self.movies[indexPath.item])
             }
         }
@@ -107,11 +106,9 @@ extension NowPlayingCollectionViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             guard let cell = sender as? UICollectionViewCell,
-                let indexPath = self.collectionView?.indexPath(for: cell),
-                let movieDetailsVC = segue.destination as? MovieDetailViewController
-                else {
-                    return
-            }
+                  let indexPath = self.collectionView?.indexPath(for: cell),
+                  let movieDetailsVC = segue.destination as? MovieDetailViewController
+            else { return }
             
             movieDetailsVC.movie = movies[indexPath.item]
         }

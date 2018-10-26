@@ -14,9 +14,6 @@ class OverviewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(adjustOverview))
-        self.addGestureRecognizer(tapGesture)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -25,14 +22,7 @@ class OverviewCell: UITableViewCell {
     
     func setOverview(_ overview: String) {
         overviewLabel.text = overview
-        overviewLabel.numberOfLines = 0
-    }
-    
-    @objc func adjustOverview(_ sender: Any) {
-        overviewLabel.numberOfLines = (overviewLabel.numberOfLines == 0) ? 5 : 0
-        UIView.animate(withDuration: 0.5) {
-            self.layoutIfNeeded()
-        }
+        overviewLabel.numberOfLines = 5
     }
 }
 

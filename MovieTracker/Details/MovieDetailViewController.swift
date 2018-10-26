@@ -53,7 +53,6 @@ extension MovieDetailViewController {
         guard let movie = movie else { return }
         
         setupView()
-        populateData()
         
         Movie.get(id: movie.id) { (movie, error) in
             guard error == nil, let movie = movie else {
@@ -69,7 +68,7 @@ extension MovieDetailViewController {
         }
 
         // Setup timer to hide activity indicators on failure
-        timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
+        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
     }
     
     override func viewDidLayoutSubviews() {
@@ -138,17 +137,13 @@ extension MovieDetailViewController {
     }
     
     func populateData() {
-        guard let movie = movie else { return }
+        guard let movie = self.movie else { return }
 
         self.movieTitle.text = movie.title
-        self.movieTitle.sizeToFit()
-
-        // Ensure movie details have been fetched
-        guard let duration = movie.duration else {
-            return
-        }
+//        self.movieTitle.sizeToFit()
         
         let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
+        let duration = movie.duration ?? "Unknown"
         self.movieDescription.text = "\(dateString)  •  \(duration)"
         self.tableView.reloadData()
     }
@@ -157,7 +152,14 @@ extension MovieDetailViewController {
         guard let movie = movie else { return }
         
         movie.getPoster(width: .w342) { (poster, error, _) in
-            self.moviePoster.image = poster
+            if error != nil && poster == nil {
+                print("Error: couldn't load poster - \(error!)")
+                self.moviePoster.image = UIImage(color: UIColor.inactive)
+            } else {
+                print("\(movie.title): Retrieved poster")
+                self.moviePoster.image = poster
+            }
+            
             self.moviePoster.layer.masksToBounds = true
             self.moviePoster.layer.cornerRadius = 5
             self.moviePoster.layer.borderWidth = 0.5
@@ -167,11 +169,17 @@ extension MovieDetailViewController {
             
             self.tintColor = poster?.averageColor ?? UIColor.inactive
             self.tintView()
-            
-            print("\(movie.title): Retrieved poster")
         }
         
         movie.getBackground() { (background, error, _) in
+            guard error == nil, let background = background else {
+                print("Error: couldn't load background image - \(error!)")
+                self.backgroundAI.stopAnimating()
+                return
+            }
+            
+            print("\(movie.title): Retrieved background image")
+            
             self.backgroundImage.image = background
             self.backgroundImage.alpha = 0
             
@@ -179,8 +187,6 @@ extension MovieDetailViewController {
                 colors: [.clear, .bg],
                 locations: [0.6, 1.0]
             )
-            
-            print("\(movie.title): Retrieved background image")
             
             self.backgroundAI.stopAnimating()
             UIView.animate(withDuration: 0.5) {
@@ -201,7 +207,6 @@ extension MovieDetailViewController {
         timer?.invalidate()
         backgroundAI.stopAnimating()
         posterAI.stopAnimating()
-//        detailAI.stopAnimating()
     }
 }
 
@@ -335,6 +340,10 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             let cell = tableView.dequeueReusableCell(withIdentifier: OverviewCell.reuseIdentifier, for: indexPath) as! OverviewCell
             cell.separatorInset = UIEdgeInsets.zero
             cell.setOverview(overview)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(adjustOverview))
+            cell.addGestureRecognizer(tapGesture)
+            
             return cell
         }
         // Detail cell
@@ -345,4 +354,15 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
         }
     }
     
+    @objc func adjustOverview(_ sender: Any) {
+        let index = IndexPath(item: 1, section: 0)
+        if let cell = tableView.cellForRow(at: index) as? OverviewCell {
+            cell.overviewLabel.numberOfLines = 0
+            UIView.animate(withDuration: 0.5) {
+                cell.layoutIfNeeded()
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+            }
+        }
+    }
 }
