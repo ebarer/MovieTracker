@@ -14,6 +14,7 @@
 		CE1F628120CFA6620075B686 /* TMDBWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */; };
 		CE1F628220CFA6620075B686 /* TMDBWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */; };
 		CE1F628420CFB54C0075B686 /* TMDBWrapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F628320CFB54C0075B686 /* TMDBWrapperTests.swift */; };
+		CE3AF2FB218C5A9A00EC4495 /* CastDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3AF2FA218C5A9A00EC4495 /* CastDetailViewController.swift */; };
 		CE59561220CA65840047BC39 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE59561120CA65840047BC39 /* UIView+Extension.swift */; };
 		CE5B575520C2206E007540DD /* MovieDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5B575420C2206E007540DD /* MovieDetailViewController.swift */; };
 		CE78BD5320C087F2001E6DB6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */; };
@@ -57,6 +58,7 @@
 		CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TMDBWrapper.swift; path = MovieTracker/Models/TMDBWrapper.swift; sourceTree = SOURCE_ROOT; };
 		CE1F628320CFB54C0075B686 /* TMDBWrapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBWrapperTests.swift; sourceTree = "<group>"; };
 		CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
+		CE3AF2FA218C5A9A00EC4495 /* CastDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastDetailViewController.swift; sourceTree = "<group>"; };
 		CE59561120CA65840047BC39 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		CE5B575420C2206E007540DD /* MovieDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailViewController.swift; sourceTree = "<group>"; };
 		CE78BD4F20C087F2001E6DB6 /* MovieTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,6 +136,7 @@
 			children = (
 				CE5B575420C2206E007540DD /* MovieDetailViewController.swift */,
 				CE9014F52175960F00B54E33 /* MovieDetailTableViewCells.swift */,
+				CE3AF2FA218C5A9A00EC4495 /* CastDetailViewController.swift */,
 			);
 			path = Details;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 				CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */,
 				CED3C39420CC9BD70024D585 /* ComingSoonCollectionViewController.swift in Sources */,
 				CEC19A0920C4BF68003BD653 /* MovieCollectionViewCell.swift in Sources */,
+				CE3AF2FB218C5A9A00EC4495 /* CastDetailViewController.swift in Sources */,
 				CEEBB30D20CD27BF00353320 /* UIButton+Extension.swift in Sources */,
 				CEC19A0720C4BF3E003BD653 /* NowPlayingCollectionViewController.swift in Sources */,
 				CE59561220CA65840047BC39 /* UIView+Extension.swift in Sources */,

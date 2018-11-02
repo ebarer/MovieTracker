@@ -248,7 +248,7 @@ extension TMDBWrapper {
                     return date
                 }
                 
-                print("Unable to create data object for string: \(dateString)")
+                print("Error: Unable to create date object for string: \(dateString)")
             } catch {
                 print("Error: \(error)")
             }
@@ -400,8 +400,6 @@ extension TMDBWrapper {
                                         type: .Actor)
                 cast.append(member)
             }
-            
-            print(cast)
             
             return cast
         }

@@ -100,6 +100,11 @@ extension MovieDetailViewController {
             guard let movie = movie else { return }
             retrieveData(for: movie)
         }
+        
+        // Remove selection (if selection)
+        if let indexPath = self.tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: animated)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -135,6 +140,7 @@ extension MovieDetailViewController {
         // Configure nav bar
         navBar.alpha = 0
         navItem.title = movie?.title
+        navigationItem.title = movie?.title
         
         // Setup images
         actionPlayBlur.layer.cornerRadius = 30
@@ -190,7 +196,7 @@ extension MovieDetailViewController {
             }
             
             DispatchQueue.main.async {
-                print("Async callback: \(movie)")
+                print("Fetched: \(movie)")
                 self.movie = movie
                 self.populateData()
                 self.getImages()
@@ -231,9 +237,8 @@ extension MovieDetailViewController {
         movie.getPoster(width: .w342) { (poster, error, _) in
             if error != nil && poster == nil {
                 print("Error: couldn't load poster - \(error!)")
-                self.moviePoster.image = UIImage(color: UIColor.inactive)
+                self.moviePoster.image = UIImage(color: UIColor.noImage)
             } else {
-                print("\(movie.title): Retrieved poster")
                 self.moviePoster.image = poster
             }
             
@@ -254,8 +259,6 @@ extension MovieDetailViewController {
                 self.backgroundAI.stopAnimating()
                 return
             }
-            
-            print("\(movie.title): Retrieved background image")
             
             self.backgroundImage.image = background
             self.backgroundImage.alpha = 0
@@ -289,17 +292,31 @@ extension MovieDetailViewController {
     }
 }
 
+// MARK: - Navigation
+
+extension MovieDetailViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showCast" {
+            guard let cell = sender as? CastCell,
+                  let castDetailsVC = segue.destination as? CastDetailViewController
+            else { return }
+
+            castDetailsVC.castMember = cell.castMember
+        }
+    }
+}
+
 // MARK: - Movie Actions
 
 extension MovieDetailViewController {
     @IBAction func trackMovie(_ sender: UIButton) {
-        print("[Tracked] \(movie?.title ?? "Unknown")")
         sender.isSelected = !sender.isSelected
+        print("\(movie?.title ?? "Unknown"): tracked = \(sender.isSelected)")
     }
     
     @IBAction func seenMovie(_ sender: UIButton) {
-        print("[Seen] \(movie?.title ?? "Unknown")")
         sender.isSelected = !sender.isSelected
+        print("\(movie?.title ?? "Unknown"): seen = \(sender.isSelected)")
         if sender.isSelected {
             actionTrack.alpha = 0.4
             actionTrack.isEnabled = false
@@ -310,7 +327,7 @@ extension MovieDetailViewController {
     }
     
     @IBAction func watchTrailer(_ sender: Any) {
-        print("Playing trailer: \(movie?.title ?? "Unknown")")
+        print("Play trailer: \(movie?.title ?? "Unknown")")
     }
 }
 
@@ -397,7 +414,15 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
         return (section == SECTION_HEADER) ? ROWS_HEADER : movie?.cast.count ?? 0
     }
     
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return heightForRow(indexPath: indexPath)
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return heightForRow(indexPath: indexPath)
+    }
+    
+    func heightForRow(indexPath: IndexPath) -> CGFloat {
         if indexPath == IndexPath(item: 0, section: SECTION_HEADER) {
             return 100.0
         } else if indexPath.section == SECTION_CAST {
@@ -412,6 +437,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
         if indexPath == IndexPath(item: 0, section: SECTION_HEADER) {
             let cell = tableView.dequeueReusableCell(withIdentifier: ScrollableCell.reuseIdentifier, for: indexPath) as! ScrollableCell
             cell.separatorInset = UIEdgeInsets.zero
+            cell.selectionStyle = .none
             cell.setupCollection(movie: movie!)
             return cell
         }
@@ -419,43 +445,41 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
         else if indexPath == IndexPath(item: 1, section: SECTION_HEADER) {
             let cell = tableView.dequeueReusableCell(withIdentifier: OverviewCell.reuseIdentifier, for: indexPath) as! OverviewCell
             cell.separatorInset = UIEdgeInsets.zero
+            cell.selectionStyle = .none
             cell.set(overview: movie?.overview)
-            
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(adjustOverview))
-            cell.addGestureRecognizer(tapGesture)
-            
             return cell
         }
         // Detail cell
         else if indexPath.section == SECTION_CAST {
             let cell = tableView.dequeueReusableCell(withIdentifier: CastCell.reuseIdentifier, for: indexPath) as! CastCell
             cell.tintColor = self.tintColor
+            cell.selectionStyle = .default
+            
             if let movie = movie, indexPath.item < movie.cast.count {
                 cell.set(castMember: movie.cast[indexPath.item], for: movie, with: imageCache)
             }
+            
             return cell
         }
         
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+            cell.selectionStyle = .default
             return cell
         }
     }
     
-    @objc func adjustOverview(_ sender: Any) {
-        let index = IndexPath(item: 1, section: 0)
-        if let cell = tableView.cellForRow(at: index) as? OverviewCell {
-            cell.overviewLabel.numberOfLines =
-                (cell.overviewLabel.numberOfLines == 0) ? 5 : 0
-            
-            // TODO: Revisit animation
-//            UIView.animate(withDuration: 0.5) {
-//                cell.layoutIfNeeded()
-                UIView.setAnimationsEnabled(false)
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-                UIView.setAnimationsEnabled(true)
-//            }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // Handle overview text expansion
+        if indexPath == IndexPath(item: 1, section: SECTION_HEADER) {
+            if let cell = tableView.cellForRow(at: indexPath) as? OverviewCell {
+                cell.setSelected(false, animated: false)
+                cell.overviewLabel.numberOfLines =
+                    (cell.overviewLabel.numberOfLines == 0) ? 5 : 0
+                
+                tableView.beginUpdates()
+                tableView.endUpdates()
+            }
         }
     }
 }

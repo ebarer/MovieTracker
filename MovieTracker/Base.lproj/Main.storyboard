@@ -98,7 +98,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="1200"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="3y9-xS-S6M">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="3y9-xS-S6M">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="1200"/>
                                 <color key="backgroundColor" white="0.050000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="0.26000000000000001" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -461,6 +461,7 @@ Title</string>
                                             <outlet property="nameLabel" destination="dp9-1i-MuV" id="dg4-h8-YsZ"/>
                                             <outlet property="profilePicture" destination="fF6-el-RVY" id="QOF-Kz-Onv"/>
                                             <outlet property="roleLabel" destination="FB4-EQ-SYF" id="YAe-0r-asi"/>
+                                            <segue destination="c2O-qE-9qp" kind="show" identifier="showCast" id="0b5-2c-jwp"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -551,6 +552,38 @@ Title</string>
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4156" y="721.92118226600985"/>
+        </scene>
+        <!--Cast Detail View Controller-->
+        <scene sceneID="gFe-kj-7yj">
+            <objects>
+                <viewController id="c2O-qE-9qp" customClass="CastDetailViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="9vl-iz-8OO">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="1000" text="Cast Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="14S-0w-NGi">
+                                <rect key="frame" x="20" y="386.33333333333331" width="335" height="39.666666666666686"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="33"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.050000000000000003" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="14S-0w-NGi" firstAttribute="centerY" secondItem="9vl-iz-8OO" secondAttribute="centerY" id="7L6-Yu-owW"/>
+                            <constraint firstItem="4X4-pg-9wA" firstAttribute="trailing" secondItem="14S-0w-NGi" secondAttribute="trailing" constant="20" id="cp9-fL-WKd"/>
+                            <constraint firstItem="14S-0w-NGi" firstAttribute="leading" secondItem="4X4-pg-9wA" secondAttribute="leading" constant="20" id="rO2-nK-pim"/>
+                            <constraint firstItem="14S-0w-NGi" firstAttribute="centerX" secondItem="9vl-iz-8OO" secondAttribute="centerX" id="y29-NW-hFm"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="4X4-pg-9wA"/>
+                    </view>
+                    <connections>
+                        <outlet property="nameLabel" destination="14S-0w-NGi" id="QLd-xo-nFP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YQP-cB-DE1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5170" y="722"/>
         </scene>
         <!--Now Playing Collection View Controller-->
         <scene sceneID="h72-ul-a9F">

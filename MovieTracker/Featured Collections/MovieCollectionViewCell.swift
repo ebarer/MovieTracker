@@ -27,7 +27,7 @@ extension MovieCollectionViewCell {
     
 // MARK: - Configuration
 
-extension MovieCollectionViewCell {    
+extension MovieCollectionViewCell {
     func configure(with movie: Movie?) {
         self.movieTitle.text = movie?.title
         
@@ -46,7 +46,7 @@ extension MovieCollectionViewCell {
             
             if error != nil && poster == nil {
                 print("Error: couldn't load poster for \(movie?.title ?? "Unknown") - \(error!)")
-                self.moviePoster.image = UIImage(color: UIColor.inactive)
+                self.moviePoster.image = UIImage(color: UIColor.noImage)
             } else {
                 self.moviePoster.image = poster
             }

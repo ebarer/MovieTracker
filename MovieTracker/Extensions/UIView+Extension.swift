@@ -75,9 +75,7 @@ extension UIImage {
         
         // Generate custom color using hue of average color,
         // with stronger brightness and saturation
-        print(Int(hue * 255), Int(sat * 255), sat)
-        sat = sat < 0.5 ? 0.5 : sat
-        return UIColor(hue: hue, saturation: sat, brightness: 1, alpha: 1)
+        return UIColor(hue: hue, saturation: max(0.5, sat), brightness: 1, alpha: 1)
     }
 }
 

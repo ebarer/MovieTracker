@@ -165,6 +165,7 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
 
 class CastCell: UITableViewCell {
     static let reuseIdentifier = "castCell"
+    var castMember: Movie.Cast?
     @IBOutlet var profilePicture: UIImageView!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var roleLabel: UILabel!
@@ -181,15 +182,21 @@ class CastCell: UITableViewCell {
         // Setup seperator inset
         let leftInset = separatorInset.left + 45 + 12 // leftInset + picture + margin
         separatorInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 0)
+        
+        // Set selection color
+        self.selectedBackgroundView = UIView(frame: self.frame)
+        self.selectedBackgroundView!.backgroundColor = .selection
     }
     
     func set(castMember: Movie.Cast, for movie: Movie, with cache: NSCache<NSNumber, AnyObject>) {
+        self.castMember = castMember
+        
         nameLabel.text = castMember.name
 
         if let role = castMember.role {
             if castMember.type == .Actor {
                 let roleString = NSMutableAttributedString(string: "as \(role)", attributes: [.foregroundColor : self.tintColor])
-                roleString.addAttribute(.foregroundColor, value: UIColor.whiteFaded(a: 0.25), range: NSRange(location: 0, length: 2))
+                roleString.addAttribute(.foregroundColor, value: UIColor.whiteFaded(a: 0.4), range: NSRange(location: 0, length: 2))
                 roleLabel.attributedText = roleString
             } else {
                 roleLabel.text = role
@@ -198,7 +205,7 @@ class CastCell: UITableViewCell {
         }
         
         profilePicture.contentMode = .scaleAspectFill
-        profilePicture.image = UIImage(color: UIColor.inactive)
+        profilePicture.image = UIImage(color: UIColor.noImage)
         
         let id = NSNumber(integerLiteral: castMember.id)
         if let image = cache.object(forKey: id) as? UIImage {
@@ -209,7 +216,6 @@ class CastCell: UITableViewCell {
                 if error != nil && image == nil {
                     print("Error: couldn't load profile picture - \(error!)")
                 } else {
-                    print("Retrieved profile pic: \(castMember.name)")
                     self.profilePicture.image = image
                     cache.setObject(image!, forKey: id)
                 }

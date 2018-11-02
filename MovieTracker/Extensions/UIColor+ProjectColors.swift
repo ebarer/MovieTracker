@@ -16,12 +16,14 @@ extension UIColor {
         self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
     }
     
-    static let bg = UIColor(red: 12, green: 12, blue: 12)
-    static let inactive = UIColor(red: 37, green: 37, blue: 37)
-    static let separator = UIColor(red: 37, green: 37, blue: 37)
-    static let gold = UIColor(red: 218, green: 193, blue: 148)
+    static let bg           = UIColor(red: 12, green: 12, blue: 12)
+    static let inactive     = UIColor(red: 37, green: 37, blue: 37)
+    static let noImage      = UIColor(red: 37, green: 37, blue: 37)
+    static let separator    = UIColor(red: 37, green: 37, blue: 37)
+    static let selection    = UIColor(red: 37, green: 37, blue: 37)
+    static let gold         = UIColor(red: 218, green: 193, blue: 148)
     
-    static func whiteFaded(a alpha: CGFloat = 0.75) -> UIColor {
-        return UIColor(white: 1.0, alpha: alpha)
+    static func whiteFaded(a: CGFloat = 0.75) -> UIColor {
+        return UIColor(red: a, green: a, blue: a, alpha: 1)
     }
 }
