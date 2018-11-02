@@ -20,12 +20,11 @@ class OverviewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func setOverview(_ overview: String) {
+    func set(overview: String?) {
         overviewLabel.text = overview
         overviewLabel.numberOfLines = 5
     }
 }
-
 
 class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     static let reuseIdentifier = "scrollableCell"
@@ -73,7 +72,6 @@ class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionV
         return cell
     }
 }
-
 
 class ScrollableCellMovieDetail: UICollectionViewCell {
     static let reuseIdentifier = "scrollableCellMovieDetail"
@@ -160,7 +158,62 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
                                            width: 1.0,
                                            height: height))
         
-        self.border!.backgroundColor = (index.item == 0) ? UIColor.bg : UIColor.seperator
+        self.border!.backgroundColor = (index.item == 0) ? UIColor.bg : UIColor.separator
         self.addSubview(border!)
+    }
+}
+
+class CastCell: UITableViewCell {
+    static let reuseIdentifier = "castCell"
+    @IBOutlet var profilePicture: UIImageView!
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var roleLabel: UILabel!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        // Setup profile picture
+        profilePicture.layer.masksToBounds = true
+        profilePicture.layer.cornerRadius = 22.0
+        profilePicture.layer.borderWidth = 0.5
+        profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
+        
+        // Setup seperator inset
+        let leftInset = separatorInset.left + 45 + 12 // leftInset + picture + margin
+        separatorInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 0)
+    }
+    
+    func set(castMember: Movie.Cast, for movie: Movie, with cache: NSCache<NSNumber, AnyObject>) {
+        nameLabel.text = castMember.name
+
+        if let role = castMember.role {
+            if castMember.type == .Actor {
+                let roleString = NSMutableAttributedString(string: "as \(role)", attributes: [.foregroundColor : self.tintColor])
+                roleString.addAttribute(.foregroundColor, value: UIColor.whiteFaded(a: 0.25), range: NSRange(location: 0, length: 2))
+                roleLabel.attributedText = roleString
+            } else {
+                roleLabel.text = role
+                roleLabel.textColor = self.tintColor
+            }
+        }
+        
+        profilePicture.contentMode = .scaleAspectFill
+        profilePicture.image = UIImage(color: UIColor.inactive)
+        
+        let id = NSNumber(integerLiteral: castMember.id)
+        if let image = cache.object(forKey: id) as? UIImage {
+            profilePicture.image = image
+        } else if let url = castMember.profilePicture {
+            movie.getCastProfile(id: castMember.id, url: url, completionHandler: { (image, error, fetchID) in
+                guard let fetchID = fetchID, fetchID == castMember.id else { return }
+                if error != nil && image == nil {
+                    print("Error: couldn't load profile picture - \(error!)")
+                } else {
+                    print("Retrieved profile pic: \(castMember.name)")
+                    self.profilePicture.image = image
+                    cache.setObject(image!, forKey: id)
+                }
+            })
+        }
     }
 }

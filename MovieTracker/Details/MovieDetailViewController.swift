@@ -9,10 +9,20 @@
 import UIKit
 
 class MovieDetailViewController: UIViewController {
+    // Constants
+    let NUM_SECTIONS = 2
+    let SECTION_HEADER = 0
+    let SECTION_CAST = 1
+    let ROWS_HEADER = 2
+    
+    // Properties
     var movie: Movie?
+    var populated: Bool = false
+    var peekStatus: Bool = false
     var timer: Timer?
     var tintColor: UIColor?
     var tableHeaderFrame = CGRect()
+    var imageCache = NSCache<NSNumber, AnyObject>()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -20,9 +30,12 @@ class MovieDetailViewController: UIViewController {
     
     // MARK: - Outlets
 
+    @IBOutlet var floatingBackButton: UIButton!
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var navItem: UINavigationItem!
     
+    var loadingAI: UIActivityIndicatorView?
+    var loadingLabel: UILabel?
     @IBOutlet var tableView: UITableView!
     @IBOutlet var tableHeader: UIView!
     
@@ -51,21 +64,8 @@ extension MovieDetailViewController {
         super.viewDidLoad()
         
         guard let movie = movie else { return }
-        
+        retrieveData(for: movie)
         setupView()
-        
-        Movie.get(id: movie.id) { (movie, error) in
-            guard error == nil, let movie = movie else {
-                print("Error: \(error!)")
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.movie = movie
-                self.populateData()
-                self.getImages()
-            }
-        }
 
         // Setup timer to hide activity indicators on failure
         timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(imageTimeout), userInfo: nil, repeats: false)
@@ -89,6 +89,17 @@ extension MovieDetailViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        
+        setupLoadingScreen()
+        
+        // Check if peeking, and hide floating back button
+        let wasPeeking = peekStatus
+        peekStatus = navigationController == nil
+        floatingBackButton.isHidden = peekStatus
+        if wasPeeking != peekStatus {
+            guard let movie = movie else { return }
+            retrieveData(for: movie)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -109,6 +120,8 @@ extension MovieDetailViewController {
 
 extension MovieDetailViewController {
     func setupView() {
+        tintColor = UIColor.inactive
+        
         self.view.addGradientView(
             colors: [.bg, .clear],
             locations: [0.0, 0.3],
@@ -117,7 +130,6 @@ extension MovieDetailViewController {
         )
         
         // Setup table
-        tintColor = UIColor.inactive
         tableView.contentInsetAdjustmentBehavior = .never
 
         // Configure nav bar
@@ -136,16 +148,81 @@ extension MovieDetailViewController {
         actionSeen.layer.cornerRadius = 9
     }
     
+    func setupLoadingScreen() {
+        if !populated {
+            tableView.alpha = 0
+            
+            // Setup loading indicator
+            loadingAI = UIActivityIndicatorView(style: .whiteLarge)
+            loadingAI!.startAnimating()
+            loadingAI!.center.x = view.center.x
+            loadingAI!.center.y = view.center.y - 40
+            view.addSubview(loadingAI!)
+            
+            // Setup movie label
+            loadingLabel = UILabel()
+            loadingLabel?.font = UIFont.systemFont(ofSize: 33.0, weight: .bold)
+            loadingLabel?.textColor = UIColor.white
+            loadingLabel?.numberOfLines = 3
+            loadingLabel?.textAlignment = .center
+            
+            
+            loadingLabel!.text = movie?.title
+            loadingLabel!.sizeToFit()
+            
+            view.addSubview(loadingLabel!)
+            let margins = view.layoutMarginsGuide
+            loadingLabel!.translatesAutoresizingMaskIntoConstraints = false
+            loadingLabel!.topAnchor.constraint(equalTo: loadingAI!.bottomAnchor, constant: 20).isActive = true
+            loadingLabel!.leadingAnchor.constraint(equalTo: margins.leadingAnchor, constant: 20).isActive = true
+            loadingLabel!.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: -20).isActive = true
+
+            let labelSize = loadingLabel!.sizeThatFits(CGSize(width: view.frame.width - 40, height: CGFloat.greatestFiniteMagnitude))
+            loadingLabel?.heightAnchor.constraint(equalToConstant: labelSize.height)
+        }
+    }
+    
+    func retrieveData(for movie: Movie) {
+        Movie.get(id: movie.id) { (movie, error) in
+            guard error == nil, let movie = movie else {
+                print("Error: \(error!)")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                print("Async callback: \(movie)")
+                self.movie = movie
+                self.populateData()
+                self.getImages()
+            }
+        }
+    }
+    
     func populateData() {
         guard let movie = self.movie else { return }
 
         self.movieTitle.text = movie.title
-//        self.movieTitle.sizeToFit()
         
         let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
         let duration = movie.duration ?? "Unknown"
         self.movieDescription.text = "\(dateString)  •  \(duration)"
         self.tableView.reloadData()
+        
+        if !populated {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.loadingLabel?.alpha = 0
+                self.loadingAI?.alpha = 0
+            }) { (completion) in
+                self.loadingAI?.stopAnimating()
+                self.loadingAI?.removeFromSuperview()
+                self.loadingLabel?.removeFromSuperview()
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.tableView.alpha = 1
+                })
+            }
+            
+            populated = true
+        }
     }
     
     func getImages() {
@@ -196,11 +273,13 @@ extension MovieDetailViewController {
     }
     
     func tintView() {
+        self.navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : self.tintColor as Any]
+        self.navBar.tintColor = self.tintColor
         self.tableView.tintColor = self.tintColor
         self.movieDescription.textColor = self.tintColor
         self.actionTrack.tintColor = self.tintColor
         self.actionSeen.tintColor = self.tintColor
-        self.tableView.reloadSections([1], with: .automatic)
+        self.tableView.reloadSections([SECTION_CAST], with: .automatic)
     }
     
     @objc func imageTimeout() {
@@ -232,7 +311,6 @@ extension MovieDetailViewController {
     
     @IBAction func watchTrailer(_ sender: Any) {
         print("Playing trailer: \(movie?.title ?? "Unknown")")
-        
     }
 }
 
@@ -299,16 +377,16 @@ extension MovieDetailViewController: UIScrollViewDelegate {
 
 extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return NUM_SECTIONS
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == 0) ? 0.0 : 25.0
+        return (section == SECTION_HEADER) ? 0.0 : 45.0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 1:
+        case SECTION_CAST:
             return "Cast & Crew"
         default:
             return nil
@@ -316,30 +394,32 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (section == 0) ? 2 : 2
+        return (section == SECTION_HEADER) ? ROWS_HEADER : movie?.cast.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath == IndexPath(item: 0, section: 0) {
+        if indexPath == IndexPath(item: 0, section: SECTION_HEADER) {
             return 100.0
+        } else if indexPath.section == SECTION_CAST {
+            return 65.0
+        } else {
+            return UITableView.automaticDimension
         }
-        
-        return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Scrollable cell
-        if indexPath == IndexPath(item: 0, section: 0) {
+        if indexPath == IndexPath(item: 0, section: SECTION_HEADER) {
             let cell = tableView.dequeueReusableCell(withIdentifier: ScrollableCell.reuseIdentifier, for: indexPath) as! ScrollableCell
             cell.separatorInset = UIEdgeInsets.zero
             cell.setupCollection(movie: movie!)
             return cell
         }
         // Overview cell
-        else if indexPath == IndexPath(item: 1, section: 0), let overview = movie?.overview {
+        else if indexPath == IndexPath(item: 1, section: SECTION_HEADER) {
             let cell = tableView.dequeueReusableCell(withIdentifier: OverviewCell.reuseIdentifier, for: indexPath) as! OverviewCell
             cell.separatorInset = UIEdgeInsets.zero
-            cell.setOverview(overview)
+            cell.set(overview: movie?.overview)
             
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(adjustOverview))
             cell.addGestureRecognizer(tapGesture)
@@ -347,9 +427,17 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             return cell
         }
         // Detail cell
+        else if indexPath.section == SECTION_CAST {
+            let cell = tableView.dequeueReusableCell(withIdentifier: CastCell.reuseIdentifier, for: indexPath) as! CastCell
+            cell.tintColor = self.tintColor
+            if let movie = movie, indexPath.item < movie.cast.count {
+                cell.set(castMember: movie.cast[indexPath.item], for: movie, with: imageCache)
+            }
+            return cell
+        }
+        
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
-            cell.textLabel?.textColor = self.tintColor
             return cell
         }
     }
@@ -357,12 +445,17 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     @objc func adjustOverview(_ sender: Any) {
         let index = IndexPath(item: 1, section: 0)
         if let cell = tableView.cellForRow(at: index) as? OverviewCell {
-            cell.overviewLabel.numberOfLines = 0
-            UIView.animate(withDuration: 0.5) {
-                cell.layoutIfNeeded()
+            cell.overviewLabel.numberOfLines =
+                (cell.overviewLabel.numberOfLines == 0) ? 5 : 0
+            
+            // TODO: Revisit animation
+//            UIView.animate(withDuration: 0.5) {
+//                cell.layoutIfNeeded()
+                UIView.setAnimationsEnabled(false)
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
-            }
+                UIView.setAnimationsEnabled(true)
+//            }
         }
     }
 }

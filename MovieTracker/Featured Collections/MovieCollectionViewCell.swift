@@ -27,7 +27,7 @@ extension MovieCollectionViewCell {
     
 // MARK: - Configuration
 
-extension MovieCollectionViewCell {
+extension MovieCollectionViewCell {    
     func configure(with movie: Movie?) {
         self.movieTitle.text = movie?.title
         

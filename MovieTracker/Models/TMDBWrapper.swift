@@ -13,6 +13,7 @@ class TMDBWrapper {
     private static let imageBaseURL = "https://image.tmdb.org/t/p"
     private static let apiVersion = "/3"
     private static let apiKey = "da99299f02cd39e2736c97d08b459731"
+    private static let castLimit = 9
     
     // Keywords to identify during/after credit extras
     private static let bonusKeywords = ["during" : 179431, "after" : 179430]
@@ -27,7 +28,7 @@ extension TMDBWrapper {
         searchURLComponents.path = "\(self.apiVersion)/movie/\(id)"
         searchURLComponents.queryItems = [
             URLQueryItem(name: "with_release_type", value: "3|2"),
-            URLQueryItem(name: "append_to_response", value: appendString)
+            URLQueryItem(name: "append_to_response", value: appendString),
         ]
         
         self.fetchData(url: searchURLComponents) { (data, error) in
@@ -157,18 +158,20 @@ extension TMDBWrapper {
         }.resume()
     }
     
-    static func fetchImage(url image: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
-        guard let image = image else {
-            completionHandler(nil, FetchError.image("Invalid image URL supplied"))
+    static func fetchImage(url: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        guard let url = url else {
+            completionHandler(nil, FetchError.image("No image URL supplied"))
             return
         }
         
         var imageURL: URL?
         
         if let width = (width as? Movie.PosterSize)?.rawValue {
-            imageURL = URL(string: "\(self.imageBaseURL)/\(width)/\(image)")
+            imageURL = URL(string: "\(self.imageBaseURL)/\(width)/\(url)")
         } else if let width = (width as? Movie.BackgroundSize)?.rawValue {
-            imageURL = URL(string: "\(self.imageBaseURL)/\(width)/\(image)")
+            imageURL = URL(string: "\(self.imageBaseURL)/\(width)/\(url)")
+        } else if let width = (width as? Movie.CastProfileSize)?.rawValue {
+            imageURL = URL(string: "\(self.imageBaseURL)/\(width)/\(url)")
         }
         
         guard imageURL != nil else {
@@ -206,13 +209,13 @@ extension TMDBWrapper {
         }
     }
     
-    static func fetchLocalImage(url image: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
-        guard let image = image else {
-            completionHandler(nil, FetchError.image("Invalid image URL supplied"))
+    static func fetchLocalImage(url: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+        guard let url = url else {
+            completionHandler(nil, FetchError.image("No image URL supplied"))
             return
         }
 
-        guard let path = Bundle.main.path(forResource: image, ofType: nil) else {
+        guard let path = Bundle.main.path(forResource: url, ofType: nil) else {
             completionHandler(nil, FetchError.noData("Invalid JSON file"))
             return
         }
@@ -271,6 +274,7 @@ extension TMDBWrapper {
         movie.certification = releaseInfo.0
         movie.genres = mv.genres()
         movie.bonusCredits = Movie.Credits(mv.bonusCredits())
+        movie.cast = mv.cast()
         
         // TODO : trailers
         movie.trailers = nil
@@ -309,6 +313,7 @@ extension TMDBWrapper {
         var trailers: Videos?
         var imdbID: String?
         var keywords: Keywords?
+        var castRaw: CastRaw?
         
         func certification() -> (String?, Date?) {
             let regionCode = NSLocale.current.regionCode ?? "US"
@@ -369,6 +374,38 @@ extension TMDBWrapper {
             return (duringCredits, afterCredits)
         }
         
+        func cast() -> [Movie.Cast] {
+            var cast = [Movie.Cast]()
+            
+            guard let castRaw = self.castRaw else {
+                return cast
+            }
+
+            for crewMember in castRaw.crew.filter({ $0.role == "Director" }) {
+                let member = Movie.Cast(id: crewMember.id,
+                                        name: crewMember.name,
+                                        role: crewMember.role,
+                                        pic: crewMember.profilePicture,
+                                        type: .Crew)
+                cast.append(member)
+            }
+            
+            for (index, castMember) in castRaw.cast.enumerated() {
+                // TODO: Determine good number of cast to display
+                if index >= castLimit { break }
+                let member = Movie.Cast(id: castMember.id,
+                                        name: castMember.name,
+                                        role: castMember.role,
+                                        pic: castMember.profilePicture,
+                                        type: .Actor)
+                cast.append(member)
+            }
+            
+            print(cast)
+            
+            return cast
+        }
+        
         enum CodingKeys: String, CodingKey {
             case id, title, overview, runtime, popularity, keywords
             case imdbID = "imdb_id"
@@ -379,6 +416,7 @@ extension TMDBWrapper {
             case releaseDates = "release_dates"
             case genresRaw = "genres"
             case trailers = "videos"
+            case castRaw = "credits"
         }
 
         struct GenreRaw: Codable {
@@ -392,6 +430,38 @@ extension TMDBWrapper {
         struct KeywordRaw: Codable {
             var id: Int
             var name: String
+        }
+        
+        struct CastRaw: Codable {
+            var cast: [CastMemberRaw]
+            var crew: [CrewMemberRaw]
+            
+            struct CastMemberRaw: Codable {
+                var id: Int
+                var order: Int
+                var name: String
+                var role: String
+                var profilePicture: String?
+                
+                enum CodingKeys : String, CodingKey {
+                    case name, id, order
+                    case role = "character"
+                    case profilePicture = "profile_path"
+                }
+            }
+            
+            struct CrewMemberRaw: Codable {
+                var id: Int
+                var name: String
+                var role: String
+                var profilePicture: String?
+                
+                enum CodingKeys : String, CodingKey {
+                    case name, id
+                    case role = "job"
+                    case profilePicture = "profile_path"
+                }
+            }
         }
 
         struct ReleaseDatesRaw: Codable {

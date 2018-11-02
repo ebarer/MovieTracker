@@ -23,6 +23,7 @@ class Movie: NSObject {
     var genres: [String]?
     var trailers: [String]?
     var bonusCredits: Credits = Credits(during: false, after: false)
+    var cast: [Cast]
     var tracked: Bool = false
     var watched: Bool = false
     
@@ -30,6 +31,7 @@ class Movie: NSObject {
         self.id = 0
         self.title = ""
         self.releaseDate = Date()
+        self.cast = [Cast]()
         super.init()
     }
     
@@ -100,11 +102,16 @@ extension Movie {
             completionHandler(image, error, self.id)
         }
     }
+    
+    func getCastProfile(id: Int, url: String, width: Movie.CastProfileSize = .w276, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
+        TMDBWrapper.fetchImage(url: url, width: width) { (image, error) in
+            completionHandler(image, error, id)
+        }
+    }
 }
 
-// MARK: - Image Size Enumerations
+// MARK: - Subclasses
 
-protocol ImageSize {}
 extension Movie {
     struct Credits {
         var during: Bool
@@ -125,6 +132,32 @@ extension Movie {
         }
     }
     
+    struct Cast {
+        var id: Int
+        var type: CastType
+        var name: String
+        var role: String?
+        var profilePicture: String?
+        
+        init(id: Int, name: String, role: String?, pic: String?, type: CastType) {
+            self.id = id
+            self.type = type
+            self.name = name
+            self.role = role
+            self.profilePicture = pic
+        }
+    }
+    
+    enum CastType {
+        case Actor
+        case Crew
+    }
+}
+
+// MARK: - Image Size Enumerations
+
+protocol ImageSize {}
+extension Movie {
     enum PosterSize: String, ImageSize {
         case w92  = "w92"
         case w154 = "w154"
@@ -140,6 +173,10 @@ extension Movie {
         case w780  = "w780"
         case w1280 = "w1280"
         case orig  = "original"
+    }
+    
+    enum CastProfileSize: String, ImageSize {
+        case w276 = "w276_and_h350_face"
     }
 }
 

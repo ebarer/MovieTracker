@@ -18,7 +18,10 @@ extension UIColor {
     
     static let bg = UIColor(red: 12, green: 12, blue: 12)
     static let inactive = UIColor(red: 37, green: 37, blue: 37)
-    static let seperator = UIColor(red: 37, green: 37, blue: 37)
-    static let whiteFaded = UIColor(white: 1.0, alpha: 0.75)
+    static let separator = UIColor(red: 37, green: 37, blue: 37)
     static let gold = UIColor(red: 218, green: 193, blue: 148)
+    
+    static func whiteFaded(a alpha: CGFloat = 0.75) -> UIColor {
+        return UIColor(white: 1.0, alpha: alpha)
+    }
 }
