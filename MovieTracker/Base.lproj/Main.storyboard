@@ -34,16 +34,16 @@
                                             </constraints>
                                         </imageView>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="EcB-as-kjr">
-                                            <rect key="frame" x="80" y="29" width="295" height="37"/>
+                                            <rect key="frame" x="80" y="29" width="285" height="37"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7op-mX-xj2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="295" height="20.333333333333332"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7op-mX-xj2">
+                                                    <rect key="frame" x="0.0" y="0.0" width="285" height="20.333333333333332"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Fw-Jt-gQh">
-                                                    <rect key="frame" x="0.0" y="21.333333333333336" width="295" height="15.666666666666664"/>
+                                                    <rect key="frame" x="0.0" y="21.333333333333336" width="285" height="15.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" white="0.40000000000000002" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -53,7 +53,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="EcB-as-kjr" firstAttribute="leading" secondItem="SeR-D6-Yrr" secondAttribute="leading" constant="80" id="1uj-04-HpX"/>
-                                        <constraint firstAttribute="trailing" secondItem="EcB-as-kjr" secondAttribute="trailing" id="DdW-3c-1vg"/>
+                                        <constraint firstAttribute="trailing" secondItem="EcB-as-kjr" secondAttribute="trailing" constant="10" id="DdW-3c-1vg"/>
                                         <constraint firstItem="fjS-Md-Bjw" firstAttribute="top" secondItem="SeR-D6-Yrr" secondAttribute="topMargin" constant="-2" id="KHE-6t-Q2V"/>
                                         <constraint firstItem="fjS-Md-Bjw" firstAttribute="leading" secondItem="SeR-D6-Yrr" secondAttribute="leadingMargin" id="eLc-NO-dpK"/>
                                         <constraint firstItem="EcB-as-kjr" firstAttribute="centerY" secondItem="fjS-Md-Bjw" secondAttribute="centerY" id="pt9-mD-NzT"/>
@@ -756,16 +756,16 @@ Title</string>
                                             </constraints>
                                         </imageView>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="hFA-dB-sQv">
-                                            <rect key="frame" x="80" y="29" width="295" height="37"/>
+                                            <rect key="frame" x="80" y="29" width="285" height="37"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E0g-OU-HM2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="295" height="20.333333333333332"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E0g-OU-HM2">
+                                                    <rect key="frame" x="0.0" y="0.0" width="285" height="20.333333333333332"/>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5nE-4o-UQJ">
-                                                    <rect key="frame" x="0.0" y="21.333333333333336" width="295" height="15.666666666666664"/>
+                                                    <rect key="frame" x="0.0" y="21.333333333333336" width="285" height="15.666666666666664"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" white="0.40000000000000002" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
@@ -779,7 +779,7 @@ Title</string>
                                         <constraint firstAttribute="bottomMargin" secondItem="98d-eM-fdC" secondAttribute="bottom" constant="-2" id="aIN-s4-G2s"/>
                                         <constraint firstItem="hFA-dB-sQv" firstAttribute="leading" secondItem="jzc-L8-n6w" secondAttribute="leading" constant="80" id="dxW-hC-EKD"/>
                                         <constraint firstItem="hFA-dB-sQv" firstAttribute="centerY" secondItem="98d-eM-fdC" secondAttribute="centerY" id="goi-cH-4Pj"/>
-                                        <constraint firstAttribute="trailing" secondItem="hFA-dB-sQv" secondAttribute="trailing" id="guz-tq-0vw"/>
+                                        <constraint firstAttribute="trailing" secondItem="hFA-dB-sQv" secondAttribute="trailing" constant="10" id="guz-tq-0vw"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.047058823530000002" blue="0.047058823530000002" alpha="1" colorSpace="calibratedRGB"/>
