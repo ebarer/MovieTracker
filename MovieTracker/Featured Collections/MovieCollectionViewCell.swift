@@ -39,9 +39,9 @@ extension MovieCollectionViewCell {
         self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
         movie?.getPoster(width: .w342) { (poster, error, id) in
-            guard let currentID = movie?.id,
+            guard let movieID = movie?.id,
                   let fetchID = id,
-                  currentID == fetchID
+                  fetchID == movieID
             else { return }
             
             if error != nil && poster == nil {

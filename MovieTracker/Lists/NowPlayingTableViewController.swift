@@ -8,8 +8,6 @@
 
 import UIKit
 
-private let reuseIdentifier = "movieCell"
-
 class NowPlayingTableViewController: UITableViewController {
     
     var movies: [DateComponents : [Movie]] = [:]
@@ -103,46 +101,12 @@ class NowPlayingTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! MovieTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath) as! MovieTableViewCell
         guard let movie = movies[sections[indexPath.section]]?[indexPath.item] else {
             return cell
         }
         
-        cell.backgroundColor = UIColor.bg
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 80.0, bottom: 0, right: 0)
-        cell.selectionColor = UIColor.selection
-        
-        cell.movieTitle.text = movie.title
-
-        let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
-        cell.movieReleaseDate.text = dateString
-        
-        cell.moviePoster.image = nil
-        
-        cell.moviePoster.image = nil
-        cell.moviePoster.alpha = 0
-        cell.moviePoster.layer.masksToBounds = true
-        cell.moviePoster.layer.cornerRadius = 5
-        cell.moviePoster.layer.borderWidth = 0.5
-        cell.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
-
-        movie.getPoster { (poster, error, id) in
-            guard let fetchID = id,
-                  movie.id == fetchID
-            else { return }
-            
-            if error != nil && poster == nil {
-                print("Error: couldn't load poster for \(movie.title) - \(error!)")
-                cell.moviePoster.image = UIImage(color: UIColor.inactive)
-            } else {
-                cell.moviePoster.image = poster
-            }
-            
-            UIView.animate(withDuration: 0.5) {
-                cell.moviePoster.alpha = 1.0
-            }
-        }
-
+        cell.set(movie: movie)
         return cell
     }
 
@@ -175,6 +139,5 @@ class NowPlayingTableViewController: UITableViewController {
             
             movieDetailsVC.movie = movies[self.sections[indexPath.section]]?[indexPath.item]
         }
-    }
-    
+    }    
 }

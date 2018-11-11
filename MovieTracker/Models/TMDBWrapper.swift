@@ -48,6 +48,11 @@ extension TMDBWrapper {
     }
     
     static func getMoviesNowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        guard page > 0 else {
+            completionHandler(nil, FetchError.decode("Invalid page number (index starts at 1)."), nil)
+            return
+        }
+        
         let dateFormatter = DateFormatter.iso8601DAw
         let today = Calendar.current.startOfDay(for: Date())
         let startDate = Calendar.current.date(byAdding: .month, value: -2, to: today) ?? today
@@ -80,6 +85,11 @@ extension TMDBWrapper {
     }
     
     static func getMoviesComingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        guard page > 0 else {
+            completionHandler(nil, FetchError.decode("Invalid page number (index starts at 1)."), nil)
+            return
+        }
+        
         let dateFormatter = DateFormatter.iso8601DAw
         let today = Calendar.current.startOfDay(for: Date())
         let startDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
@@ -92,6 +102,40 @@ extension TMDBWrapper {
             URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
             URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
             URLQueryItem(name: "sort_by", value: "popularity.desc"),
+            URLQueryItem(name: "page", value: String(page))
+        ]
+        
+        self.fetchMovieData(url: searchURLComponents) { (data, error) in
+            guard error == nil, let data = data else {
+                completionHandler(nil, error, nil)
+                return
+            }
+            
+            do {
+                let root = try decoder.decode(RootRaw.self, from: data)
+                let movies = root.movies.map({ self.translate(movie: $0) })
+                completionHandler(movies, nil, (root.totalResults, root.totalPages))
+            } catch {
+                completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"), nil)
+            }
+        }
+    }
+    
+    static func searchForMovies(query: String, page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        guard page > 0 else {
+            completionHandler(nil, FetchError.decode("Invalid page number (index starts at 1)."), nil)
+            return
+        }
+        
+        if query.count == 0 {
+            completionHandler([], nil, nil)
+            return
+        }
+        
+        var searchURLComponents = URLComponents(string: self.baseURL)!
+        searchURLComponents.path = "\(self.apiVersion)/search/movie"
+        searchURLComponents.queryItems = [
+            URLQueryItem(name: "query", value: query),
             URLQueryItem(name: "page", value: String(page))
         ]
         

@@ -91,6 +91,10 @@ extension Movie {
         TMDBWrapper.getMoviesComingSoon(page: page, completionHandler: completionHandler)
     }
     
+    static func search(query: String, page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        TMDBWrapper.searchForMovies(query: query, page: page, completionHandler: completionHandler)
+    }
+    
     func getPoster(width: Movie.PosterSize = .w185, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
         TMDBWrapper.fetchImage(url: self.poster, width: width) { (image, error) in
             completionHandler(image, error, self.id)
@@ -186,7 +190,7 @@ extension String {
         case "Science Fiction":
             return "Sci-Fi"
         case "Documentary":
-            return "Docu"
+            return "Doc"
         default:
             return self
         }

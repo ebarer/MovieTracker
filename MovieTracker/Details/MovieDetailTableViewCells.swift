@@ -10,7 +10,12 @@ import UIKit
 
 class OverviewCell: UITableViewCell {
     static let reuseIdentifier = "overviewCell"
+    
+    // MARK: - Outlets
+    
     @IBOutlet var overviewLabel: UILabel!
+    
+    // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -28,8 +33,12 @@ class OverviewCell: UITableViewCell {
 
 class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     static let reuseIdentifier = "scrollableCell"
-    @IBOutlet var scrollCollectionView: UICollectionView!
     var movie: Movie?
+    
+    // MARK: - Outlets
+    @IBOutlet var scrollCollectionView: UICollectionView!
+    
+    // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -46,6 +55,7 @@ class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionV
     }
     
 // MARK: - UICollectionView Data Source
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -75,21 +85,19 @@ class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionV
 
 class ScrollableCellMovieDetail: UICollectionViewCell {
     static let reuseIdentifier = "scrollableCellMovieDetail"
+    
+    // MARK: - Outlets
+    
     @IBOutlet var headerLabel: UILabel!
     @IBOutlet var detailLabel: UILabel!
     @IBOutlet var detailImage: UIImageView!
     var border: UIView?
     
+    // MARK: - Lifecycle
+    
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
-//    override func updateConstraints() {
-//        super.updateConstraints()
-//        let margins = contentView.layoutMarginsGuide
-//        border?.trailingAnchor.constraint(equalTo: margins.trailingAnchor).isActive = true
-//        border?.centerYAnchor.constraint(equalTo: margins.centerYAnchor).isActive = true
-//    }
     
     func configure(with movie: Movie?, indexPath: IndexPath) {
         guard let movie = movie else { return }
@@ -166,9 +174,14 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
 class CastCell: UITableViewCell {
     static let reuseIdentifier = "castCell"
     var castMember: Movie.Cast?
+
+    // MARK: - Outlets
+    
     @IBOutlet var profilePicture: UIImageView!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var roleLabel: UILabel!
+    
+    // MARK: - Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
