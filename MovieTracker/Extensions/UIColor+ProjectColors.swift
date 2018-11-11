@@ -17,13 +17,13 @@ extension UIColor {
     }
     
     static let bg           = UIColor(red: 12, green: 12, blue: 12)
-    static let inactive     = UIColor(red: 37, green: 37, blue: 37)
-    static let noImage      = UIColor(red: 37, green: 37, blue: 37)
-    static let separator    = UIColor(red: 37, green: 37, blue: 37)
-    static let selection    = UIColor(red: 37, green: 37, blue: 37)
-    static let gold         = UIColor(red: 218, green: 193, blue: 148)
+    static let separator    = UIColor(red: 36, green: 36, blue: 36)
+    static let accent       = UIColor(red: 218, green: 193, blue: 148)
+    static let inactive     = UIColor.separator
+    static let selection    = UIColor.separator
     
     static func whiteFaded(a: CGFloat = 0.75) -> UIColor {
-        return UIColor(red: a, green: a, blue: a, alpha: 1)
+        let c = (a < 0 || a > 1) ? 0.75 : a
+        return UIColor(red: c, green: c, blue: c, alpha: 1)
     }
 }

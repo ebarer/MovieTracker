@@ -55,7 +55,8 @@ extension UIImage {
         // Find average color
         var bitmap = [UInt8](repeating: 0, count: 4)
         let context = CIContext(options: [CIContextOption.workingColorSpace: kCFNull])
-        context.render(outputImage, toBitmap: &bitmap, rowBytes: 4,
+        context.render(outputImage, toBitmap: &bitmap,
+                       rowBytes: 4,
                        bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
                        format: CIFormat.RGBA8,
                        colorSpace: nil)
@@ -70,7 +71,7 @@ extension UIImage {
         
         // If hue/sat are 0.0, return default color
         if hue == 0.0 && sat == 0.0 {
-            return UIColor.gold
+            return UIColor.accent
         }
         
         // Generate custom color using hue of average color,

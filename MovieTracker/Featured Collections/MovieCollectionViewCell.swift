@@ -46,7 +46,7 @@ extension MovieCollectionViewCell {
             
             if error != nil && poster == nil {
                 print("Error: couldn't load poster for \(movie?.title ?? "Unknown") - \(error!)")
-                self.moviePoster.image = UIImage(color: UIColor.noImage)
+                self.moviePoster.image = UIImage(color: UIColor.inactive)
             } else {
                 self.moviePoster.image = poster
             }

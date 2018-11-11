@@ -103,7 +103,7 @@ extension Movie {
         }
     }
     
-    func getCastProfile(id: Int, url: String, width: Movie.CastProfileSize = .w276, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
+    func getCastPicture(id: Int, url: String, width: Movie.CastProfileSize = .w276, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
         TMDBWrapper.fetchImage(url: url, width: width) { (image, error) in
             completionHandler(image, error, id)
         }
@@ -182,6 +182,13 @@ extension Movie {
 
 extension String {
     func shorten() -> String {
-        return self.replacingOccurrences(of: "Science Fiction", with: "Sci-Fi")
+        switch self {
+        case "Science Fiction":
+            return "Sci-Fi"
+        case "Documentary":
+            return "Docu"
+        default:
+            return self
+        }
     }
 }

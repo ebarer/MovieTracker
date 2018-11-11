@@ -22,7 +22,6 @@ class MovieDetailViewController: UIViewController {
     var timer: Timer?
     var tintColor: UIColor?
     var tableHeaderFrame = CGRect()
-    var imageCache = NSCache<NSNumber, AnyObject>()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -50,8 +49,6 @@ class MovieDetailViewController: UIViewController {
     @IBOutlet var posterContainer: UIView!
     @IBOutlet var posterAI: UIActivityIndicatorView!
     @IBOutlet var moviePoster: UIImageView!
-    @IBOutlet var actionPlay: UIView!
-    @IBOutlet var actionPlayBlur: UIVisualEffectView!
     
     @IBOutlet var movieTitle: UILabel!
     @IBOutlet var movieDescription: UILabel!
@@ -108,8 +105,10 @@ extension MovieDetailViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        // Show the navigation stack navigation bar for previous views in stack
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        // Show the navigation bar when being dismissed
+        if isMovingFromParent {
+            self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -128,13 +127,16 @@ extension MovieDetailViewController {
         tintColor = UIColor.inactive
         
         self.view.addGradientView(
-            colors: [.bg, .clear],
+            colors: [UIColor.bg, UIColor.clear],
             locations: [0.0, 0.3],
             view: self.tableView,
             frame: self.backgroundContainer.frame
         )
         
         // Setup table
+        tableView.backgroundColor = UIColor.bg
+        tableView.separatorColor = UIColor.separator
+        tableView.showsVerticalScrollIndicator = false
         tableView.contentInsetAdjustmentBehavior = .never
 
         // Configure nav bar
@@ -142,12 +144,8 @@ extension MovieDetailViewController {
         navItem.title = movie?.title
         navigationItem.title = movie?.title
         
-        // Setup images
-        actionPlayBlur.layer.cornerRadius = 30
-        actionPlayBlur.clipsToBounds = true
-        actionPlay.isHidden = true
-        posterAI.startAnimating()
         backgroundAI.startAnimating()
+        posterAI.startAnimating()
         
         // Configure action buttons
         actionTrack.layer.cornerRadius = 9
@@ -237,7 +235,7 @@ extension MovieDetailViewController {
         movie.getPoster(width: .w342) { (poster, error, _) in
             if error != nil && poster == nil {
                 print("Error: couldn't load poster - \(error!)")
-                self.moviePoster.image = UIImage(color: UIColor.noImage)
+                self.moviePoster.image = UIImage(color: UIColor.inactive)
             } else {
                 self.moviePoster.image = poster
             }
@@ -247,7 +245,6 @@ extension MovieDetailViewController {
             self.moviePoster.layer.borderWidth = 0.5
             self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
             self.posterAI.stopAnimating()
-            self.actionPlay.isHidden = true
             
             self.tintColor = poster?.averageColor ?? UIColor.inactive
             self.tintView()
@@ -302,6 +299,10 @@ extension MovieDetailViewController {
             else { return }
 
             castDetailsVC.castMember = cell.castMember
+        } else if segue.identifier == "showPoster" {
+            guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
+            posterDetailsVC.tintColor = self.tintColor
+            posterDetailsVC.movie = self.movie
         }
     }
 }
@@ -326,8 +327,9 @@ extension MovieDetailViewController {
         }
     }
     
-    @IBAction func watchTrailer(_ sender: Any) {
-        print("Play trailer: \(movie?.title ?? "Unknown")")
+    @IBAction func viewPoster(gestureRecognizer: UITapGestureRecognizer) {
+        print("View poster: \(movie?.title ?? "Unknown")")
+        self.performSegue(withIdentifier: "showPoster", sender: self)
     }
 }
 
@@ -438,7 +440,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             let cell = tableView.dequeueReusableCell(withIdentifier: ScrollableCell.reuseIdentifier, for: indexPath) as! ScrollableCell
             cell.separatorInset = UIEdgeInsets.zero
             cell.selectionStyle = .none
-            cell.setupCollection(movie: movie!)
+            cell.setupCollection(movie: movie)
             return cell
         }
         // Overview cell
@@ -446,6 +448,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             let cell = tableView.dequeueReusableCell(withIdentifier: OverviewCell.reuseIdentifier, for: indexPath) as! OverviewCell
             cell.separatorInset = UIEdgeInsets.zero
             cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 150, bottom: 0, right: 0)
             cell.set(overview: movie?.overview)
             return cell
         }
@@ -456,7 +459,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             cell.selectionStyle = .default
             
             if let movie = movie, indexPath.item < movie.cast.count {
-                cell.set(castMember: movie.cast[indexPath.item], for: movie, with: imageCache)
+                cell.set(castMember: movie.cast[indexPath.item], for: movie)
             }
             
             return cell

@@ -40,7 +40,7 @@ class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionV
         super.setSelected(selected, animated: animated)
     }
     
-    func setupCollection(movie: Movie) {
+    func setupCollection(movie: Movie?) {
         self.movie = movie
         self.scrollCollectionView.reloadData()
     }
@@ -173,22 +173,16 @@ class CastCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        // Setup profile picture
-        profilePicture.layer.masksToBounds = true
-        profilePicture.layer.cornerRadius = 22.0
-        profilePicture.layer.borderWidth = 0.5
-        profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
-        
         // Setup seperator inset
         let leftInset = separatorInset.left + 45 + 12 // leftInset + picture + margin
         separatorInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 0)
         
         // Set selection color
         self.selectedBackgroundView = UIView(frame: self.frame)
-        self.selectedBackgroundView!.backgroundColor = .selection
+        self.selectedBackgroundView!.backgroundColor = UIColor.selection
     }
     
-    func set(castMember: Movie.Cast, for movie: Movie, with cache: NSCache<NSNumber, AnyObject>) {
+    func set(castMember: Movie.Cast, for movie: Movie) {
         self.castMember = castMember
         
         nameLabel.text = castMember.name
@@ -203,21 +197,39 @@ class CastCell: UITableViewCell {
                 roleLabel.textColor = self.tintColor
             }
         }
-        
+
+        profilePicture.image = nil
+        profilePicture.alpha = 0
+        profilePicture.layer.masksToBounds = true
         profilePicture.contentMode = .scaleAspectFill
-        profilePicture.image = UIImage(color: UIColor.noImage)
+        profilePicture.layer.cornerRadius = 22.0
+        profilePicture.layer.borderWidth = 0.5
+        profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
         let id = NSNumber(integerLiteral: castMember.id)
+        let cache = (UIApplication.shared.delegate as! AppDelegate).imageCache
         if let image = cache.object(forKey: id) as? UIImage {
-            profilePicture.image = image
+            self.profilePicture.image = image
+            
+            UIView.animate(withDuration: 0.5) {
+                self.profilePicture.alpha = 1.0
+            }
         } else if let url = castMember.profilePicture {
-            movie.getCastProfile(id: castMember.id, url: url, completionHandler: { (image, error, fetchID) in
-                guard let fetchID = fetchID, fetchID == castMember.id else { return }
+            movie.getCastPicture(id: castMember.id, url: url, completionHandler: { (image, error, fetchID) in
+                guard let fetchID = fetchID,
+                      fetchID == castMember.id
+                else { return }
+                
                 if error != nil && image == nil {
                     print("Error: couldn't load profile picture - \(error!)")
+                    self.profilePicture.image = UIImage(color: UIColor.inactive)
                 } else {
                     self.profilePicture.image = image
                     cache.setObject(image!, forKey: id)
+                }
+                
+                UIView.animate(withDuration: 0.5) {
+                    self.profilePicture.alpha = 1.0
                 }
             })
         }

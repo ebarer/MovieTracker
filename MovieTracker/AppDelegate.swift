@@ -43,6 +43,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.saveContext()
     }
 
+    // MARK: - Image Cache
+    
+    lazy var imageCache: NSCache<NSNumber, AnyObject> = {
+        return NSCache<NSNumber, AnyObject>()
+    }()
+    
     // MARK: - Core Data stack
 
     lazy var persistentContainer: NSPersistentContainer = {

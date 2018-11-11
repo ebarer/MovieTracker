@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		56E37CFE20C2005D00471547 /* UIColor+ProjectColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */; };
+		CE0ADBCD2197A96A00AB6442 /* PosterDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0ADBCC2197A96A00AB6442 /* PosterDetailViewController.swift */; };
 		CE1F627D20CF70360075B686 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8320C112D8001E6DB6 /* Movie.swift */; };
 		CE1F627E20CF70370075B686 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8320C112D8001E6DB6 /* Movie.swift */; };
 		CE1F628020CFA65A0075B686 /* TMDBWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */; };
@@ -55,6 +56,7 @@
 
 /* Begin PBXFileReference section */
 		56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+ProjectColors.swift"; sourceTree = "<group>"; };
+		CE0ADBCC2197A96A00AB6442 /* PosterDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterDetailViewController.swift; sourceTree = "<group>"; };
 		CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TMDBWrapper.swift; path = MovieTracker/Models/TMDBWrapper.swift; sourceTree = SOURCE_ROOT; };
 		CE1F628320CFB54C0075B686 /* TMDBWrapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBWrapperTests.swift; sourceTree = "<group>"; };
 		CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			children = (
 				CE5B575420C2206E007540DD /* MovieDetailViewController.swift */,
 				CE9014F52175960F00B54E33 /* MovieDetailTableViewCells.swift */,
+				CE0ADBCC2197A96A00AB6442 /* PosterDetailViewController.swift */,
 				CE3AF2FA218C5A9A00EC4495 /* CastDetailViewController.swift */,
 			);
 			path = Details;
@@ -353,6 +356,7 @@
 			files = (
 				CE78BD8820C148B8001E6DB6 /* MovieTableViewCell.swift in Sources */,
 				CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */,
+				CE0ADBCD2197A96A00AB6442 /* PosterDetailViewController.swift in Sources */,
 				CE1F628020CFA65A0075B686 /* TMDBWrapper.swift in Sources */,
 				CE9014F62175960F00B54E33 /* MovieDetailTableViewCells.swift in Sources */,
 				CE78BD5B20C087F2001E6DB6 /* MovieTracker.xcdatamodeld in Sources */,

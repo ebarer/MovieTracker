@@ -31,7 +31,7 @@ extension TMDBWrapper {
             URLQueryItem(name: "append_to_response", value: appendString),
         ]
         
-        self.fetchData(url: searchURLComponents) { (data, error) in
+        self.fetchMovieData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error)
                 return
@@ -63,7 +63,7 @@ extension TMDBWrapper {
             URLQueryItem(name: "page", value: String(page))
         ]
  
-        self.fetchData(url: searchURLComponents) { (data, error) in
+        self.fetchMovieData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error, nil)
                 return
@@ -95,7 +95,7 @@ extension TMDBWrapper {
             URLQueryItem(name: "page", value: String(page))
         ]
         
-        self.fetchData(url: searchURLComponents) { (data, error) in
+        self.fetchMovieData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error, nil)
                 return
@@ -115,7 +115,7 @@ extension TMDBWrapper {
 // MARK: - API Fetchers
 
 extension TMDBWrapper {
-    static func fetchData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
+    static func fetchMovieData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
         let regionCode = NSLocale.current.regionCode ?? "US"
         let languageCode = NSLocale.current.languageCode ?? "en"
         
@@ -128,18 +128,20 @@ extension TMDBWrapper {
             URLQueryItem(name: "certification_country", value: regionCode)
         ]
         
-        var searchURLComponents = url
-        if searchURLComponents.queryItems == nil {
-            searchURLComponents.queryItems = queryItems
+        var queryURL = url
+        if queryURL.queryItems == nil {
+            queryURL.queryItems = queryItems
         } else {
-            searchURLComponents.queryItems?.append(contentsOf: queryItems)
+            queryURL.queryItems?.append(contentsOf: queryItems)
         }
         
-        guard let searchURL = searchURLComponents.url else {
-            return
-        }
+        fetchData(url: queryURL, completionHandler: completionHandler)
+    }
+    
+    static func fetchData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
+        guard let queryURL = url.url else { return }
         
-        var request = URLRequest(url: searchURL)
+        var request = URLRequest(url: queryURL)
         request.httpMethod = "GET"
         request.cachePolicy = .useProtocolCachePolicy
         
@@ -175,7 +177,7 @@ extension TMDBWrapper {
         }
         
         guard imageURL != nil else {
-            completionHandler(nil, FetchError.image("Couldn't generate movie image URL"))
+            completionHandler(nil, FetchError.image("Couldn't generate image URL"))
             return
         }
         
