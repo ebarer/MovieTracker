@@ -298,6 +298,7 @@ extension MovieDetailViewController {
                   let castDetailsVC = segue.destination as? CastDetailViewController
             else { return }
 
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
             castDetailsVC.castMember = cell.castMember
         } else if segue.identifier == "showPoster" {
             guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
@@ -312,12 +313,12 @@ extension MovieDetailViewController {
 extension MovieDetailViewController {
     @IBAction func trackMovie(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
-        print("\(movie?.title ?? "Unknown"): tracked = \(sender.isSelected)")
+        print("TEMP: \(movie?.title ?? "Unknown"): tracked = \(sender.isSelected)")
     }
     
     @IBAction func seenMovie(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
-        print("\(movie?.title ?? "Unknown"): seen = \(sender.isSelected)")
+        print("TEMP: \(movie?.title ?? "Unknown"): seen = \(sender.isSelected)")
         if sender.isSelected {
             actionTrack.alpha = 0.4
             actionTrack.isEnabled = false
@@ -328,7 +329,6 @@ extension MovieDetailViewController {
     }
     
     @IBAction func viewPoster(gestureRecognizer: UITapGestureRecognizer) {
-        print("View poster: \(movie?.title ?? "Unknown")")
         self.performSegue(withIdentifier: "showPoster", sender: self)
     }
 }
@@ -457,9 +457,12 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             let cell = tableView.dequeueReusableCell(withIdentifier: CastCell.reuseIdentifier, for: indexPath) as! CastCell
             cell.tintColor = self.tintColor
             cell.selectionStyle = .default
-            
+
             if let movie = movie, indexPath.item < movie.cast.count {
-                cell.set(castMember: movie.cast[indexPath.item], for: movie)
+                if cell.tag != movie.cast[indexPath.item].id {
+                    cell.tag = movie.cast[indexPath.item].id
+                    cell.set(index: indexPath.item, castMember: movie.cast[indexPath.item], for: movie)
+                }
             }
             
             return cell

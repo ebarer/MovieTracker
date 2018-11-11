@@ -46,8 +46,6 @@ class MovieTableViewCell: UITableViewCell {
         self.movieReleaseDate.text = dateString
         
         self.moviePoster.image = nil
-        
-        self.moviePoster.image = nil
         self.moviePoster.alpha = 0
         self.moviePoster.layer.masksToBounds = true
         self.moviePoster.layer.cornerRadius = 5
@@ -55,21 +53,24 @@ class MovieTableViewCell: UITableViewCell {
         self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
         movie.getPoster { (poster, error, id) in
-            guard let fetchID = id,
-                  fetchID == movie.id
-            else { return }
+            guard self.tag == movie.id else {
+                self.setImage(image: UIImage(color: UIColor.inactive))
+                return
+            }
             
             if error != nil && poster == nil {
                 print("Error: couldn't load poster for \(movie.title) - \(error!)")
-                self.moviePoster.image = UIImage(color: UIColor.inactive)
+                self.setImage(image: UIImage(color: UIColor.inactive))
             } else {
-                self.moviePoster.image = poster
-            }
-            
-            UIView.animate(withDuration: 0.5) {
-                self.moviePoster.alpha = 1.0
+                self.setImage(image: poster)
             }
         }
-        
+    }
+    
+    func setImage(image: UIImage?) {
+        self.moviePoster.image = image
+        UIView.animate(withDuration: 0.5) {
+            self.moviePoster.alpha = 1.0
+        }
     }
 }

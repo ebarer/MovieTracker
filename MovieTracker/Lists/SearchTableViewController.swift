@@ -18,21 +18,16 @@ class SearchTableViewController: UITableViewController {
         view.backgroundColor = UIColor.bg
 
         searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.placeholder = "Search Movies"
         searchController.searchBar.barStyle = .blackTranslucent
         searchController.searchBar.tintColor = UIColor.accent
         searchController.searchBar.keyboardAppearance = .dark
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-
-//        navigationItem.searchController = searchController
+        
+        navigationItem.titleView = searchController.searchBar
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        searchController.searchBar.setShowsCancelButton(false, animated: false)
-        navigationItem.titleView = searchController.searchBar
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -59,6 +54,10 @@ class SearchTableViewController: UITableViewController {
 // MARK: - Navigation
 
 extension SearchTableViewController {
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchController.searchBar.endEditing(true)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
@@ -78,9 +77,11 @@ extension SearchTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath) as! MovieTableViewCell
-        
         let movie = searchResults[indexPath.item]
-        cell.set(movie: movie)
+        if cell.tag != movie.id {
+            cell.tag = movie.id
+            cell.set(movie: movie)
+        }
         return cell
     }
     

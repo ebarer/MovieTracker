@@ -28,7 +28,7 @@ extension MovieCollectionViewCell {
 // MARK: - Configuration
 
 extension MovieCollectionViewCell {
-    func configure(with movie: Movie?) {
+    func set(movie: Movie?) {
         self.movieTitle.text = movie?.title
         
         self.moviePoster.image = nil
@@ -40,20 +40,25 @@ extension MovieCollectionViewCell {
         
         movie?.getPoster(width: .w342) { (poster, error, id) in
             guard let movieID = movie?.id,
-                  let fetchID = id,
-                  fetchID == movieID
-            else { return }
+                  self.tag == movieID
+            else {
+                self.setImage(image: UIImage(color: UIColor.inactive))
+                return
+            }
             
             if error != nil && poster == nil {
                 print("Error: couldn't load poster for \(movie?.title ?? "Unknown") - \(error!)")
-                self.moviePoster.image = UIImage(color: UIColor.inactive)
+                self.setImage(image: UIImage(color: UIColor.inactive))
             } else {
-                self.moviePoster.image = poster
+                self.setImage(image: poster)
             }
-            
-            UIView.animate(withDuration: 0.5) {
-                self.moviePoster.alpha = 1.0
-            }
+        }
+    }
+    
+    func setImage(image: UIImage?) {
+        self.moviePoster.image = image
+        UIView.animate(withDuration: 0.5) {
+            self.moviePoster.alpha = 1.0
         }
     }
 }

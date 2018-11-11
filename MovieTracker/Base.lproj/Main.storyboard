@@ -70,10 +70,7 @@
                                     <outlet property="moviePoster" destination="fjS-Md-Bjw" id="w4F-JB-45e"/>
                                     <outlet property="movieReleaseDate" destination="0Fw-Jt-gQh" id="EdX-b4-1uA"/>
                                     <outlet property="movieTitle" destination="7op-mX-xj2" id="sVY-ar-81T"/>
-                                    <segue destination="fVR-qT-4O4" kind="show" identifier="showDetail" id="G5K-e7-N0Z">
-                                        <segue key="commit" inheritsFrom="parent" id="tPf-TU-a2O"/>
-                                        <segue key="preview" inheritsFrom="commit" id="vmu-sE-ZSj"/>
-                                    </segue>
+                                    <segue destination="fVR-qT-4O4" kind="show" identifier="showDetail" id="G5K-e7-N0Z"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -739,7 +736,7 @@ Title</string>
         <scene sceneID="5nu-dP-di9">
             <objects>
                 <tableViewController id="AQj-ve-g54" customClass="SearchTableViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="5QK-yv-DGg">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="5QK-yv-DGg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -795,10 +792,7 @@ Title</string>
                                     <outlet property="moviePoster" destination="98d-eM-fdC" id="r1K-nU-8IJ"/>
                                     <outlet property="movieReleaseDate" destination="5nE-4o-UQJ" id="Ziw-Hg-rhK"/>
                                     <outlet property="movieTitle" destination="E0g-OU-HM2" id="Cew-JX-LlL"/>
-                                    <segue destination="fVR-qT-4O4" kind="show" identifier="showDetail" id="6mn-Er-PXe">
-                                        <segue key="commit" inheritsFrom="parent" id="5yo-wO-spf"/>
-                                        <segue key="preview" inheritsFrom="commit" id="aO1-GJ-yIP"/>
-                                    </segue>
+                                    <segue destination="fVR-qT-4O4" kind="show" identifier="showDetail" id="6mn-Er-PXe"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

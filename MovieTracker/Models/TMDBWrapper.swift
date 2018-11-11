@@ -226,12 +226,19 @@ extension TMDBWrapper {
         }
         
         URLSession.shared.dataTask(with: imageURL!) { (data, response, error) in
-            if let imageData = data {
-                let poster = UIImage(data: imageData)
-                
-                DispatchQueue.main.async {
-                    completionHandler(poster, nil)
+            DispatchQueue.main.async {
+                guard error == nil else {
+                    completionHandler(nil, error)
+                    return
                 }
+                
+                guard let imageData = data else {
+                    completionHandler(nil, FetchError.noData("Response didn't contain any data."))
+                    return
+                }
+                
+                let image = UIImage(data: imageData)
+                completionHandler(image, nil)
             }
         }.resume()
     }

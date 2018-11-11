@@ -195,7 +195,7 @@ class CastCell: UITableViewCell {
         self.selectedBackgroundView!.backgroundColor = UIColor.selection
     }
     
-    func set(castMember: Movie.Cast, for movie: Movie) {
+    func set(index: Int, castMember: Movie.Cast, for movie: Movie) {
         self.castMember = castMember
         
         nameLabel.text = castMember.name
@@ -220,31 +220,34 @@ class CastCell: UITableViewCell {
         profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
         let id = NSNumber(integerLiteral: castMember.id)
+//        print("[\(index)] DEBUG: Cast ID = \(castMember.id)")
         let cache = (UIApplication.shared.delegate as! AppDelegate).imageCache
         if let image = cache.object(forKey: id) as? UIImage {
-            self.profilePicture.image = image
-            
-            UIView.animate(withDuration: 0.5) {
-                self.profilePicture.alpha = 1.0
-            }
-        } else if let url = castMember.profilePicture {
-            movie.getCastPicture(id: castMember.id, url: url, completionHandler: { (image, error, fetchID) in
-                guard let fetchID = fetchID,
-                      fetchID == castMember.id
-                else { return }
+//            print("[\(index)] DEBUG: Loaded (cached) profile picture for \(castMember.name)!")
+            self.setImage(index: index, image: image)
+        } else {
+            movie.getCastPicture(id: castMember.id, url: castMember.profilePicture, completionHandler: { (image, error, fetchID) in
+                guard self.tag == castMember.id else {
+                    self.setImage(index: index, image: UIImage(color: UIColor.inactive))
+                    return
+                }
                 
                 if error != nil && image == nil {
-                    print("Error: couldn't load profile picture - \(error!)")
-                    self.profilePicture.image = UIImage(color: UIColor.inactive)
+//                    print("[\(index)] Error: couldn't load profile picture for \(castMember.name) - \(error!)")
+                    self.setImage(index: index, image: UIImage(color: UIColor.inactive))
                 } else {
-                    self.profilePicture.image = image
+//                    print("[\(index)] DEBUG: Loaded profile picture for \(castMember.name)!")
                     cache.setObject(image!, forKey: id)
-                }
-                
-                UIView.animate(withDuration: 0.5) {
-                    self.profilePicture.alpha = 1.0
+                    self.setImage(index: index, image: image)
                 }
             })
+        }
+    }
+    
+    func setImage(index: Int, image: UIImage?) {
+        self.profilePicture.image = image
+        UIView.animate(withDuration: 0.5) {
+            self.profilePicture.alpha = 1.0
         }
     }
 }

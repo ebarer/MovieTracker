@@ -106,7 +106,10 @@ class NowPlayingTableViewController: UITableViewController {
             return cell
         }
         
-        cell.set(movie: movie)
+        if cell.tag != movie.id {
+            cell.tag = movie.id
+            cell.set(movie: movie)
+        }
         return cell
     }
 
@@ -120,7 +123,7 @@ class NowPlayingTableViewController: UITableViewController {
         var actions = [UITableViewRowAction]()
         
         let addAction = UITableViewRowAction(style: UITableViewRowAction.Style.normal, title: "Add") { (action, indexPath) in
-            print(self.movies[self.sections[indexPath.section]]?[indexPath.item] ?? "Unknown movie")
+            print("TEMP: \(self.movies[self.sections[indexPath.section]]?[indexPath.item].description ?? "Unknown movie")")
         }
         
         addAction.backgroundColor = UIColor.accent

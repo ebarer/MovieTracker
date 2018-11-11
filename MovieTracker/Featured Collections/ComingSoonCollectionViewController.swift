@@ -63,14 +63,18 @@ extension ComingSoonCollectionViewController {
         }
         
         if indexPath.item < movies.count {
-            cell.configure(with: movies[indexPath.item])
+            if cell.tag != movies[indexPath.item].id {
+                cell.tag = movies[indexPath.item].id
+                cell.set(movie: movies[indexPath.item])
+            }
         } else {
-            cell.configure(with: nil)
+            cell.tag = 0
+            cell.set(movie: nil)
             
             fetchMovies {
                 guard indexPath.item < self.movies.count else { return }
-                
-                cell.configure(with: self.movies[indexPath.item])
+                cell.tag = self.movies[indexPath.item].id
+                cell.set(movie: self.movies[indexPath.item])
             }
         }
         

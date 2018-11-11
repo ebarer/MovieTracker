@@ -107,7 +107,7 @@ extension Movie {
         }
     }
     
-    func getCastPicture(id: Int, url: String, width: Movie.CastProfileSize = .w276, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
+    func getCastPicture(id: Int, url: String?, width: Movie.CastProfileSize = .w276, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
         TMDBWrapper.fetchImage(url: url, width: width) { (image, error) in
             completionHandler(image, error, id)
         }
