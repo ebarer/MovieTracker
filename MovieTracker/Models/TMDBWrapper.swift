@@ -364,21 +364,23 @@ extension TMDBWrapper {
         func certification() -> (String?, Date?) {
             let regionCode = NSLocale.current.regionCode ?? "US"
             
-            guard let regionReleases = self.releaseDates?.releases.filter({
-                $0.country == regionCode
-            })[0] else {
+            guard let releases = self.releaseDates?.releases else {
+                return (nil, nil)
+            }
+            
+            let filteredReleases = releases.filter({ $0.country == regionCode })
+            guard filteredReleases.count > 0 else {
                 return (nil, nil)
             }
 
-            var release = regionReleases.dates.filter({ $0.type == .Theatrical })
+            var release = filteredReleases[0].dates.filter({ $0.type == .Theatrical })
             if release.count < 1 {
-                release = regionReleases.dates.filter({ $0.type == .TheatricalLimited })
+                release = filteredReleases[0].dates.filter({ $0.type == .TheatricalLimited })
             }
             
             guard release.count > 0 else {
                 return (nil, nil)
             }
-            
             
             if !release[0].certification.isEmpty {
                 return (release[0].certification, release[0].releaseDate)
