@@ -173,7 +173,7 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
 
 class CastCell: UITableViewCell {
     static let reuseIdentifier = "castCell"
-    var castMember: Movie.Cast?
+    var person: Person?
 
     // MARK: - Outlets
     
@@ -195,13 +195,13 @@ class CastCell: UITableViewCell {
         self.selectedBackgroundView!.backgroundColor = UIColor.selection
     }
     
-    func set(index: Int, castMember: Movie.Cast, for movie: Movie) {
-        self.castMember = castMember
+    func set(index: Int, person: Person, for movie: Movie) {
+        self.person = person
         
-        nameLabel.text = castMember.name
+        nameLabel.text = person.name
 
-        if let role = castMember.role {
-            if castMember.type == .Actor {
+        if let role = person.role {
+            if person.type == .Cast {
                 let roleString = NSMutableAttributedString(string: "as \(role)", attributes: [.foregroundColor : self.tintColor])
                 roleString.addAttribute(.foregroundColor, value: UIColor.whiteFaded(a: 0.4), range: NSRange(location: 0, length: 2))
                 roleLabel.attributedText = roleString
@@ -219,28 +219,24 @@ class CastCell: UITableViewCell {
         profilePicture.layer.borderWidth = 0.5
         profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
-        let id = NSNumber(integerLiteral: castMember.id)
-//        print("[\(index)] DEBUG: Cast ID = \(castMember.id)")
+        let id = NSNumber(integerLiteral: person.id)
         let cache = (UIApplication.shared.delegate as! AppDelegate).imageCache
         if let image = cache.object(forKey: id) as? UIImage {
-//            print("[\(index)] DEBUG: Loaded (cached) profile picture for \(castMember.name)!")
             self.setImage(index: index, image: image)
         } else {
-            movie.getCastPicture(id: castMember.id, url: castMember.profilePicture, completionHandler: { (image, error, fetchID) in
-                guard self.tag == castMember.id else {
+            person.getPicture { (image, error, fetchID) in
+                guard self.tag == person.id else {
                     self.setImage(index: index, image: UIImage(color: UIColor.inactive))
                     return
                 }
                 
                 if error != nil && image == nil {
-//                    print("[\(index)] Error: couldn't load profile picture for \(castMember.name) - \(error!)")
                     self.setImage(index: index, image: UIImage(color: UIColor.inactive))
                 } else {
-//                    print("[\(index)] DEBUG: Loaded profile picture for \(castMember.name)!")
                     cache.setObject(image!, forKey: id)
                     self.setImage(index: index, image: image)
                 }
-            })
+            }
         }
     }
     

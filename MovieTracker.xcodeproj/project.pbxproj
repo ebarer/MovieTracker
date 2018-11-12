@@ -35,6 +35,8 @@
 		CEC19A0920C4BF68003BD653 /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */; };
 		CED3C39220CC9A6E0024D585 /* FeaturedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED3C39120CC9A6E0024D585 /* FeaturedViewController.swift */; };
 		CED3C39420CC9BD70024D585 /* ComingSoonCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED3C39320CC9BD70024D585 /* ComingSoonCollectionViewController.swift */; };
+		CEDA8BC121997F2A006BB3CD /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC021997F2A006BB3CD /* Person.swift */; };
+		CEDA8BC321997F71006BB3CD /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC221997F71006BB3CD /* String+Extension.swift */; };
 		CEEBB30D20CD27BF00353320 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */; };
 /* End PBXBuildFile section */
 
@@ -86,6 +88,8 @@
 		CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCollectionViewCell.swift; sourceTree = "<group>"; };
 		CED3C39120CC9A6E0024D585 /* FeaturedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedViewController.swift; sourceTree = "<group>"; };
 		CED3C39320CC9BD70024D585 /* ComingSoonCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoonCollectionViewController.swift; sourceTree = "<group>"; };
+		CEDA8BC021997F2A006BB3CD /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
+		CEDA8BC221997F71006BB3CD /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,6 +124,7 @@
 				CE78BD5920C087F2001E6DB6 /* MovieTracker.xcdatamodeld */,
 				CE1F627F20CFA65A0075B686 /* TMDBWrapper.swift */,
 				CE78BD8320C112D8001E6DB6 /* Movie.swift */,
+				CEDA8BC021997F2A006BB3CD /* Person.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 				CE59561120CA65840047BC39 /* UIView+Extension.swift */,
 				CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */,
 				CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */,
+				CEDA8BC221997F71006BB3CD /* String+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -358,6 +364,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE78BD8820C148B8001E6DB6 /* MovieTableViewCell.swift in Sources */,
+				CEDA8BC321997F71006BB3CD /* String+Extension.swift in Sources */,
 				CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */,
 				CE0ADBCD2197A96A00AB6442 /* PosterDetailViewController.swift in Sources */,
 				CE1F628020CFA65A0075B686 /* TMDBWrapper.swift in Sources */,
@@ -369,6 +376,7 @@
 				CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */,
 				CED3C39420CC9BD70024D585 /* ComingSoonCollectionViewController.swift in Sources */,
 				CEC19A0920C4BF68003BD653 /* MovieCollectionViewCell.swift in Sources */,
+				CEDA8BC121997F2A006BB3CD /* Person.swift in Sources */,
 				CE3AF2FB218C5A9A00EC4495 /* CastDetailViewController.swift in Sources */,
 				CEEBB30D20CD27BF00353320 /* UIButton+Extension.swift in Sources */,
 				CEC19A0720C4BF3E003BD653 /* NowPlayingCollectionViewController.swift in Sources */,

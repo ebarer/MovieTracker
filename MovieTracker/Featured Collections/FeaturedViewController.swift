@@ -24,12 +24,11 @@ extension FeaturedViewController {
     }
 }
 
-// MARK: - Search Controller Delegate
-
+// MARK: - UISearchResultsUpdating Delegate
+// TODO: Add search to main view
 extension FeaturedViewController: UISearchResultsUpdating {
-    // MARK: - UISearchResultsUpdating Delegate
     func updateSearchResults(for searchController: UISearchController) {
-        // TODO
+
     }
 }
 

@@ -9,23 +9,31 @@
 import UIKit
 
 class SearchTableViewController: UITableViewController {
-    var searchResults = [Movie]()
+    var movieResults = [Movie]()
+    var peopleResults = [Person]()
+    var scope: SearchScope = SearchScope.Movies
     let searchController = UISearchController(searchResultsController: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = UIColor.bg
 
+        // Setup search controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Movies"
+        searchController.searchBar.placeholder = scope.placeholder
         searchController.searchBar.barStyle = .blackTranslucent
         searchController.searchBar.tintColor = UIColor.accent
         searchController.searchBar.keyboardAppearance = .dark
         
-        navigationItem.titleView = searchController.searchBar
+        // Setup search scope bar
+        searchController.searchBar.scopeButtonTitles = SearchScope.titles
+        searchController.searchBar.delegate = self
+        
+//        navigationItem.titleView = searchController.searchBar
+        navigationItem.title = nil
+        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
     }
@@ -38,16 +46,6 @@ class SearchTableViewController: UITableViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         searchController.searchBar.resignFirstResponder()
-    }
-    
-    func noQuery() -> Bool {
-        return searchController.searchBar.text?.isEmpty ?? true
-    }
-    
-    func reloadData() {
-        // Check if we have any results
-        self.tableView.separatorStyle = (searchResults.count == 0) ? .none : .singleLine
-        self.tableView.reloadData()
     }
 }
 
@@ -63,7 +61,7 @@ extension SearchTableViewController {
             guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
             guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
             
-            movieDetailsVC.movie = searchResults[indexPath.item]
+            movieDetailsVC.movie = movieResults[indexPath.item]
         }
     }
 }
@@ -72,21 +70,125 @@ extension SearchTableViewController {
 
 extension SearchTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchResults.count
+        switch scope {
+        case .Movies:
+            return movieResults.count
+        case .People:
+            return peopleResults.count
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath) as! MovieTableViewCell
-        let movie = searchResults[indexPath.item]
-        if cell.tag != movie.id {
-            cell.tag = movie.id
-            cell.set(movie: movie)
+        var cell: UITableViewCell
+        switch scope {
+        case .Movies:
+            cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath)
+            let movie = movieResults[indexPath.item]
+            if cell.tag != movie.id {
+                cell.tag = movie.id
+                (cell as! MovieTableViewCell).set(movie: movie)
+            }
+        case .People:
+            // TODO: Dequeue person row
+            // TODO: Rename CastRow -> PersonRow
+            // TODO: Rename CastDetailVC -> PersonDetailVC
+            cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath)
+            cell.tag = 0
+            (cell as! MovieTableViewCell).movieTitle.text = "Actor"
         }
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 95.0
+    }
+    
+    func reloadData() {
+        // Check if we have any results
+        var results: Int
+        switch scope {
+        case .Movies:
+            results = movieResults.count
+        case .People:
+            results = peopleResults.count
+        }
+        
+        self.tableView.separatorStyle = (results == 0) ? .none : .singleLine
+        self.tableView.reloadData()
+    }
+}
+
+// MARK: - Search helper methods
+
+extension SearchTableViewController {
+    func movieSearch(query: String) {
+        Movie.search(query: query.lowercased(), page: 1) { (data, error, total) in
+            guard error == nil else {
+                print("Error: \(error!)")
+                return
+            }
+            
+            guard let newMovies = data else {
+                print("Error: unable to fetch movies")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.movieResults = newMovies
+                self.reloadData()
+            }
+        }
+    }
+    
+    func personSearch(query: String) {
+        Person.search(query: query.lowercased(), page: 1) { (data, error, total) in
+            guard error == nil else {
+                print("Error: \(error!)")
+                return
+            }
+            
+            guard let people = data else {
+                print("Error: unable to fetch movies")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.peopleResults = people
+                self.reloadData()
+            }
+        }
+    }
+    
+    func noQuery() -> Bool {
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    enum SearchScope: Int {
+        case Movies = 0
+        case People
+        
+        init(value: Int) {
+            switch value {
+            case 1:
+                self = .People
+            default:
+                self = .Movies
+            }
+        }
+        
+        static var titles: [String] {
+            return ["Movies", "People"]
+        }
+        
+        var placeholder: String {
+            switch self {
+            case .Movies:
+                return "Search for movies"
+            case .People:
+                return "Search for cast and crew"
+            }
+        }
     }
 }
 
@@ -94,29 +196,45 @@ extension SearchTableViewController {
 
 extension SearchTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        if let query = searchController.searchBar.text {
-            guard query.count > 0 else {
-                self.searchResults = []
-                self.reloadData()
-                return
-            }
-            
-            Movie.search(query: query.lowercased(), page: 1) { (data, error, total) in
-                guard error == nil else {
-                    print("Error: \(error!)")
-                    return
-                }
-                
-                guard let newMovies = data else {
-                    print("Error: unable to fetch movies")
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    self.searchResults = newMovies
-                    self.reloadData()
-                }
-            }
+        guard let query = searchController.searchBar.text,
+              query.count > 0
+        else {
+            self.movieResults = []
+            self.peopleResults = []
+            self.reloadData()
+            return
+        }
+        
+        switch scope {
+        case .Movies:
+            movieSearch(query: query)
+        case .People:
+            personSearch(query: query)
+        }
+    }
+}
+
+// MARK: - UISearchBar Delegate
+
+extension SearchTableViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        scope = SearchScope(value: selectedScope)
+        searchBar.placeholder = scope.placeholder
+        
+        guard let query = searchBar.text,
+              query.count > 0
+        else {
+            self.movieResults = []
+            self.peopleResults = []
+            self.reloadData()
+            return
+        }
+        
+        switch scope {
+        case .Movies:
+            movieSearch(query: query)
+        case .People:
+            personSearch(query: query)
         }
     }
 }

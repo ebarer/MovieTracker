@@ -41,9 +41,11 @@ class MovieTableViewCell: UITableViewCell {
         self.selectionColor = UIColor.selection
         
         self.movieTitle.text = movie.title
+        self.movieTitle.alpha = 0
         
         let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
         self.movieReleaseDate.text = dateString
+        self.movieReleaseDate.alpha = 0
         
         self.moviePoster.image = nil
         self.moviePoster.alpha = 0
@@ -73,7 +75,9 @@ class MovieTableViewCell: UITableViewCell {
     func setImage(image: UIImage?) {
         self.moviePoster.image = image
         UIView.animate(withDuration: 0.5) {
-            self.moviePoster.alpha = 1.0
+            self.moviePoster.alpha = 1
+            self.movieTitle.alpha = 1
+            self.movieReleaseDate.alpha = 1
         }
     }
 }

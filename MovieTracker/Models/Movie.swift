@@ -1,5 +1,5 @@
 //
-//  MovieGluAPI.swift
+//  Movie.swift
 //  MovieTracker
 //
 //  Created by Elliot Barer on 5/31/18.
@@ -23,7 +23,7 @@ class Movie: NSObject {
     var genres: [String]?
     var trailers: [String]?
     var bonusCredits: Credits = Credits(during: false, after: false)
-    var cast: [Cast]
+    var team: [Person]
     var tracked: Bool = false
     var watched: Bool = false
     
@@ -31,7 +31,7 @@ class Movie: NSObject {
         self.id = 0
         self.title = ""
         self.releaseDate = Date()
-        self.cast = [Cast]()
+        self.team = [Person]()
         super.init()
     }
     
@@ -106,12 +106,6 @@ extension Movie {
             completionHandler(image, error, self.id)
         }
     }
-    
-    func getCastPicture(id: Int, url: String?, width: Movie.CastProfileSize = .w276, completionHandler: @escaping (UIImage?, Error?, Int?) -> Void) {
-        TMDBWrapper.fetchImage(url: url, width: width) { (image, error) in
-            completionHandler(image, error, id)
-        }
-    }
 }
 
 // MARK: - Subclasses
@@ -135,27 +129,6 @@ extension Movie {
             return (self.during, self.after)
         }
     }
-    
-    struct Cast {
-        var id: Int
-        var type: CastType
-        var name: String
-        var role: String?
-        var profilePicture: String?
-        
-        init(id: Int, name: String, role: String?, pic: String?, type: CastType) {
-            self.id = id
-            self.type = type
-            self.name = name
-            self.role = role
-            self.profilePicture = pic
-        }
-    }
-    
-    enum CastType {
-        case Actor
-        case Crew
-    }
 }
 
 // MARK: - Image Size Enumerations
@@ -177,22 +150,5 @@ extension Movie {
         case w780  = "w780"
         case w1280 = "w1280"
         case orig  = "original"
-    }
-    
-    enum CastProfileSize: String, ImageSize {
-        case w276 = "w276_and_h350_face"
-    }
-}
-
-extension String {
-    func shorten() -> String {
-        switch self {
-        case "Science Fiction":
-            return "Sci-Fi"
-        case "Documentary":
-            return "Doc"
-        default:
-            return self
-        }
     }
 }

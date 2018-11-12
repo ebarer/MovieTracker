@@ -9,7 +9,7 @@
 import UIKit
 
 class CastDetailViewController: UIViewController {
-    var castMember: Movie.Cast?
+    var castMember: Person?
     @IBOutlet var nameLabel: UILabel!
     
     override func viewDidLoad() {

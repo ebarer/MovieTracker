@@ -299,7 +299,7 @@ extension MovieDetailViewController {
             else { return }
 
             self.navigationController?.setNavigationBarHidden(false, animated: false)
-            castDetailsVC.castMember = cell.castMember
+            castDetailsVC.castMember = cell.person
         } else if segue.identifier == "showPoster" {
             guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
             posterDetailsVC.tintColor = self.tintColor
@@ -413,7 +413,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (section == SECTION_HEADER) ? ROWS_HEADER : movie?.cast.count ?? 0
+        return (section == SECTION_HEADER) ? ROWS_HEADER : movie?.team.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -458,10 +458,10 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             cell.tintColor = self.tintColor
             cell.selectionStyle = .default
 
-            if let movie = movie, indexPath.item < movie.cast.count {
-                if cell.tag != movie.cast[indexPath.item].id {
-                    cell.tag = movie.cast[indexPath.item].id
-                    cell.set(index: indexPath.item, castMember: movie.cast[indexPath.item], for: movie)
+            if let movie = movie, indexPath.item < movie.team.count {
+                if cell.tag != movie.team[indexPath.item].id {
+                    cell.tag = movie.team[indexPath.item].id
+                    cell.set(index: indexPath.item, person: movie.team[indexPath.item], for: movie)
                 }
             }
             
