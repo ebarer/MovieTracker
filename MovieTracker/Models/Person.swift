@@ -15,6 +15,10 @@ class Person: NSObject {
     var type: PersonType?
     var role: String?
     var profilePicture: String?
+    var birthday: Date?
+    var imdbID: String?
+    var bio: String?
+    var credits: [Movie]?
     
     enum PersonType {
         case Cast
@@ -33,11 +37,19 @@ class Person: NSObject {
         self.role = role
         self.profilePicture = pic
     }
+    
+    override var description: String {
+        return "[\(id)] \(name)"
+    }
 }
 
 // MARK: - API Methods
 
 extension Person {
+    static func get(id: Int, completionHandler: @escaping (Person?, Error?) -> Void) {
+        TMDBWrapper.getPerson(id: id, completionHandler: completionHandler)
+    }
+    
     static func search(query: String, page: Int, completionHandler: @escaping ([Person]?, Error?, (results: Int, pages: Int)?) -> Void) {
         TMDBWrapper.searchForPeople(query: query, page: page, completionHandler: completionHandler)
     }

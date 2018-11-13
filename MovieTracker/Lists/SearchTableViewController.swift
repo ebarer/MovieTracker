@@ -58,10 +58,17 @@ extension SearchTableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
-            guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
-            
-            movieDetailsVC.movie = movieResults[indexPath.item]
+            guard let cell = sender as? MovieTableViewCell,
+                  let movie = cell.movie,
+                  let movieDetailsVC = segue.destination as? MovieDetailViewController
+            else { return }
+            movieDetailsVC.movie = movie
+        } else if segue.identifier == "showPerson" {
+            guard let cell = sender as? PersonTableViewCell,
+                  let person = cell.person,
+                  let personDetailsVC = segue.destination as? PersonDetailViewController
+            else { return }
+            personDetailsVC.person = person
         }
     }
 }
@@ -89,19 +96,24 @@ extension SearchTableViewController {
                 (cell as! MovieTableViewCell).set(movie: movie)
             }
         case .People:
-            // TODO: Dequeue person row
-            // TODO: Rename CastRow -> PersonRow
-            // TODO: Rename CastDetailVC -> PersonDetailVC
-            cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath)
-            cell.tag = 0
-            (cell as! MovieTableViewCell).movieTitle.text = "Actor"
+            cell = tableView.dequeueReusableCell(withIdentifier: PersonTableViewCell.reuseIdentifier, for: indexPath)
+            let person = peopleResults[indexPath.item]
+            if cell.tag != person.id {
+                cell.tag = person.id
+                (cell as! PersonTableViewCell).set(person: person)
+            }
         }
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 95.0
+        switch scope {
+        case .Movies:
+            return 95.0
+        case .People:
+            return 65.0
+        }
     }
     
     func reloadData() {

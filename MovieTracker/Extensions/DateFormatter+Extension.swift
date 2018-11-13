@@ -8,7 +8,18 @@
 
 import Foundation
 
+extension Date {
+    func toString() -> String {
+        return DateFormatter.detailPresentation.string(from: self)
+    }
+}
+
 extension DateFormatter {
+    enum DateFormats {
+        case iso8601DAw
+        case iso8601DTw
+    }
+    
     public static var iso8601DAw: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"

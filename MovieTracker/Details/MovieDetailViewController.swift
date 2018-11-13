@@ -12,7 +12,7 @@ class MovieDetailViewController: UIViewController {
     // Constants
     let NUM_SECTIONS = 2
     let SECTION_HEADER = 0
-    let SECTION_CAST = 1
+    let SECTION_STAFF = 1
     let ROWS_HEADER = 2
     
     // Properties
@@ -207,7 +207,7 @@ extension MovieDetailViewController {
 
         self.movieTitle.text = movie.title
         
-        let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
+        let dateString = movie.releaseDate?.toString() ?? "Unknown"
         let duration = movie.duration ?? "Unknown"
         self.movieDescription.text = "\(dateString)  •  \(duration)"
         self.tableView.reloadData()
@@ -279,7 +279,7 @@ extension MovieDetailViewController {
         self.movieDescription.textColor = self.tintColor
         self.actionTrack.tintColor = self.tintColor
         self.actionSeen.tintColor = self.tintColor
-        self.tableView.reloadSections([SECTION_CAST], with: .automatic)
+        self.tableView.reloadSections([SECTION_STAFF], with: .automatic)
     }
     
     @objc func imageTimeout() {
@@ -293,13 +293,14 @@ extension MovieDetailViewController {
 
 extension MovieDetailViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showCast" {
-            guard let cell = sender as? CastCell,
-                  let castDetailsVC = segue.destination as? CastDetailViewController
+        if segue.identifier == "showPerson" {
+            guard let cell = sender as? PersonTableViewCell,
+                  let personDetailsVC = segue.destination as? PersonDetailViewController
             else { return }
 
             self.navigationController?.setNavigationBarHidden(false, animated: false)
-            castDetailsVC.castMember = cell.person
+            personDetailsVC.tintColor = self.tintColor
+            personDetailsVC.person = cell.person
         } else if segue.identifier == "showPoster" {
             guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
             posterDetailsVC.tintColor = self.tintColor
@@ -405,7 +406,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case SECTION_CAST:
+        case SECTION_STAFF:
             return "Cast & Crew"
         default:
             return nil
@@ -427,7 +428,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     func heightForRow(indexPath: IndexPath) -> CGFloat {
         if indexPath == IndexPath(item: 0, section: SECTION_HEADER) {
             return 100.0
-        } else if indexPath.section == SECTION_CAST {
+        } else if indexPath.section == SECTION_STAFF {
             return 65.0
         } else {
             return UITableView.automaticDimension
@@ -453,15 +454,15 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             return cell
         }
         // Detail cell
-        else if indexPath.section == SECTION_CAST {
-            let cell = tableView.dequeueReusableCell(withIdentifier: CastCell.reuseIdentifier, for: indexPath) as! CastCell
+        else if indexPath.section == SECTION_STAFF {
+            let cell = tableView.dequeueReusableCell(withIdentifier: PersonTableViewCell.reuseIdentifier, for: indexPath) as! PersonTableViewCell
             cell.tintColor = self.tintColor
             cell.selectionStyle = .default
 
             if let movie = movie, indexPath.item < movie.team.count {
                 if cell.tag != movie.team[indexPath.item].id {
                     cell.tag = movie.team[indexPath.item].id
-                    cell.set(index: indexPath.item, person: movie.team[indexPath.item], for: movie)
+                    cell.set(person: movie.team[indexPath.item])
                 }
             }
             

@@ -80,7 +80,6 @@ class PosterDetailViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @IBAction func dismissView() {
-//        self.modalTransitionStyle = .coverVertical
         self.dismiss(animated: true, completion: nil)
     }
     

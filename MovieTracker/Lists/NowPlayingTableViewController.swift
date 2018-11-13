@@ -31,13 +31,25 @@ class NowPlayingTableViewController: UITableViewController {
             }
             
             // Split data into dictionary and sort
-            var movieDict = Dictionary(grouping: newMovies, by: { Calendar.current.dateComponents([.year, .month], from: $0.releaseDate) })
+            var movieDict = Dictionary(grouping: newMovies, by: { (movie) -> DateComponents in
+                guard let releaseDate = movie.releaseDate else {
+                    // TODO: Fix this case, though it should never happen,
+                    // coming soon movies inherently have a release date
+                    return Calendar.current.dateComponents([.year, .month], from: Date())
+                }
+                return Calendar.current.dateComponents([.year, .month], from: releaseDate)
+            })
+
             let months = movieDict.keys.sorted { (a, b) -> Bool in
                 return a.year! > b.year! ? false : a.month! < b.month!
             }
             
             for key in months {
-                movieDict[key]?.sort { $0.releaseDate.compare($1.releaseDate) == .orderedAscending }
+                movieDict[key]?.sort {
+                    guard let releaseA = $0.releaseDate else { return false }
+                    guard let releaseB = $1.releaseDate else { return true }
+                    return releaseA.compare(releaseB) == .orderedAscending
+                }
             }
             
             DispatchQueue.main.async {

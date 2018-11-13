@@ -13,7 +13,9 @@ class TMDBWrapper {
     private static let imageBaseURL = "https://image.tmdb.org/t/p"
     private static let apiVersion = "/3"
     private static let apiKey = "da99299f02cd39e2736c97d08b459731"
-    private static let castLimit = 9
+    private static let staffLimit = 10
+    private static let regionCode = NSLocale.current.regionCode ?? "US"
+    private static let languageCode = NSLocale.current.languageCode ?? "en"
     
     // Keywords to identify during/after credit extras
     private static let bonusKeywords = ["during" : 179431, "after" : 179430]
@@ -155,6 +157,30 @@ extension TMDBWrapper {
         }
     }
     
+    static func getPerson(id: Int, completionHandler: @escaping (Person?, Error?) -> Void) {
+        let appendString = "movie_credits"
+        var searchURLComponents = URLComponents(string: self.baseURL)!
+        searchURLComponents.path = "\(self.apiVersion)/person/\(id)"
+        searchURLComponents.queryItems = [
+            URLQueryItem(name: "append_to_response", value: appendString),
+        ]
+        
+        self.fetchPersonData(url: searchURLComponents) { (data, error) in
+            guard error == nil, let data = data else {
+                completionHandler(nil, error)
+                return
+            }
+            
+            do {
+                let personRaw = try decoder.decode(PersonRaw.self, from: data)
+                let person = self.translate(person: personRaw)
+                completionHandler(person, nil)
+            } catch {
+                completionHandler(nil, FetchError.decode("Couldn't decode JSON data: \(error)"))
+            }
+        }
+    }
+    
     static func searchForPeople(query: String, page: Int, completionHandler: @escaping ([Person]?, Error?, (results: Int, pages: Int)?) -> Void) {
         guard page > 0 else {
             completionHandler(nil, FetchError.decode("Invalid page number (index starts at 1)."), nil)
@@ -173,7 +199,7 @@ extension TMDBWrapper {
             URLQueryItem(name: "page", value: String(page))
         ]
         
-        self.fetchMovieData(url: searchURLComponents) { (data, error) in
+        self.fetchPersonData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error, nil)
                 return
@@ -194,8 +220,6 @@ extension TMDBWrapper {
 
 extension TMDBWrapper {
     static func fetchMovieData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
-        let regionCode = NSLocale.current.regionCode ?? "US"
-        let languageCode = NSLocale.current.languageCode ?? "en"
         
         let queryItems = [
             URLQueryItem(name: "api_key", value: apiKey),
@@ -216,10 +240,27 @@ extension TMDBWrapper {
         fetchData(url: queryURL, completionHandler: completionHandler)
     }
     
+    static func fetchPersonData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
+        let queryItems = [
+            URLQueryItem(name: "api_key", value: apiKey),
+            URLQueryItem(name: "include_adult", value: "false"),
+            URLQueryItem(name: "with_original_language", value: languageCode),
+            URLQueryItem(name: "language", value: "\(languageCode)-\(regionCode)"),
+            URLQueryItem(name: "region", value: regionCode)
+        ]
+        
+        var queryURL = url
+        if queryURL.queryItems == nil {
+            queryURL.queryItems = queryItems
+        } else {
+            queryURL.queryItems?.append(contentsOf: queryItems)
+        }
+        
+        fetchData(url: queryURL, completionHandler: completionHandler)
+    }
+    
     static func fetchData(url: URLComponents, completionHandler: @escaping (Data?, Error?) -> Void) {
         guard let queryURL = url.url else { return }
-        
-        print("Debug: \(queryURL)")
         
         var request = URLRequest(url: queryURL)
         request.httpMethod = "GET"
@@ -283,7 +324,7 @@ extension TMDBWrapper {
 // MARK: - Local JSON Fetch
 
 extension TMDBWrapper {
-    static func fetchLocalData(url: String, completionHandler: @escaping (Data?, Error?) -> Void) {
+    private static func fetchLocalData(url: String, completionHandler: @escaping (Data?, Error?) -> Void) {
         guard let path = Bundle.main.path(forResource: url, ofType: "json") else {
             completionHandler(nil, FetchError.noData("Invalid JSON file"))
             return
@@ -298,7 +339,7 @@ extension TMDBWrapper {
         }
     }
     
-    static func fetchLocalImage(url: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
+    private static func fetchLocalImage(url: String?, width: ImageSize, completionHandler: @escaping (UIImage?, Error?) -> Void) {
         guard let url = url else {
             completionHandler(nil, FetchError.image("No image URL supplied"))
             return
@@ -375,6 +416,12 @@ extension TMDBWrapper {
         let person = Person(id: p.id, name: p.name)
         person.popularity = p.popularity
         person.profilePicture = p.profilePicture
+        person.birthday = p.birthday
+        person.bio = p.biography
+        person.imdbID = p.imdbID
+        
+        person.credits = p.credits()
+        
         return person
     }
 }
@@ -395,10 +442,10 @@ extension TMDBWrapper {
         }
     }
     
-    struct MovieRaw: Codable {
+    private struct MovieRaw: Codable {
         var id: Int
         var title: String
-        var releaseDate: Date
+        var releaseDate: Date?
         var overview: String?
         var poster: String?
         var background: String?
@@ -488,9 +535,11 @@ extension TMDBWrapper {
                                     type:   .Crew)
                 team.append(member)
             }
+
             
+            // TODO: Determine good number of cast to display
+            let castLimit = staffLimit - team.count
             for (index, person) in teamRaw.cast.enumerated() {
-                // TODO: Determine good number of cast to display
                 if index >= castLimit { break }
                 let member = Person(id:     person.id,
                                     name:   person.name,
@@ -621,16 +670,68 @@ extension TMDBWrapper {
         }
     }
     
-    struct PersonRaw: Codable {
+    private struct PersonRaw: Codable {
         var id: Int
         var name: String
         var popularity: Float
         var profilePicture: String?
-//        var knownFor: [MovieRaw]
+        var birthday: Date?
+        var biography: String?
+        var imdbID: String?
+        var test: String?
+        var creditsRaw: CreditsRaw?
         
-        enum CodingKeys : String, CodingKey {
+        func credits() -> [Movie] {
+            var credits = [Movie]()
+            
+            guard let creditsRaw = self.creditsRaw else {
+                return credits
+            }
+            
+            for movie in creditsRaw.cast {
+                let credit = Movie(id: movie.id, title: movie.title)
+                credit.poster = movie.poster
+                if let releaseDateString = movie.releaseDateString {
+                    if releaseDateString.isEmpty == false {
+                        credit.releaseDate = releaseDateString.toDate(format: .iso8601DAw)
+                    }
+                }
+                
+                credits.append(credit)
+            }
+
+            return credits.sorted {
+                guard let releaseA = $0.releaseDate else { return true }
+                guard let releaseB = $1.releaseDate else { return false }
+                return releaseA.compare(releaseB) == .orderedDescending
+            }
+        }
+        
+        enum CodingKeys: String, CodingKey {
             case id, name, popularity
+            case birthday, biography
+            case imdbID = "imdb_id"
+            case creditsRaw = "movie_credits"
             case profilePicture = "profile_path"
+        }
+        
+        struct CreditsRaw: Codable {
+            var cast: [MovieCreditRaw]
+            var crew: [MovieCreditRaw]
+            
+            struct MovieCreditRaw: Codable {
+                var id: Int
+                var title: String
+                var releaseDateString: String?
+                var overview: String?
+                var poster: String?
+                
+                enum CodingKeys: String, CodingKey {
+                    case id, title, overview
+                    case releaseDateString = "release_date"
+                    case poster = "poster_path"
+                }
+            }
         }
     }
     

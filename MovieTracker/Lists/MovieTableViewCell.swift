@@ -10,6 +10,7 @@ import UIKit
 
 class MovieTableViewCell: UITableViewCell {
     static let reuseIdentifier = "movieCell"
+    var movie: Movie?
 
     // MARK: - Outlets
     
@@ -21,38 +22,27 @@ class MovieTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
-    @IBInspectable var selectionColor: UIColor = .gray {
-        didSet {
-            let view = UIView()
-            view.backgroundColor = selectionColor
-            selectedBackgroundView = view
-        }
+        
+        // Setup seperator inset = separatorInset.left + moviePoster.frame.width + 10
+        separatorInset = UIEdgeInsets(top: 0, left: 78, bottom: 0, right: 0)
+        
+        // Set selection color
+        self.selectedBackgroundView = UIView(frame: self.frame)
+        self.selectedBackgroundView!.backgroundColor = UIColor.selection
     }
     
     func set(movie: Movie) {
-        self.backgroundColor = UIColor.bg
-        self.separatorInset = UIEdgeInsets(top: 0, left: 80.0, bottom: 0, right: 0)
-        self.selectionColor = UIColor.selection
+        self.movie = movie
         
-        self.movieTitle.text = movie.title
-        self.movieTitle.alpha = 0
+        movieTitle.text = movie.title
+        movieReleaseDate.text = movie.releaseDate?.toString() ?? "Unknown"
         
-        let dateString = DateFormatter.detailPresentation.string(from: movie.releaseDate)
-        self.movieReleaseDate.text = dateString
-        self.movieReleaseDate.alpha = 0
-        
-        self.moviePoster.image = nil
-        self.moviePoster.alpha = 0
-        self.moviePoster.layer.masksToBounds = true
-        self.moviePoster.layer.cornerRadius = 5
-        self.moviePoster.layer.borderWidth = 0.5
-        self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
+        moviePoster.image = nil
+        moviePoster.alpha = 0
+        moviePoster.layer.masksToBounds = true
+        moviePoster.layer.cornerRadius = 5
+        moviePoster.layer.borderWidth = 0.5
+        moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
         
         // TODO: Prevent timeout when searching
         // Log each outgoing call, ensure there
@@ -76,8 +66,6 @@ class MovieTableViewCell: UITableViewCell {
         self.moviePoster.image = image
         UIView.animate(withDuration: 0.5) {
             self.moviePoster.alpha = 1
-            self.movieTitle.alpha = 1
-            self.movieReleaseDate.alpha = 1
         }
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 class Movie: NSObject {
     var id: Int
     var title: String
-    var releaseDate: Date
+    var releaseDate: Date?
     var overview: String?
     var poster: String?
     var background: String?
@@ -30,7 +30,6 @@ class Movie: NSObject {
     override init() {
         self.id = 0
         self.title = ""
-        self.releaseDate = Date()
         self.team = [Person]()
         super.init()
     }
@@ -42,7 +41,7 @@ class Movie: NSObject {
     }
     
     override var description: String {
-        return "[\(id)] \(title) - \(releaseDate) - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
+        return "[\(id)] \(title) - \(releaseDate?.toString() ?? "Unknown") - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
     }
 
     var duration: String? {
