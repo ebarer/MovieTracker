@@ -688,17 +688,19 @@ extension TMDBWrapper {
                 return credits
             }
             
-            for movie in creditsRaw.cast {
-                let credit = Movie(id: movie.id, title: movie.title)
-                credit.poster = movie.poster
-                if let releaseDateString = movie.releaseDateString {
-                    if releaseDateString.isEmpty == false {
-                        credit.releaseDate = releaseDateString.toDate(format: .iso8601DAw)
+            for collection in [creditsRaw.cast, creditsRaw.crew] {
+                for movie in collection {
+                    let credit = Movie(id: movie.id, title: movie.title)
+                    credit.poster = movie.poster
+                    if let releaseDateString = movie.releaseDateString {
+                        if releaseDateString.isEmpty == false {
+                            credit.releaseDate = releaseDateString.toDate(format: .iso8601DAw)
+                        }
                     }
+                    
+                    credits.append(credit)
                 }
-                
-                credits.append(credit)
-            }
+        }
 
             return credits.sorted {
                 guard let releaseA = $0.releaseDate else { return true }

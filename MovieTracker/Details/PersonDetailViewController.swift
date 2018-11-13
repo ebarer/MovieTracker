@@ -15,6 +15,7 @@ class PersonDetailViewController: UIViewController {
     var tintColor: UIColor?
     
     // MARK: - Outlets
+    @IBOutlet var profilePicture: UIImageView!
     @IBOutlet var nameLabel: UILabel!
 }
 
@@ -26,6 +27,7 @@ extension PersonDetailViewController {
         
         guard let person = person else { return }
         retrieveData(for: person)
+        setupView()
 
         navigationController?.navigationBar.tintColor = self.tintColor ?? UIColor.accent
     }
@@ -34,6 +36,12 @@ extension PersonDetailViewController {
 // MARK: - View Methods
 
 extension PersonDetailViewController {
+    func setupView() {
+        // Setup table
+//        backgroundAI.startAnimating()
+//        posterAI.startAnimating()
+    }
+    
     func retrieveData(for person: Person) {
         Person.get(id: person.id) { (person, error) in
             guard error == nil, let person = person else {
@@ -45,6 +53,7 @@ extension PersonDetailViewController {
                 print("Fetched: \(person)")
                 self.person = person
                 self.populateData()
+                self.getImages()
             }
         }
     }
@@ -72,5 +81,24 @@ extension PersonDetailViewController {
             populated = true
         }
     }
-
+    
+    func getImages() {
+        guard let person = self.person else { return }
+        
+        person.getPicture(width: .w276) { (image, error, _) in
+            if error != nil && image == nil {
+                print("Error: couldn't load profile picture - \(error!)")
+                self.profilePicture.image = UIImage(color: UIColor.inactive)
+            } else {
+                self.profilePicture.image = image
+            }
+            
+            self.profilePicture.layer.masksToBounds = true
+            self.profilePicture.layer.cornerRadius = self.profilePicture.frame.width / 2
+            self.profilePicture.layer.borderWidth = 0.5
+            self.profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
+//            self.posterAI.stopAnimating()
+        }
+    }
+    
 }
