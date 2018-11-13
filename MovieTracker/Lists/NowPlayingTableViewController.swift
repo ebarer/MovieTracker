@@ -148,7 +148,7 @@ class NowPlayingTableViewController: UITableViewController {
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
+        if segue.identifier == "showMovie" {
             guard let indexPath = self.tableView.indexPathForSelectedRow else { return }
             guard let movieDetailsVC = segue.destination as? MovieDetailViewController else { return }
             

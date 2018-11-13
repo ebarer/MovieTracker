@@ -682,12 +682,11 @@ extension TMDBWrapper {
         var creditsRaw: CreditsRaw?
         
         func credits() -> [Movie] {
-            var credits = [Movie]()
-            
             guard let creditsRaw = self.creditsRaw else {
-                return credits
+                return []
             }
             
+            var credits = Set<Movie>()
             for collection in [creditsRaw.cast, creditsRaw.crew] {
                 for movie in collection {
                     let credit = Movie(id: movie.id, title: movie.title)
@@ -697,11 +696,12 @@ extension TMDBWrapper {
                             credit.releaseDate = releaseDateString.toDate(format: .iso8601DAw)
                         }
                     }
-                    
-                    credits.append(credit)
-                }
-        }
 
+                    // TODO: Need to prevent duplicate entries
+                    credits.insert(credit)
+                }
+            }
+            
             return credits.sorted {
                 guard let releaseA = $0.releaseDate else { return true }
                 guard let releaseB = $1.releaseDate else { return false }

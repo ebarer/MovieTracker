@@ -107,6 +107,18 @@ extension Movie {
     }
 }
 
+// MARK - Equatable + Hashable
+
+extension Movie {
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    override var hash: Int {
+        return self.id
+    }
+}
+
 // MARK: - Subclasses
 
 extension Movie {

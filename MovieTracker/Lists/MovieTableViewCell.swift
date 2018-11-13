@@ -23,8 +23,9 @@ class MovieTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        // Setup seperator inset = separatorInset.left + moviePoster.frame.width + 10
-        separatorInset = UIEdgeInsets(top: 0, left: 78, bottom: 0, right: 0)
+        // Setup seperator inset = leftInset + picture + margin
+        let leftInset = separatorInset.left + moviePoster.frame.width + 12
+        separatorInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: 0)
         
         // Set selection color
         self.selectedBackgroundView = UIView(frame: self.frame)

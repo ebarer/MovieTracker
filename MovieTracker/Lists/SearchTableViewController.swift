@@ -57,7 +57,7 @@ extension SearchTableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
+        if segue.identifier == "showMovie" {
             guard let cell = sender as? MovieTableViewCell,
                   let movie = cell.movie,
                   let movieDetailsVC = segue.destination as? MovieDetailViewController

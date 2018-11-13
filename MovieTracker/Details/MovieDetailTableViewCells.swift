@@ -8,8 +8,8 @@
 
 import UIKit
 
-class OverviewCell: UITableViewCell {
-    static let reuseIdentifier = "overviewCell"
+class MovieOverviewCell: UITableViewCell {
+    static let reuseIdentifier = "movieOverviewCell"
     
     // MARK: - Outlets
     

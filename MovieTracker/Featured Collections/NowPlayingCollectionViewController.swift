@@ -109,7 +109,7 @@ extension NowPlayingCollectionViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
+        if segue.identifier == "showMovie" {
             guard let cell = sender as? UICollectionViewCell,
                   let indexPath = self.collectionView?.indexPath(for: cell),
                   let movieDetailsVC = segue.destination as? MovieDetailViewController

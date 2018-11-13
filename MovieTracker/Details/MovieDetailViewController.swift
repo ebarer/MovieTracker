@@ -142,7 +142,7 @@ extension MovieDetailViewController {
         // Configure nav bar
         navBar.alpha = 0
         navItem.title = movie?.title
-        navigationItem.title = movie?.title
+        navigationItem.title = ""
         
         backgroundAI.startAnimating()
         posterAI.startAnimating()
@@ -289,26 +289,6 @@ extension MovieDetailViewController {
     }
 }
 
-// MARK: - Navigation
-
-extension MovieDetailViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showPerson" {
-            guard let cell = sender as? PersonTableViewCell,
-                  let personDetailsVC = segue.destination as? PersonDetailViewController
-            else { return }
-
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
-            personDetailsVC.tintColor = self.tintColor
-            personDetailsVC.person = cell.person
-        } else if segue.identifier == "showPoster" {
-            guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
-            posterDetailsVC.tintColor = self.tintColor
-            posterDetailsVC.movie = self.movie
-        }
-    }
-}
-
 // MARK: - Movie Actions
 
 extension MovieDetailViewController {
@@ -401,7 +381,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == SECTION_HEADER) ? 0.0 : 45.0
+        return (section == SECTION_HEADER) ? 0.01 : 45.0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -446,10 +426,8 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
         }
         // Overview cell
         else if indexPath == IndexPath(item: 1, section: SECTION_HEADER) {
-            let cell = tableView.dequeueReusableCell(withIdentifier: OverviewCell.reuseIdentifier, for: indexPath) as! OverviewCell
-            cell.separatorInset = UIEdgeInsets.zero
+            let cell = tableView.dequeueReusableCell(withIdentifier: MovieOverviewCell.reuseIdentifier, for: indexPath) as! MovieOverviewCell
             cell.selectionStyle = .none
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 150, bottom: 0, right: 0)
             cell.set(overview: movie?.overview)
             return cell
         }
@@ -460,9 +438,10 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             cell.selectionStyle = .default
 
             if let movie = movie, indexPath.item < movie.team.count {
-                if cell.tag != movie.team[indexPath.item].id {
-                    cell.tag = movie.team[indexPath.item].id
-                    cell.set(person: movie.team[indexPath.item])
+                let person = movie.team[indexPath.item]
+                if cell.tag != person.id {
+                    cell.tag = person.id
+                    cell.set(person: person)
                 }
             }
             
@@ -479,7 +458,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // Handle overview text expansion
         if indexPath == IndexPath(item: 1, section: SECTION_HEADER) {
-            if let cell = tableView.cellForRow(at: indexPath) as? OverviewCell {
+            if let cell = tableView.cellForRow(at: indexPath) as? MovieOverviewCell {
                 cell.setSelected(false, animated: false)
                 cell.overviewLabel.numberOfLines =
                     (cell.overviewLabel.numberOfLines == 0) ? 5 : 0
@@ -487,6 +466,26 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
                 tableView.beginUpdates()
                 tableView.endUpdates()
             }
+        }
+    }
+}
+
+// MARK: - Navigation
+
+extension MovieDetailViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showPerson" {
+            guard let cell = sender as? PersonTableViewCell,
+                let personDetailsVC = segue.destination as? PersonDetailViewController
+                else { return }
+            
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
+            personDetailsVC.tintColor = self.tintColor
+            personDetailsVC.person = cell.person
+        } else if segue.identifier == "showPoster" {
+            guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
+            posterDetailsVC.tintColor = self.tintColor
+            posterDetailsVC.movie = self.movie
         }
     }
 }
