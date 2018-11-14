@@ -55,13 +55,11 @@ extension FeaturedViewController {
         searchController.obscuresBackgroundDuringPresentation = true
         searchController.hidesNavigationBarDuringPresentation = true
 
-        navigationItem.searchController = searchController
+//        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = true
         
         setupGrid()
-        fetchMovies {
-            self.loadingView.isHidden = true
-        }
+        fetchMovies()
     }
 }
 

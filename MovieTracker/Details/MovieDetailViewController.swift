@@ -157,27 +157,26 @@ extension MovieDetailViewController {
             tableView.alpha = 0
             
             // Setup loading indicator
-            loadingAI = UIActivityIndicatorView(style: .whiteLarge)
+            loadingAI = UIActivityIndicatorView(style: .white)
             loadingAI!.startAnimating()
             loadingAI!.center.x = view.center.x
-            loadingAI!.center.y = view.center.y - 40
+            loadingAI!.center.y = view.center.y
             view.addSubview(loadingAI!)
             
             // Setup movie label
             loadingLabel = UILabel()
-            loadingLabel?.font = UIFont.systemFont(ofSize: 33.0, weight: .bold)
+            loadingLabel?.font = UIFont.systemFont(ofSize: 11.0, weight: .bold)
             loadingLabel?.textColor = UIColor.white
             loadingLabel?.numberOfLines = 3
             loadingLabel?.textAlignment = .center
             
-            
-            loadingLabel!.text = movie?.title
+            loadingLabel!.text = movie?.title.uppercased()
             loadingLabel!.sizeToFit()
             
             view.addSubview(loadingLabel!)
             let margins = view.layoutMarginsGuide
             loadingLabel!.translatesAutoresizingMaskIntoConstraints = false
-            loadingLabel!.topAnchor.constraint(equalTo: loadingAI!.bottomAnchor, constant: 20).isActive = true
+            loadingLabel!.topAnchor.constraint(equalTo: loadingAI!.bottomAnchor, constant: 8).isActive = true
             loadingLabel!.leadingAnchor.constraint(equalTo: margins.leadingAnchor, constant: 20).isActive = true
             loadingLabel!.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: -20).isActive = true
 

@@ -520,8 +520,8 @@ Title</string>
                                     <constraint firstAttribute="height" constant="500" id="P7s-gZ-QdN"/>
                                 </constraints>
                             </imageView>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="u9d-r1-1AT">
-                                <rect key="frame" x="169" y="387.66666666666669" width="37" height="37"/>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="u9d-r1-1AT">
+                                <rect key="frame" x="177.66666666666666" y="396" width="20" height="20"/>
                             </activityIndicatorView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dv0-bV-IL4">
                                 <rect key="frame" x="162.66666666666666" y="64" width="50" height="31.333333333333329"/>
@@ -600,8 +600,8 @@ Title</string>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="BbA-nn-b8v">
-                                                    <rect key="frame" x="169" y="59" width="37" height="37"/>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="BbA-nn-b8v">
+                                                    <rect key="frame" x="177.66666666666666" y="67.666666666666671" width="20" height="20"/>
                                                 </activityIndicatorView>
                                             </subviews>
                                             <constraints>
@@ -885,6 +885,26 @@ Title</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ki4-Lh-Ajd">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="5Ae-S6-ePZ">
+                                        <rect key="frame" x="177.66666666666666" y="396" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="LOADING" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvG-Vy-jNJ">
+                                        <rect key="frame" x="163" y="424" width="49" height="14"/>
+                                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="11"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="cvG-Vy-jNJ" firstAttribute="top" secondItem="5Ae-S6-ePZ" secondAttribute="bottom" constant="8" id="1xU-x9-knU"/>
+                                    <constraint firstItem="cvG-Vy-jNJ" firstAttribute="centerX" secondItem="Ki4-Lh-Ajd" secondAttribute="centerX" id="8wW-pg-HN1"/>
+                                    <constraint firstItem="5Ae-S6-ePZ" firstAttribute="centerY" secondItem="Ki4-Lh-Ajd" secondAttribute="centerY" id="A2N-7a-HIH"/>
+                                    <constraint firstItem="5Ae-S6-ePZ" firstAttribute="centerX" secondItem="Ki4-Lh-Ajd" secondAttribute="centerX" id="f0F-cC-MzD"/>
+                                </constraints>
+                            </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" indicatorStyle="white" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="NJY-ie-jL6">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                                 <color key="backgroundColor" white="0.050000000000000003" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -894,27 +914,6 @@ Title</string>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
-                                <view key="backgroundView" contentMode="scaleToFill" id="Ki4-Lh-Ajd">
-                                    <rect key="frame" x="0.0" y="-88" width="375" height="812"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="5Ae-S6-ePZ">
-                                            <rect key="frame" x="177" y="396" width="20" height="20"/>
-                                        </activityIndicatorView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="LOADING" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cvG-Vy-jNJ">
-                                            <rect key="frame" x="163" y="424" width="49" height="14"/>
-                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="11"/>
-                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="cvG-Vy-jNJ" firstAttribute="top" secondItem="5Ae-S6-ePZ" secondAttribute="bottom" constant="8" id="1xU-x9-knU"/>
-                                        <constraint firstItem="cvG-Vy-jNJ" firstAttribute="centerX" secondItem="Ki4-Lh-Ajd" secondAttribute="centerX" id="8wW-pg-HN1"/>
-                                        <constraint firstItem="5Ae-S6-ePZ" firstAttribute="centerY" secondItem="Ki4-Lh-Ajd" secondAttribute="centerY" id="A2N-7a-HIH"/>
-                                        <constraint firstItem="5Ae-S6-ePZ" firstAttribute="centerX" secondItem="Ki4-Lh-Ajd" secondAttribute="centerX" id="f0F-cC-MzD"/>
-                                    </constraints>
-                                </view>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="movieCollectionViewCell" id="Wh2-Dx-Q89" customClass="MovieCollectionViewCell" customModule="MovieTracker" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="120" height="212"/>
@@ -968,8 +967,12 @@ Title</string>
                         <constraints>
                             <constraint firstItem="NJY-ie-jL6" firstAttribute="trailing" secondItem="86Q-zw-mT1" secondAttribute="trailing" id="0Gq-Yz-TVO"/>
                             <constraint firstItem="NJY-ie-jL6" firstAttribute="leading" secondItem="86Q-zw-mT1" secondAttribute="leading" id="1za-UV-C9K"/>
+                            <constraint firstItem="Ki4-Lh-Ajd" firstAttribute="top" secondItem="8Qr-7h-KpF" secondAttribute="top" id="AAF-Nw-Frx"/>
+                            <constraint firstAttribute="bottom" secondItem="Ki4-Lh-Ajd" secondAttribute="bottom" id="AqV-Lb-dbk"/>
                             <constraint firstAttribute="bottom" secondItem="NJY-ie-jL6" secondAttribute="bottom" id="NAP-4k-5Yn"/>
                             <constraint firstItem="NJY-ie-jL6" firstAttribute="top" secondItem="8Qr-7h-KpF" secondAttribute="top" id="PyU-kA-r6w"/>
+                            <constraint firstItem="Ki4-Lh-Ajd" firstAttribute="leading" secondItem="86Q-zw-mT1" secondAttribute="leading" id="QTm-IQ-nen"/>
+                            <constraint firstItem="Ki4-Lh-Ajd" firstAttribute="trailing" secondItem="86Q-zw-mT1" secondAttribute="trailing" id="wdL-50-v1U"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="86Q-zw-mT1"/>
                     </view>
@@ -1195,7 +1198,7 @@ Title</string>
         <image name="Dismiss" width="100" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="51e-3o-aDc"/>
-        <segue reference="guH-em-CD5"/>
+        <segue reference="0b5-2c-jwp"/>
+        <segue reference="3hJ-Zj-7nc"/>
     </inferredMetricsTieBreakers>
 </document>
