@@ -23,7 +23,7 @@ extension String {
         case "Science Fiction":
             return "Sci-Fi"
         case "Documentary":
-            return "Doc"
+            return "Docu."
         default:
             return self
         }

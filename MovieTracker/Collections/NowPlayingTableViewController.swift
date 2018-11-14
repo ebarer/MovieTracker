@@ -118,10 +118,8 @@ class NowPlayingTableViewController: UITableViewController {
             return cell
         }
         
-        if cell.tag != movie.id {
-            cell.tag = movie.id
-            cell.set(movie: movie)
-        }
+        cell.tag = movie.id
+        cell.set(movie: movie)
         return cell
     }
 

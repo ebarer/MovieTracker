@@ -394,7 +394,11 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (section == SECTION_HEADER) ? ROWS_HEADER : movie?.team.count ?? 0
+        if section == SECTION_HEADER {
+            return ROWS_HEADER
+        } else {
+            return min(10, movie?.team.count ?? 0)
+        }
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -431,7 +435,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             cell.set(overview: movie?.overview)
             return cell
         }
-        // Detail cell
+        // Person cell
         else if indexPath.section == SECTION_STAFF {
             let cell = tableView.dequeueReusableCell(withIdentifier: PersonTableViewCell.reuseIdentifier, for: indexPath) as! PersonTableViewCell
             cell.tintColor = self.tintColor
@@ -439,15 +443,13 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
 
             if let movie = movie, indexPath.item < movie.team.count {
                 let person = movie.team[indexPath.item]
-                if cell.tag != person.id {
-                    cell.tag = person.id
-                    cell.set(person: person)
-                }
+                cell.tag = person.id
+                cell.set(person: person)
             }
             
             return cell
         }
-        
+        // Detail cell
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.selectionStyle = .default

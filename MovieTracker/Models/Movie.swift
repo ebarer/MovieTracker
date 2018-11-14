@@ -27,23 +27,6 @@ class Movie: NSObject {
     var tracked: Bool = false
     var watched: Bool = false
     
-    override init() {
-        self.id = 0
-        self.title = ""
-        self.team = [Person]()
-        super.init()
-    }
-    
-    convenience init(id: Int, title: String) {
-        self.init()
-        self.id = id
-        self.title = title
-    }
-    
-    override var description: String {
-        return "[\(id)] \(title) - \(releaseDate?.toString() ?? "Unknown") - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
-    }
-
     var duration: String? {
         guard runtime != nil else { return nil }
         return "\(self.runtime! / 60) hr \(self.runtime! % 60) min"
@@ -72,6 +55,39 @@ class Movie: NSObject {
             return "During + After"
         }
     }
+    
+    // MARK: - Initializers
+
+    override init() {
+        self.id = 0
+        self.title = ""
+        self.team = [Person]()
+        super.init()
+    }
+
+    convenience init(id: Int, title: String) {
+        self.init()
+        self.id = id
+        self.title = title
+    }
+
+    override var description: String {
+        return "[\(id)] \(title) - \(releaseDate?.toString() ?? "Unknown") - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
+    }
+
+    // MARK - Equatable + Hashable
+
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    override func isEqual(_ object: Any?) -> Bool {
+        return self.id == (object as? Movie)?.id
+    }
+
+    override var hash: Int {
+        return self.id
+    }
 
 }
 
@@ -82,8 +98,8 @@ extension Movie {
         TMDBWrapper.getMovie(id: id, completionHandler: completionHandler)
     }
     
-    static func nowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
-        TMDBWrapper.getMoviesNowShowing(page: page, completionHandler: completionHandler)
+    static func nowPlaying(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+        TMDBWrapper.getMoviesNowPlaying(page: page, completionHandler: completionHandler)
     }
     
     static func comingSoon(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
@@ -107,18 +123,6 @@ extension Movie {
     }
 }
 
-// MARK - Equatable + Hashable
-
-extension Movie {
-    static func == (lhs: Movie, rhs: Movie) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    override var hash: Int {
-        return self.id
-    }
-}
-
 // MARK: - Subclasses
 
 extension Movie {
@@ -131,9 +135,9 @@ extension Movie {
             self.after = after
         }
         
-        init(_ val: (Bool, Bool)) {
-            self.during = val.0
-            self.after = val.1
+        init(_ val: (during: Bool, after: Bool)) {
+            self.during = val.during
+            self.after = val.after
         }
         
         var raw: (Bool, Bool) {

@@ -16,6 +16,7 @@ class PersonBiographyCell: UITableViewCell {
     
     // MARK: - Outlets
     
+    @IBOutlet var profilePictureAI: UIActivityIndicatorView!
     @IBOutlet var profilePicture: UIImageView!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var biographyLabel: UILabel!
@@ -24,6 +25,15 @@ class PersonBiographyCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        profilePictureAI.startAnimating()
+        profilePictureAI.hidesWhenStopped = true
+
+        profilePicture.image = UIImage(color: UIColor.inactive)
+        profilePicture.layer.masksToBounds = true
+        profilePicture.layer.cornerRadius = profilePicture.frame.width / 2
+        profilePicture.layer.borderWidth = 0.5
+        profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -47,11 +57,7 @@ class PersonBiographyCell: UITableViewCell {
                 self.profilePicture.image = image
             }
             
-            self.profilePicture.layer.masksToBounds = true
-            self.profilePicture.layer.cornerRadius = self.profilePicture.frame.width / 2
-            self.profilePicture.layer.borderWidth = 0.5
-            self.profilePicture.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
-//            self.posterAI.stopAnimating()
+            self.profilePictureAI.stopAnimating()
         }
     }
 }

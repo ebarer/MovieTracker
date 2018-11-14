@@ -91,17 +91,13 @@ extension SearchTableViewController {
         case .Movies:
             cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath)
             let movie = movieResults[indexPath.item]
-            if cell.tag != movie.id {
-                cell.tag = movie.id
-                (cell as! MovieTableViewCell).set(movie: movie)
-            }
+            cell.tag = movie.id
+            (cell as! MovieTableViewCell).set(movie: movie)
         case .People:
             cell = tableView.dequeueReusableCell(withIdentifier: PersonTableViewCell.reuseIdentifier, for: indexPath)
             let person = peopleResults[indexPath.item]
-            if cell.tag != person.id {
-                cell.tag = person.id
-                (cell as! PersonTableViewCell).set(person: person)
-            }
+            cell.tag = person.id
+            (cell as! PersonTableViewCell).set(person: person)
         }
         
         return cell

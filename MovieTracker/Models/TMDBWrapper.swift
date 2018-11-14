@@ -13,7 +13,6 @@ class TMDBWrapper {
     private static let imageBaseURL = "https://image.tmdb.org/t/p"
     private static let apiVersion = "/3"
     private static let apiKey = "da99299f02cd39e2736c97d08b459731"
-    private static let staffLimit = 10
     private static let regionCode = NSLocale.current.regionCode ?? "US"
     private static let languageCode = NSLocale.current.languageCode ?? "en"
     
@@ -49,27 +48,33 @@ extension TMDBWrapper {
         }
     }
     
-    static func getMoviesNowShowing(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
+    static func getMoviesNowPlaying(page: Int, completionHandler: @escaping ([Movie]?, Error?, (results: Int, pages: Int)?) -> Void) {
         guard page > 0 else {
             completionHandler(nil, FetchError.decode("Invalid page number (index starts at 1)."), nil)
             return
         }
-        
-        let dateFormatter = DateFormatter.iso8601DAw
-        let today = Calendar.current.startOfDay(for: Date())
-        let startDate = Calendar.current.date(byAdding: .month, value: -2, to: today) ?? today
-        let endDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
+
+//        let dateFormatter = DateFormatter.iso8601DAw
+//        let today = Calendar.current.startOfDay(for: Date())
+//        let startDate = Calendar.current.date(byAdding: .month, value: -2, to: today) ?? today
+//        let endDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
+//
+//        var searchURLComponents = URLComponents(string: self.baseURL)!
+//        searchURLComponents.path = "\(self.apiVersion)/discover/movie"
+//        searchURLComponents.queryItems = [
+//            URLQueryItem(name: "with_release_type", value: "3|2"),
+//            URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
+//            URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
+//            URLQueryItem(name: "sort_by", value: "popularity.desc"),
+//            URLQueryItem(name: "page", value: String(page))
+//        ]
         
         var searchURLComponents = URLComponents(string: self.baseURL)!
-        searchURLComponents.path = "\(self.apiVersion)/discover/movie"
+        searchURLComponents.path = "\(self.apiVersion)/movie/now_playing"
         searchURLComponents.queryItems = [
-            URLQueryItem(name: "with_release_type", value: "3|2"),
-            URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
-            URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
-            URLQueryItem(name: "sort_by", value: "popularity.desc"),
             URLQueryItem(name: "page", value: String(page))
         ]
- 
+
         self.fetchMovieData(url: searchURLComponents) { (data, error) in
             guard error == nil, let data = data else {
                 completionHandler(nil, error, nil)
@@ -92,18 +97,24 @@ extension TMDBWrapper {
             return
         }
         
-        let dateFormatter = DateFormatter.iso8601DAw
-        let today = Calendar.current.startOfDay(for: Date())
-        let startDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
-        let endDate = Calendar.current.date(byAdding: Calendar.Component.month, value: 3, to: startDate) ?? startDate
+//        let dateFormatter = DateFormatter.iso8601DAw
+//        let today = Calendar.current.startOfDay(for: Date())
+//        let startDate = Calendar.current.date(byAdding: .weekday, value: 1, to: today) ?? today
+//        let endDate = Calendar.current.date(byAdding: Calendar.Component.month, value: 3, to: startDate) ?? startDate
+//
+//        var searchURLComponents = URLComponents(string: self.baseURL)!
+//        searchURLComponents.path = "\(self.apiVersion)/discover/movie"
+//        searchURLComponents.queryItems = [
+//            URLQueryItem(name: "with_release_type", value: "3|2"),
+//            URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
+//            URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
+//            URLQueryItem(name: "sort_by", value: "popularity.desc"),
+//            URLQueryItem(name: "page", value: String(page))
+//        ]
         
         var searchURLComponents = URLComponents(string: self.baseURL)!
-        searchURLComponents.path = "\(self.apiVersion)/discover/movie"
+        searchURLComponents.path = "\(self.apiVersion)/movie/upcoming"
         searchURLComponents.queryItems = [
-            URLQueryItem(name: "with_release_type", value: "3|2"),
-            URLQueryItem(name: "release_date.gte", value: dateFormatter.string(from: startDate)),
-            URLQueryItem(name: "release_date.lte", value: dateFormatter.string(from: endDate)),
-            URLQueryItem(name: "sort_by", value: "popularity.desc"),
             URLQueryItem(name: "page", value: String(page))
         ]
         
@@ -400,7 +411,12 @@ extension TMDBWrapper {
         movie.imdbID = mv.imdbID
         
         let releaseInfo = mv.certification()
-        movie.releaseDate = releaseInfo.1 ?? mv.releaseDate
+        if let releaseDate = releaseInfo.releaseDate {
+            movie.releaseDate = releaseDate
+        } else if let releaseDateString = mv.releaseDateString {
+            movie.releaseDate = releaseDateString.toDate(format: .iso8601DAw)
+        }
+
         movie.certification = releaseInfo.0
         movie.genres = mv.genres()
         movie.bonusCredits = Movie.Credits(mv.bonusCredits())
@@ -445,7 +461,7 @@ extension TMDBWrapper {
     private struct MovieRaw: Codable {
         var id: Int
         var title: String
-        var releaseDate: Date?
+        var releaseDateString: String?
         var overview: String?
         var poster: String?
         var background: String?
@@ -459,7 +475,7 @@ extension TMDBWrapper {
         var keywords: Keywords?
         var teamRaw: TeamRaw?
         
-        func certification() -> (String?, Date?) {
+        func certification() -> (certification: String?, releaseDate: Date?) {
             let regionCode = NSLocale.current.regionCode ?? "US"
             
             guard let releases = self.releaseDates?.releases else {
@@ -536,11 +552,7 @@ extension TMDBWrapper {
                 team.append(member)
             }
 
-            
-            // TODO: Determine good number of cast to display
-            let castLimit = staffLimit - team.count
-            for (index, person) in teamRaw.cast.enumerated() {
-                if index >= castLimit { break }
+            for person in teamRaw.cast {
                 let member = Person(id:     person.id,
                                     name:   person.name,
                                     role:   person.role,
@@ -555,7 +567,7 @@ extension TMDBWrapper {
         enum CodingKeys: String, CodingKey {
             case id, title, overview, runtime, popularity, keywords
             case imdbID = "imdb_id"
-            case releaseDate = "release_date"
+            case releaseDateString = "release_date"
             case poster = "poster_path"
             case background = "backdrop_path"
             case rating = "vote_average"
@@ -682,11 +694,11 @@ extension TMDBWrapper {
         var creditsRaw: CreditsRaw?
         
         func credits() -> [Movie] {
+            var credits = [Movie]()
             guard let creditsRaw = self.creditsRaw else {
-                return []
+                return credits
             }
-            
-            var credits = Set<Movie>()
+
             for collection in [creditsRaw.cast, creditsRaw.crew] {
                 for movie in collection {
                     let credit = Movie(id: movie.id, title: movie.title)
@@ -697,12 +709,12 @@ extension TMDBWrapper {
                         }
                     }
 
-                    // TODO: Need to prevent duplicate entries
-                    credits.insert(credit)
+                    credits.append(credit)
                 }
             }
             
-            return credits.sorted {
+            // Convert to set to remove duplicates, then sort by release date
+            return Set(credits).sorted {
                 guard let releaseA = $0.releaseDate else { return true }
                 guard let releaseB = $1.releaseDate else { return false }
                 return releaseA.compare(releaseB) == .orderedDescending

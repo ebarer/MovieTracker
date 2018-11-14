@@ -36,6 +36,18 @@ extension PersonDetailViewController {
 
         navigationController?.navigationBar.tintColor = self.tintColor ?? UIColor.accent
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        // Hide navigation stack navigation bar, replace with my own
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+
+        // Remove selection (if selection)
+        if let indexPath = self.tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: animated)
+        }
+    }
 }
 
 // MARK: - View Methods
@@ -82,17 +94,23 @@ extension PersonDetailViewController {
         print(person.birthday?.toString() ?? "No birthday")
         print(person.bio ?? "No bio")
         
-        if let credits = person.credits {
-            for movie in credits {
-                print(movie)
-            }
-        }
-        
         self.tableView.reloadData()
         
         if !populated {
             populated = true
         }
+    }
+}
+
+// MARK: - UINavigationBar Delegates
+
+extension PersonDetailViewController: UINavigationBarDelegate, UIGestureRecognizerDelegate {
+    func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return .topAttached
+    }
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
 
