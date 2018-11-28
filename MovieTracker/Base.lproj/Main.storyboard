@@ -13,7 +13,7 @@
         <!--Watch List-->
         <scene sceneID="sa4-NO-HIc">
             <objects>
-                <tableViewController id="izE-fi-Fhf" customClass="NowPlayingTableViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="izE-fi-Fhf" customClass="MovieListTableViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="prototypes" style="plain" separatorStyle="default" sectionIndexMinimumDisplayRowCount="1" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="iza-K0-NWu">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -85,12 +85,12 @@
         <!--Movie Detail View Controller-->
         <scene sceneID="0Jv-f9-0O0">
             <objects>
-                <viewController title="Movie Detail View Controller" extendedLayoutIncludesOpaqueBars="YES" hidesBottomBarWhenPushed="YES" id="fVR-qT-4O4" customClass="MovieDetailViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" clipsSubviews="YES" contentMode="scaleToFill" id="c7F-ww-a1I">
+                <viewController title="Movie Detail View Controller" id="fVR-qT-4O4" customClass="MovieDetailViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="c7F-ww-a1I">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="1200"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="3y9-xS-S6M">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="3y9-xS-S6M">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="1200"/>
                                 <color key="backgroundColor" white="0.050000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="separatorColor" white="0.26000000000000001" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -462,8 +462,8 @@ Title</string>
                         <color key="backgroundColor" red="0.047058823529411764" green="0.046122804284095764" blue="0.046122804284095764" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="3y9-xS-S6M" firstAttribute="top" secondItem="c7F-ww-a1I" secondAttribute="top" id="6ko-TF-Fgq"/>
-                            <constraint firstItem="3y9-xS-S6M" firstAttribute="trailing" secondItem="c7F-ww-a1I" secondAttribute="trailing" id="7O7-in-kmx"/>
-                            <constraint firstItem="3y9-xS-S6M" firstAttribute="leading" secondItem="c7F-ww-a1I" secondAttribute="leading" id="E9A-dT-tFl"/>
+                            <constraint firstItem="3y9-xS-S6M" firstAttribute="trailing" secondItem="hhB-3q-fIf" secondAttribute="trailing" id="7O7-in-kmx"/>
+                            <constraint firstItem="3y9-xS-S6M" firstAttribute="leading" secondItem="hhB-3q-fIf" secondAttribute="leading" id="E9A-dT-tFl"/>
                             <constraint firstAttribute="bottom" secondItem="3y9-xS-S6M" secondAttribute="bottom" id="Kpq-hs-wiT"/>
                             <constraint firstItem="pI0-6V-55b" firstAttribute="leading" secondItem="c7F-ww-a1I" secondAttribute="leadingMargin" constant="-4" id="OHv-eM-8s0"/>
                             <constraint firstItem="nEQ-O5-0wU" firstAttribute="top" secondItem="hhB-3q-fIf" secondAttribute="top" id="P26-8A-AX6"/>
@@ -585,15 +585,15 @@ Title</string>
                                                         <constraint firstAttribute="width" constant="125" id="k7Z-UN-U7Y"/>
                                                     </constraints>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="BbA-nn-b8v">
+                                                    <rect key="frame" x="177.66666666666666" y="67.666666666666671" width="20" height="20"/>
+                                                </activityIndicatorView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="1000" text="Person Name" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="14S-0w-NGi">
                                                     <rect key="frame" x="30" y="155" width="315" height="33.666666666666657"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="28"/>
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="BbA-nn-b8v">
-                                                    <rect key="frame" x="177.66666666666666" y="67.666666666666671" width="20" height="20"/>
-                                                </activityIndicatorView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Jan 1, 2019  •  30 years old" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yXo-rb-JXS">
                                                     <rect key="frame" x="15" y="203.66666666666666" width="345" height="18"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -789,9 +789,9 @@ Title</string>
                         <color key="backgroundColor" white="0.050000000000000003" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="vEs-zP-1Y8" secondAttribute="bottom" id="9eP-Dr-Ex1"/>
-                            <constraint firstAttribute="trailing" secondItem="vEs-zP-1Y8" secondAttribute="trailing" id="Cqh-Ug-10V"/>
+                            <constraint firstItem="4X4-pg-9wA" firstAttribute="trailing" secondItem="vEs-zP-1Y8" secondAttribute="trailing" id="Cqh-Ug-10V"/>
                             <constraint firstItem="vEs-zP-1Y8" firstAttribute="top" secondItem="9vl-iz-8OO" secondAttribute="top" id="NaQ-aR-3ap"/>
-                            <constraint firstItem="vEs-zP-1Y8" firstAttribute="leading" secondItem="9vl-iz-8OO" secondAttribute="leading" id="kVe-Jh-eRn"/>
+                            <constraint firstItem="vEs-zP-1Y8" firstAttribute="leading" secondItem="4X4-pg-9wA" secondAttribute="leading" id="kVe-Jh-eRn"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="4X4-pg-9wA"/>
                     </view>
@@ -1102,7 +1102,7 @@ Title</string>
         <!--Tab Bar Controller-->
         <scene sceneID="ATM-Pj-1IU">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="Q6p-hC-5Xa" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="Q6p-hC-5Xa" customClass="TabBarController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="Urp-Eh-ptM">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
@@ -1277,6 +1277,6 @@ Title</string>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="0b5-2c-jwp"/>
-        <segue reference="QMC-I3-Lgu"/>
+        <segue reference="guH-em-CD5"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -72,7 +72,7 @@ class Movie: NSObject {
     }
 
     override var description: String {
-        return "[\(id)] \(title) - \(releaseDate?.toString() ?? "Unknown") - \(rating != nil ? String(rating!) : "N/A") - \(popularity != nil ? String(popularity!) : "N/A")"
+        return "[\(id)] \(title), \(releaseDate?.toString() ?? "Unknown"), \(popularity != nil ? String(popularity!) : "N/A")"
     }
 
     // MARK - Equatable + Hashable

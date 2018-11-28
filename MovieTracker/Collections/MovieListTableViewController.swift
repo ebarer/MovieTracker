@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NowPlayingTableViewController: UITableViewController {
+class MovieListTableViewController: UITableViewController {
     
     var movies: [DateComponents : [Movie]] = [:]
     var sections: [DateComponents] = []
@@ -102,7 +102,7 @@ class NowPlayingTableViewController: UITableViewController {
         let title = UILabel(frame: frame.insetBy(dx: 16, dy: 10))
         title.text = DateFormatter.sectionHeader.string(from: date)
         title.font = UIFont.systemFont(ofSize: 14.0, weight: .bold)
-        title.textColor = UIColor.accent
+        title.textColor = UIColor.white
         headerView.addSubview(title)
         
         return headerView

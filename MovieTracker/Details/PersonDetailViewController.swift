@@ -66,6 +66,7 @@ extension PersonDetailViewController {
         // Setup table
         tableView.backgroundColor = UIColor.bg
         tableView.separatorColor = UIColor.separator
+        tableView.showsVerticalScrollIndicator = false
 
         // Configure nav bar
         let backImage = UIImage(named: "BackButton")

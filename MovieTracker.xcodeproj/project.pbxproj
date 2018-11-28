@@ -27,7 +27,7 @@
 		CE78BD6B20C087F4001E6DB6 /* MovieTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD6A20C087F4001E6DB6 /* MovieTrackerTests.swift */; };
 		CE78BD7620C087F4001E6DB6 /* MovieTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD7520C087F4001E6DB6 /* MovieTrackerUITests.swift */; };
 		CE78BD8420C112D8001E6DB6 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8320C112D8001E6DB6 /* Movie.swift */; };
-		CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */; };
+		CE78BD8620C12481001E6DB6 /* MovieListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8520C12481001E6DB6 /* MovieListTableViewController.swift */; };
 		CE78BD8820C148B8001E6DB6 /* MovieTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */; };
 		CE9014F62175960F00B54E33 /* MovieDetailTableViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9014F52175960F00B54E33 /* MovieDetailTableViewCells.swift */; };
 		CEB0923220D0CA3E0050D39E /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */; };
@@ -39,6 +39,7 @@
 		CEDA8BC121997F2A006BB3CD /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC021997F2A006BB3CD /* Person.swift */; };
 		CEDA8BC321997F71006BB3CD /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC221997F71006BB3CD /* String+Extension.swift */; };
 		CEEBB30D20CD27BF00353320 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */; };
+		CEEE5B6421AE3A2A008C8EAE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEE5B6321AE3A2A008C8EAE /* TabBarController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,7 +83,7 @@
 		CE78BD7520C087F4001E6DB6 /* MovieTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTrackerUITests.swift; sourceTree = "<group>"; };
 		CE78BD7720C087F4001E6DB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE78BD8320C112D8001E6DB6 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
-		CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingTableViewController.swift; sourceTree = "<group>"; };
+		CE78BD8520C12481001E6DB6 /* MovieListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListTableViewController.swift; sourceTree = "<group>"; };
 		CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTableViewCell.swift; sourceTree = "<group>"; };
 		CE9014F52175960F00B54E33 /* MovieDetailTableViewCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailTableViewCells.swift; sourceTree = "<group>"; };
 		CEB88D91219AAF4B00F95D4D /* PersonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonTableViewCell.swift; sourceTree = "<group>"; };
@@ -93,6 +94,8 @@
 		CEDA8BC021997F2A006BB3CD /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		CEDA8BC221997F71006BB3CD /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
+		CEEE5B6321AE3A2A008C8EAE /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TabBarController.swift; path = MovieTracker/TabBarController.swift; sourceTree = SOURCE_ROOT; };
+		CEEE5B6521AE3B35008C8EAE /* ToDo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ToDo.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,7 +139,7 @@
 			children = (
 				CED3C39120CC9A6E0024D585 /* FeaturedViewController.swift */,
 				CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */,
-				CE78BD8520C12481001E6DB6 /* NowPlayingTableViewController.swift */,
+				CE78BD8520C12481001E6DB6 /* MovieListTableViewController.swift */,
 				CE78BD8720C148B8001E6DB6 /* MovieTableViewCell.swift */,
 				CEB88D91219AAF4B00F95D4D /* PersonTableViewCell.swift */,
 				CEC07527219BC1A4002A3958 /* GlobalSearchResultsController.swift */,
@@ -180,12 +183,14 @@
 		CE78BD5120C087F2001E6DB6 /* MovieTracker */ = {
 			isa = PBXGroup;
 			children = (
+				CEEE5B6521AE3B35008C8EAE /* ToDo.md */,
 				CE78BD6120C087F4001E6DB6 /* Info.plist */,
 				CE78BD5220C087F2001E6DB6 /* AppDelegate.swift */,
 				CE94C8AA20CC6C2D00E3925E /* Extensions */,
 				CE59561520CA69230047BC39 /* Models */,
 				CE78BD5E20C087F4001E6DB6 /* LaunchScreen.storyboard */,
 				CE78BD5620C087F2001E6DB6 /* Main.storyboard */,
+				CEEE5B6321AE3A2A008C8EAE /* TabBarController.swift */,
 				CE59561620CA693E0047BC39 /* Collections */,
 				CE59561720CA694B0047BC39 /* Details */,
 				CE78BD5C20C087F4001E6DB6 /* Assets.xcassets */,
@@ -360,9 +365,10 @@
 			files = (
 				CE78BD8820C148B8001E6DB6 /* MovieTableViewCell.swift in Sources */,
 				CEDA8BC321997F71006BB3CD /* String+Extension.swift in Sources */,
-				CE78BD8620C12481001E6DB6 /* NowPlayingTableViewController.swift in Sources */,
+				CE78BD8620C12481001E6DB6 /* MovieListTableViewController.swift in Sources */,
 				CE0ADBCD2197A96A00AB6442 /* PosterDetailViewController.swift in Sources */,
 				CEB88D92219AAF4B00F95D4D /* PersonTableViewCell.swift in Sources */,
+				CEEE5B6421AE3A2A008C8EAE /* TabBarController.swift in Sources */,
 				CE1F628020CFA65A0075B686 /* TMDBWrapper.swift in Sources */,
 				CE2B098A2197EB7000C0CE9A /* SearchTableViewController.swift in Sources */,
 				CE9014F62175960F00B54E33 /* MovieDetailTableViewCells.swift in Sources */,

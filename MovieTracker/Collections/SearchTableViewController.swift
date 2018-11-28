@@ -194,7 +194,7 @@ extension SearchTableViewController {
             case .Movies:
                 return "Enter movie title"
             case .People:
-                return "Enter for cast and crew"
+                return "Enter name of cast/crew"
             }
         }
     }

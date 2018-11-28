@@ -17,9 +17,9 @@ extension UIColor {
     }
     
     static let bg           = UIColor(red: 12, green: 12, blue: 12)
-    static let separator    = UIColor(red: 36, green: 36, blue: 36)
+    static let separator    = UIColor(red: 35, green: 35, blue: 35)
 //    static let accent       = UIColor(red: 218, green: 193, blue: 148)
-    static let accent       = UIColor.red
+    static let accent       = UIColor(red: 225, green: 0, blue: 35)
     static let inactive     = UIColor.separator
     static let selection    = UIColor.separator
     

@@ -133,7 +133,6 @@ extension MovieDetailViewController {
         tableView.backgroundColor = UIColor.bg
         tableView.separatorColor = UIColor.separator
         tableView.showsVerticalScrollIndicator = false
-        tableView.contentInsetAdjustmentBehavior = .never
 
         // Configure nav bar
         navigationItem.title = ""
@@ -477,8 +476,7 @@ extension MovieDetailViewController {
             guard let cell = sender as? PersonTableViewCell,
                 let personDetailsVC = segue.destination as? PersonDetailViewController
                 else { return }
-            
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
+
             personDetailsVC.tintColor = self.tintColor
             personDetailsVC.person = cell.person
         } else if segue.identifier == "showPoster" {
