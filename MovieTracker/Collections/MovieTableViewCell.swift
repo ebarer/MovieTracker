@@ -44,10 +44,7 @@ class MovieTableViewCell: UITableViewCell {
         moviePoster.layer.cornerRadius = 5
         moviePoster.layer.borderWidth = 0.5
         moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
-        
-        // TODO: Prevent timeout when searching
-        // Log each outgoing call, ensure there
-        // exists a corresponding inbound call
+
         movie.getPoster { (poster, error, id) in
             guard self.tag == movie.id else {
                 self.setImage(image: UIImage(color: UIColor.inactive))

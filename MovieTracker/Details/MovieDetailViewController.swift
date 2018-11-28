@@ -114,10 +114,6 @@ extension MovieDetailViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
-    @IBAction func navigateBack() {
-        self.navigationController?.popViewController(animated: true)
-    }
 }
 
 // MARK: - View Methods
@@ -140,10 +136,12 @@ extension MovieDetailViewController {
         tableView.contentInsetAdjustmentBehavior = .never
 
         // Configure nav bar
+        navigationItem.title = ""
         navBar.alpha = 0
         navItem.title = movie?.title
-        navigationItem.title = ""
+        navItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(navigateToRoot))
         
+        // Setup activity indicators
         backgroundAI.startAnimating()
         posterAI.startAnimating()
         
@@ -380,7 +378,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == SECTION_HEADER) ? 0.01 : 45.0
+        return (section == SECTION_HEADER) ? 0.01 : 15.0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -487,6 +485,22 @@ extension MovieDetailViewController {
             guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
             posterDetailsVC.tintColor = self.tintColor
             posterDetailsVC.movie = self.movie
+        }
+    }
+    
+    @IBAction func navigateBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func navigateToRoot() {
+        if let vcStack = self.navigationController?.viewControllers,
+               vcStack.count > 1,
+               vcStack[1] != self
+        {
+            print(vcStack[1].navigationItem.title ?? "Unknown")
+            self.navigationController?.popToViewController(vcStack[1], animated: true)
+        } else {
+            self.navigationController?.popToRootViewController(animated: true)
         }
     }
 }

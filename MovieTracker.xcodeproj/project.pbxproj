@@ -150,9 +150,9 @@
 			children = (
 				CE5B575420C2206E007540DD /* MovieDetailViewController.swift */,
 				CE9014F52175960F00B54E33 /* MovieDetailTableViewCells.swift */,
+				CE0ADBCC2197A96A00AB6442 /* PosterDetailViewController.swift */,
 				CE3AF2FA218C5A9A00EC4495 /* PersonDetailViewController.swift */,
 				CEB88D93219AFC5100F95D4D /* PersonDetailTableViewCells.swift */,
-				CE0ADBCC2197A96A00AB6442 /* PosterDetailViewController.swift */,
 			);
 			path = Details;
 			sourceTree = "<group>";

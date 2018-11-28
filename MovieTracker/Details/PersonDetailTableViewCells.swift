@@ -8,9 +8,8 @@
 
 import UIKit
 
-// TODO: PersonHeaderCell <-- Biography?
-
 class PersonBiographyCell: UITableViewCell {
+    // Properties
     static let reuseIdentifier = "personBiographyCell"
     var person: Person?
     
@@ -19,6 +18,7 @@ class PersonBiographyCell: UITableViewCell {
     @IBOutlet var profilePictureAI: UIActivityIndicatorView!
     @IBOutlet var profilePicture: UIImageView!
     @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var birthdayLabel: UILabel!
     @IBOutlet var biographyLabel: UILabel!
     
     // MARK: - Lifecycle
@@ -46,6 +46,24 @@ class PersonBiographyCell: UITableViewCell {
         self.person = person
         
         nameLabel.text = person.name
+        
+        var birthdayString = "Unknown"
+        if let birthday = person.birthday {
+            birthdayString = "\(birthday.toString())"
+            
+            if let age = Calendar.current.dateComponents([.year], from: birthday, to: Date()).year {
+                birthdayString += "  •  \(age) years old"
+            }
+            
+            birthdayLabel.text = birthdayString
+            birthdayLabel.textColor = self.tintColor
+            birthdayLabel.isHidden = false
+        } else {
+            birthdayLabel.text = nil
+            birthdayLabel.isHidden = true
+        }
+        
+        
         biographyLabel.text = person.bio
         biographyLabel.numberOfLines = 5
         
@@ -61,3 +79,5 @@ class PersonBiographyCell: UITableViewCell {
         }
     }
 }
+
+// TODO: PersonHeaderCell <-- Biography?

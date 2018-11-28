@@ -17,7 +17,6 @@ class PersonDetailViewController: UIViewController {
     
     // Properties
     var person: Person?
-    var populated: Bool = false
     var tintColor: UIColor?
     
     // MARK: - Outlets
@@ -34,6 +33,7 @@ extension PersonDetailViewController {
         retrieveData(for: person)
         setupView()
 
+        navigationItem.title = person.name
         navigationController?.navigationBar.tintColor = self.tintColor ?? UIColor.accent
     }
 
@@ -42,6 +42,9 @@ extension PersonDetailViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : self.tintColor as Any]
+        self.navigationController?.navigationBar.tintColor = self.tintColor
 
         // Remove selection (if selection)
         if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -63,9 +66,11 @@ extension PersonDetailViewController {
         // Setup table
         tableView.backgroundColor = UIColor.bg
         tableView.separatorColor = UIColor.separator
-        
-//        backgroundAI.startAnimating()
-//        posterAI.startAnimating()
+
+        // Configure nav bar
+        let backImage = UIImage(named: "BackButton")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(navigateBack))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(navigateToRoot))
     }
     
     func retrieveData(for person: Person) {
@@ -78,26 +83,8 @@ extension PersonDetailViewController {
             DispatchQueue.main.async {
                 print("Fetched: \(person)")
                 self.person = person
-                self.populateData()
+                self.tableView.reloadData()
             }
-        }
-    }
-    
-    func populateData() {
-        guard let person = self.person else { return }
-        
-        print(person.id)
-        print(person.name)
-        print(person.profilePicture ?? "No profile picture")
-        print(person.popularity)
-        print(person.imdbID ?? "No IMDB ID")
-        print(person.birthday?.toString() ?? "No birthday")
-        print(person.bio ?? "No bio")
-        
-        self.tableView.reloadData()
-        
-        if !populated {
-            populated = true
         }
     }
 }
@@ -162,10 +149,12 @@ extension PersonDetailViewController: UITableViewDataSource, UITableViewDelegate
             let cell = tableView.dequeueReusableCell(withIdentifier: PersonBiographyCell.reuseIdentifier, for: indexPath) as! PersonBiographyCell
             cell.separatorInset = UIEdgeInsets.zero
             cell.selectionStyle = .none
+            cell.tintColor = self.tintColor
             cell.set(person: person)
             return cell
         }
-        // Detail cell
+        // TODO: Best Known cell
+        // Movie cell
         else if indexPath.section == SECTION_CREDITS {
             let cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath) as! MovieTableViewCell
             if let person = person, indexPath.item < person.credits?.count ?? 0 {
@@ -179,6 +168,7 @@ extension PersonDetailViewController: UITableViewDataSource, UITableViewDelegate
             }
             
             return cell
+        // Detail cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
             cell.selectionStyle = .default
@@ -212,6 +202,22 @@ extension PersonDetailViewController {
             else { return }
 
             movieDetailsVC.movie = movie
+        }
+    }
+    
+    @objc func navigateBack() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func navigateToRoot() {
+        if let vcStack = self.navigationController?.viewControllers,
+               vcStack.count > 1,
+               vcStack[1] != self
+        {
+            print(vcStack[1].navigationItem.title ?? "Unknown")
+            self.navigationController?.popToViewController(vcStack[1], animated: true)
+        } else {
+            self.navigationController?.popToRootViewController(animated: true)
         }
     }
 }

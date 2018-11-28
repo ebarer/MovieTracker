@@ -715,8 +715,8 @@ extension TMDBWrapper {
             
             // Convert to set to remove duplicates, then sort by release date
             return Set(credits).sorted {
-                guard let releaseA = $0.releaseDate else { return true }
-                guard let releaseB = $1.releaseDate else { return false }
+                guard let releaseA = $0.releaseDate else { return false }
+                guard let releaseB = $1.releaseDate else { return true }
                 return releaseA.compare(releaseB) == .orderedDescending
             }
         }

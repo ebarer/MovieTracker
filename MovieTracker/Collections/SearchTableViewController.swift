@@ -21,7 +21,7 @@ class SearchTableViewController: UITableViewController {
         // Setup search controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = true
         searchController.searchBar.placeholder = scope.placeholder
         searchController.searchBar.barStyle = .blackTranslucent
         searchController.searchBar.tintColor = UIColor.accent
@@ -32,7 +32,7 @@ class SearchTableViewController: UITableViewController {
         searchController.searchBar.delegate = self
         
 //        navigationItem.titleView = searchController.searchBar
-        navigationItem.title = nil
+        navigationItem.title = "Search"
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
@@ -192,9 +192,9 @@ extension SearchTableViewController {
         var placeholder: String {
             switch self {
             case .Movies:
-                return "Search for movies"
+                return "Enter movie title"
             case .People:
-                return "Search for cast and crew"
+                return "Enter for cast and crew"
             }
         }
     }

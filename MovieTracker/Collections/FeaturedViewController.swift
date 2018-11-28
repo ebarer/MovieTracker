@@ -29,6 +29,7 @@ class FeaturedViewController: UIViewController {
     // MARK: - Outlets
     @IBOutlet var loadingView: UIView!
     @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet var featuredListSegmentControl: UISegmentedControl!
 }
 
 // MARK: - Lifecycle
@@ -38,25 +39,27 @@ extension FeaturedViewController {
         super.viewDidLoad()
         self.definesPresentationContext = true
         
+        featuredListSegmentControl.tintColor = UIColor.accent
+        
         // Get search results table controlleer
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let resultsTableController = storyboard.instantiateViewController(withIdentifier: "resultsTableController") as! GlobalSearchResultsController
-
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let resultsTableController = storyboard.instantiateViewController(withIdentifier: "resultsTableController") as! GlobalSearchResultsController
+//
         // Setup search controller
-        searchController = UISearchController(searchResultsController: resultsTableController)
-        searchController.searchResultsUpdater = resultsTableController
-
-        searchController.searchBar.barStyle = .blackTranslucent
-        searchController.searchBar.tintColor = UIColor.accent
-        searchController.searchBar.keyboardAppearance = .dark
-        searchController.searchBar.transform = CGAffineTransform(translationX: 0, y: 5.0)
-
-        searchController.dimsBackgroundDuringPresentation = true
-        searchController.obscuresBackgroundDuringPresentation = true
-        searchController.hidesNavigationBarDuringPresentation = true
-
+//        searchController = UISearchController(searchResultsController: resultsTableController)
+//        searchController.searchResultsUpdater = resultsTableController
+//
+//        searchController.searchBar.barStyle = .blackTranslucent
+//        searchController.searchBar.tintColor = UIColor.accent
+//        searchController.searchBar.keyboardAppearance = .dark
+//        searchController.searchBar.transform = CGAffineTransform(translationX: 0, y: 5.0)
+//
+//        searchController.dimsBackgroundDuringPresentation = true
+//        searchController.obscuresBackgroundDuringPresentation = true
+//        searchController.hidesNavigationBarDuringPresentation = true
+//
 //        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = true
+//        navigationItem.hidesSearchBarWhenScrolling = true
         
         setupGrid()
         fetchMovies()
@@ -211,30 +214,30 @@ extension FeaturedViewController {
     }
 }
 // MARK: - Scroll View Delegate
-
-extension FeaturedViewController {
-    // Trigger search on pull down
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let scrollOffset = scrollView.contentOffset.y
-        if scrollOffset < -200 {
-            shouldTriggerSearch = true
-        }
-    }
-
+//
+//extension FeaturedViewController {
+//    // Trigger search on pull down
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        let scrollOffset = scrollView.contentOffset.y
+//        if scrollOffset < -200 {
+//            shouldTriggerSearch = true
+//        }
+//    }
+//
 //    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
 //        if shouldTriggerSearch {
 //            searchController.searchBar.becomeFirstResponder()
 //            shouldTriggerSearch = false
 //        }
 //    }
-
-    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        if shouldTriggerSearch {
-            searchController.searchBar.becomeFirstResponder()
-            shouldTriggerSearch = false
-        }
-    }
-}
+//
+//    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+//        if shouldTriggerSearch {
+//            searchController.searchBar.becomeFirstResponder()
+//            shouldTriggerSearch = false
+//        }
+//    }
+//}
 
 // MARK: - Navigation
 
