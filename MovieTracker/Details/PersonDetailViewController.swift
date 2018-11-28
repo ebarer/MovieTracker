@@ -71,7 +71,6 @@ extension PersonDetailViewController {
         // Configure nav bar
         let backImage = UIImage(named: "BackButton")
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: backImage, style: .plain, target: self, action: #selector(navigateBack))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(navigateToRoot))
     }
     
     func retrieveData(for person: Person) {

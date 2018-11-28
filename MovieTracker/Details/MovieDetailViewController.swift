@@ -138,7 +138,6 @@ extension MovieDetailViewController {
         navigationItem.title = ""
         navBar.alpha = 0
         navItem.title = movie?.title
-        navItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(navigateToRoot))
         
         // Setup activity indicators
         backgroundAI.startAnimating()

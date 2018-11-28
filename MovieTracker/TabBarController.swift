@@ -22,15 +22,15 @@ class TabBarController: UITabBarController {
 
 extension TabBarController: UITabBarControllerDelegate {
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        print(self.presentedViewController is FeaturedViewController)
-        
-        guard let navVC = self.presentedViewController?.navigationController else {
-            print("Error: invalid navVC")
+        guard let navVC = self.selectedViewController as? UINavigationController else {
+            print("Error: invalid nav VC")
             return
         }
 
         let vcStack = navVC.viewControllers
-        if vcStack.count > 1 {
+        if vcStack.count > 2 {
+            // Ensure view is scrolled to top
+            (vcStack[1] as? MovieDetailViewController)?.tableView.setContentOffset(.zero, animated: false)
             navVC.popToViewController(vcStack[1], animated: true)
         } else {
             navVC.popToRootViewController(animated: true)
