@@ -807,7 +807,7 @@ Title</string>
         <!--Navigation Controller-->
         <scene sceneID="1iN-d9-uOq">
             <objects>
-                <navigationController id="iAd-ys-qdF" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="navFeatured" useStoryboardIdentifierAsRestorationIdentifier="YES" id="iAd-ys-qdF" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="featured" id="jBO-Px-jWh"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="1aH-NM-lEA">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
@@ -1082,7 +1082,7 @@ Title</string>
         <!--Navigation Controller-->
         <scene sceneID="Sew-7C-A5j">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cfh-5G-Qt1" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="navList" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="cfh-5G-Qt1" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="mostViewed" id="LJI-dn-7A5"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="VpH-d9-VnX">
@@ -1123,7 +1123,7 @@ Title</string>
         <!--Navigation Controller-->
         <scene sceneID="D0b-5V-0Gh">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="l1e-9P-dPF" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="navSearch" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="l1e-9P-dPF" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="search" id="ycJ-Si-eCS"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="rSz-wO-WZd">
