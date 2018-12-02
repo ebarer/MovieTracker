@@ -23,18 +23,24 @@ class PosterDetailViewController: UIViewController, UIScrollViewDelegate {
             self.dismissView()
             return
         }
-
-        dismissButton.tintColor = self.tintColor ?? UIColor.accent
         
+        // Setup blurred background
         view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25)
-        
         let blurView = UIVisualEffectView(frame: self.view.frame)
         blurView.effect = UIBlurEffect(style: UIBlurEffect.Style.dark)
         self.view.insertSubview(blurView, belowSubview: posterView)
+
+        // Configure dismiss button and gesture
+        dismissButton.tintColor = self.tintColor ?? UIColor.accent
+        let dismissGesture = UISwipeGestureRecognizer(target: self, action: #selector(dismissView))
+        dismissGesture.direction = .down
+        self.view.addGestureRecognizer(dismissGesture)
         
+        // Setup poster view
         posterView.backgroundColor = UIColor.clear
         posterView.contentMode = .scaleAspectFit
         
+        // Get poster
         let id = NSNumber(integerLiteral: movie.id)
         let cache = (UIApplication.shared.delegate as! AppDelegate).imageCache
         if let poster = cache.object(forKey: id) as? UIImage {
@@ -56,10 +62,6 @@ class PosterDetailViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(dismissView))
-        swipeGesture.direction = .down
-        self.view.addGestureRecognizer(swipeGesture)
     }
     
     override var prefersStatusBarHidden: Bool {

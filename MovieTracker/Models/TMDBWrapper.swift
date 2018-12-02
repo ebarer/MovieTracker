@@ -402,7 +402,11 @@ extension TMDBWrapper {
     
     private static func translate(movie mv: MovieRaw) -> Movie {
         let movie = Movie(id: mv.id, title: mv.title)
-        movie.overview = mv.overview
+        
+        if let overview = mv.overview, overview.count > 0 {
+            movie.overview = overview
+        }
+                
         movie.poster = mv.poster
         movie.background = mv.background
         movie.runtime = mv.runtime

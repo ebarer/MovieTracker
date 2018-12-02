@@ -1,12 +1,12 @@
 # To-Do
 
-- [ ] P1: resolve crash when searching for person
+- [ ] Movie: add trailers and playback (side scrolling cell, below overview)
 
-- [ ] Movie: add trailers and playback
+- [ ] Person: add TV rows for completion (non-selectable) 
+- [ ] Person: add "Best Known For" category (side scroller)
+
 - [ ] Movie: add "Read More" label
 - [ ] Person: add "Read More" label
-- [ ] Person: add TV rows (non-selectable) for completion
-- [ ] Person: add "Best Known For" category (side scroller)
 
 ## Movie Tracking
 - [ ] Implement lists
