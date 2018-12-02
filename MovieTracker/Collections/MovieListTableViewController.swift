@@ -16,6 +16,7 @@ class MovieListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.separatorColor = UIColor.bg
         tableView.backgroundColor = UIColor.bg
         navigationController?.navigationBar.shadowImage = UIImage()
         
@@ -55,6 +56,7 @@ class MovieListTableViewController: UITableViewController {
             DispatchQueue.main.async {
                 self.movies = movieDict
                 self.sections = months
+                self.tableView.separatorColor = UIColor.separator
                 self.tableView.reloadData()
             }
         }

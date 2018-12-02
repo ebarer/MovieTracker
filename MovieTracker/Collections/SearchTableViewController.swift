@@ -14,6 +14,10 @@ class SearchTableViewController: UITableViewController {
     var scope: SearchScope = SearchScope.Movies
     let searchController = UISearchController(searchResultsController: nil)
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.bg
@@ -21,7 +25,7 @@ class SearchTableViewController: UITableViewController {
         // Setup search controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = true
+        searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.placeholder = scope.placeholder
         searchController.searchBar.barStyle = .blackTranslucent
         searchController.searchBar.tintColor = UIColor.accent
@@ -36,6 +40,18 @@ class SearchTableViewController: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
+        
+        // Setup table
+        tableView.separatorStyle = .none
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        
+        // Remove selection (if selection)
+        if let indexPath = self.tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPath, animated: animated)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -46,30 +62,6 @@ class SearchTableViewController: UITableViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         searchController.searchBar.resignFirstResponder()
-    }
-}
-
-// MARK: - Navigation
-
-extension SearchTableViewController {
-    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        searchController.searchBar.endEditing(true)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showMovie" {
-            guard let cell = sender as? MovieTableViewCell,
-                  let movie = cell.movie,
-                  let movieDetailsVC = segue.destination as? MovieDetailViewController
-            else { return }
-            movieDetailsVC.movie = movie
-        } else if segue.identifier == "showPerson" {
-            guard let cell = sender as? PersonTableViewCell,
-                  let person = cell.person,
-                  let personDetailsVC = segue.destination as? PersonDetailViewController
-            else { return }
-            personDetailsVC.person = person
-        }
     }
 }
 
@@ -243,6 +235,33 @@ extension SearchTableViewController: UISearchBarDelegate {
             movieSearch(query: query)
         case .People:
             personSearch(query: query)
+        }
+    }
+}
+
+// MARK: - Navigation
+
+extension SearchTableViewController {
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchController.searchBar.endEditing(true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showMovie" {
+            guard let cell = sender as? MovieTableViewCell,
+                let movie = cell.movie,
+                let movieDetailsVC = segue.destination as? MovieDetailViewController
+                else { return }
+            movieDetailsVC.movie = movie
+        }
+        
+        if segue.identifier == "showPerson" {
+            guard let cell = sender as? PersonTableViewCell,
+                let person = cell.person,
+                let personDetailsVC = segue.destination as? PersonDetailViewController
+                else { return }
+            personDetailsVC.tintColor = UIColor.accent
+            personDetailsVC.person = person
         }
     }
 }

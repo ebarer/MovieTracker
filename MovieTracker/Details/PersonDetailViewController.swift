@@ -19,6 +19,10 @@ class PersonDetailViewController: UIViewController {
     var person: Person?
     var tintColor: UIColor?
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     // MARK: - Outlets
     @IBOutlet var tableView: UITableView!
 }
@@ -32,9 +36,6 @@ extension PersonDetailViewController {
         guard let person = person else { return }
         retrieveData(for: person)
         setupView()
-
-        navigationItem.title = person.name
-        navigationController?.navigationBar.tintColor = self.tintColor ?? UIColor.accent
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -43,12 +44,21 @@ extension PersonDetailViewController {
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
 
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : self.tintColor as Any]
-        self.navigationController?.navigationBar.tintColor = self.tintColor
+        if let tintColor = self.tintColor {
+            navigationController?.navigationBar.tintColor = tintColor
+            navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : tintColor]
+        }
 
         // Remove selection (if selection)
         if let indexPath = self.tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: animated)
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        // Show the navigation bar when being dismissed
+        if isMovingFromParent {
+            self.navigationController?.setNavigationBarHidden(false, animated: animated)
         }
     }
 }
@@ -57,11 +67,7 @@ extension PersonDetailViewController {
 
 extension PersonDetailViewController {
     func setupView() {
-        navigationItem.title = ""
-        
-        if let tintColor = self.tintColor {
-            navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : tintColor]
-        }
+        navigationItem.title = person?.name ?? ""
         
         // Setup table
         tableView.backgroundColor = UIColor.bg
@@ -158,8 +164,9 @@ extension PersonDetailViewController: UITableViewDataSource, UITableViewDelegate
         else if indexPath.section == SECTION_CREDITS {
             let cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.reuseIdentifier, for: indexPath) as! MovieTableViewCell
             if let person = person, indexPath.item < person.credits?.count ?? 0 {
-                let movie = person.credits![indexPath.item]
-                if cell.tag != movie.id {
+                if let movie = person.credits?[indexPath.item],
+                   cell.tag != movie.id
+                {
                     cell.tag = movie.id
                     cell.set(movie: movie)
                 }
@@ -214,7 +221,6 @@ extension PersonDetailViewController {
                vcStack.count > 1,
                vcStack[1] != self
         {
-            print(vcStack[1].navigationItem.title ?? "Unknown")
             self.navigationController?.popToViewController(vcStack[1], animated: true)
         } else {
             self.navigationController?.popToRootViewController(animated: true)

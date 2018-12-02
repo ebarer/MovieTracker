@@ -63,7 +63,6 @@ class PersonBiographyCell: UITableViewCell {
             birthdayLabel.isHidden = true
         }
         
-        
         biographyLabel.text = person.bio
         biographyLabel.numberOfLines = 5
         

@@ -562,7 +562,7 @@ Title</string>
         <!--Person Detail View Controller-->
         <scene sceneID="gFe-kj-7yj">
             <objects>
-                <viewController id="c2O-qE-9qp" customClass="PersonDetailViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Person Detail View Controller" id="c2O-qE-9qp" customClass="PersonDetailViewController" customModule="MovieTracker" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9vl-iz-8OO">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -795,6 +795,7 @@ Title</string>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="4X4-pg-9wA"/>
                     </view>
+                    <nil key="simulatedTopBarMetrics"/>
                     <size key="freeformSize" width="375" height="1000"/>
                     <connections>
                         <outlet property="tableView" destination="vEs-zP-1Y8" id="yx5-8d-EUn"/>
@@ -929,7 +930,7 @@ Title</string>
                                     <outlet property="nameLabel" destination="hKH-4q-F7G" id="MZs-i5-ngK"/>
                                     <outlet property="profilePicture" destination="UkC-iy-xc8" id="Fve-RI-lWF"/>
                                     <outlet property="roleLabel" destination="Wh6-Ng-bos" id="Fdj-Pi-yik"/>
-                                    <segue destination="c2O-qE-9qp" kind="show" identifier="showPerson" id="51e-3o-aDc"/>
+                                    <segue destination="c2O-qE-9qp" kind="show" identifier="showPerson" id="Gtl-Su-DIs"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

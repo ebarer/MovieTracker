@@ -26,7 +26,7 @@ class MovieOverviewCell: UITableViewCell {
     }
     
     func set(overview: String?) {
-        overviewLabel.text = overview
+        overviewLabel.text = overview ?? "No movie description available."
         overviewLabel.numberOfLines = 5
     }
 }

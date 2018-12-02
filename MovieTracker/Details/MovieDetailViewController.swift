@@ -22,6 +22,7 @@ class MovieDetailViewController: UIViewController {
     var timer: Timer?
     var tintColor: UIColor?
     var tableHeaderFrame = CGRect()
+    var shouldZoomPoster: Bool = false
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -71,7 +72,7 @@ extension MovieDetailViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        // Height: 425 -> 385
+        // Height: 425 (double) -> 385 (single)
         // Set the table header height for single line titles
         if movieTitle.frame.height < 79 &&
            tableHeader.frame.size.height != 385.0
@@ -120,7 +121,7 @@ extension MovieDetailViewController {
 
 extension MovieDetailViewController {
     func setupView() {
-        tintColor = UIColor.inactive
+        tintColor = UIColor.accent
         
         self.view.addGradientView(
             colors: [UIColor.bg, UIColor.clear],
@@ -201,10 +202,17 @@ extension MovieDetailViewController {
         guard let movie = self.movie else { return }
 
         self.movieTitle.text = movie.title
+
+        if let date = movie.releaseDate?.toString() {
+            if let duration = movie.duration {
+                self.movieDescription.text = "\(date)  •  \(duration)"
+            } else {
+                self.movieDescription.text = "\(date)"
+            }
+        } else {
+            self.movieDescription.text = nil
+        }
         
-        let dateString = movie.releaseDate?.toString() ?? "Unknown"
-        let duration = movie.duration ?? "Unknown"
-        self.movieDescription.text = "\(dateString)  •  \(duration)"
         self.tableView.reloadData()
         
         if !populated {
@@ -233,6 +241,7 @@ extension MovieDetailViewController {
                 self.moviePoster.image = UIImage(color: UIColor.inactive)
             } else {
                 self.moviePoster.image = poster
+                self.shouldZoomPoster = true
             }
             
             self.moviePoster.layer.masksToBounds = true
@@ -241,7 +250,7 @@ extension MovieDetailViewController {
             self.moviePoster.layer.borderColor = UIColor(white: 1, alpha: 0.20).cgColor
             self.posterAI.stopAnimating()
             
-            self.tintColor = poster?.averageColor ?? UIColor.inactive
+            self.tintColor = poster?.averageColor ?? UIColor.accent
             self.tintView()
         }
         
@@ -376,7 +385,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == SECTION_HEADER) ? 0.01 : 15.0
+        return (section == SECTION_HEADER) ? 0.01 : 35.0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -470,16 +479,27 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
 // MARK: - Navigation
 
 extension MovieDetailViewController {
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "showPoster" {
+            // Only perform segue if there is a movie poster to display
+            return self.shouldZoomPoster
+        } else {
+            return true
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showPerson" {
             guard let cell = sender as? PersonTableViewCell,
-                let personDetailsVC = segue.destination as? PersonDetailViewController
-                else { return }
+                  let personDetailsVC = segue.destination as? PersonDetailViewController
+            else { return }
 
             personDetailsVC.tintColor = self.tintColor
             personDetailsVC.person = cell.person
         } else if segue.identifier == "showPoster" {
-            guard let posterDetailsVC = segue.destination as? PosterDetailViewController else { return }
+            guard let posterDetailsVC = segue.destination as? PosterDetailViewController else {
+                return
+            }
             posterDetailsVC.tintColor = self.tintColor
             posterDetailsVC.movie = self.movie
         }
@@ -494,7 +514,6 @@ extension MovieDetailViewController {
                vcStack.count > 1,
                vcStack[1] != self
         {
-            print(vcStack[1].navigationItem.title ?? "Unknown")
             self.navigationController?.popToViewController(vcStack[1], animated: true)
         } else {
             self.navigationController?.popToRootViewController(animated: true)

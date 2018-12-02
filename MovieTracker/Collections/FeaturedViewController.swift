@@ -26,6 +26,10 @@ class FeaturedViewController: UIViewController {
     var searchController: UISearchController!
     var resultsTableController: GlobalSearchResultsController!
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     // MARK: - Outlets
     @IBOutlet var loadingView: UIView!
     @IBOutlet var collectionView: UICollectionView!
@@ -63,6 +67,12 @@ extension FeaturedViewController {
         
         setupGrid()
         fetchMovies()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if movies.count == 0 {
+            fetchMovies()
+        }
     }
 }
 
@@ -171,8 +181,8 @@ extension FeaturedViewController: UICollectionViewDataSourcePrefetching {
 
         self.movies.append(contentsOf: newMovies)
 
-        self.fetchingData = false
-        if self.lastPageFetched == 1 {
+        if self.movies.count > 0 && self.lastPageFetched == 1 {
+            self.fetchingData = false
             self.collectionView?.reloadData()
             
             UIView.animate(withDuration: 0.25, animations: {
