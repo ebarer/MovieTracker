@@ -6,11 +6,15 @@
 //  Copyright © 2018 ebarer. All rights reserved.
 //
 
+import AVKit
+import AVFoundation
+import SafariServices
 import UIKit
+import WebKit
 
 class MovieDetailViewController: UIViewController {
     // Constants
-    let NUM_SECTIONS = 2
+    let NUM_SECTIONS = 3
     let SECTION_HEADER = 0
     let SECTION_STAFF = 1
     let ROWS_HEADER = 2
@@ -94,6 +98,7 @@ extension MovieDetailViewController {
         let wasPeeking = peekStatus
         peekStatus = navigationController == nil
         floatingBackButton.isHidden = peekStatus
+        floatingBackButton.alpha = 0
         if wasPeeking != peekStatus {
             guard let movie = movie else { return }
             retrieveData(for: movie)
@@ -103,6 +108,12 @@ extension MovieDetailViewController {
         if let indexPath = self.tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPath, animated: animated)
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.floatingBackButton.alpha = 1
+        })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -154,7 +165,7 @@ extension MovieDetailViewController {
             tableView.alpha = 0
             
             // Setup loading indicator
-            loadingAI = UIActivityIndicatorView(style: .white)
+            loadingAI = UIActivityIndicatorView(style: .medium)
             loadingAI!.startAnimating()
             loadingAI!.center.x = view.center.x
             loadingAI!.center.y = view.center.y
@@ -178,7 +189,7 @@ extension MovieDetailViewController {
             loadingLabel!.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: -20).isActive = true
 
             let labelSize = loadingLabel!.sizeThatFits(CGSize(width: view.frame.width - 40, height: CGFloat.greatestFiniteMagnitude))
-            loadingLabel?.heightAnchor.constraint(equalToConstant: labelSize.height)
+            loadingLabel?.heightAnchor.constraint(equalToConstant: labelSize.height).isActive = true
         }
     }
     
@@ -385,13 +396,15 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == SECTION_HEADER) ? 0.01 : 35.0
+        return (section == SECTION_HEADER) ? 0.01 : 45.0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case SECTION_STAFF:
             return "Cast & Crew"
+        case 2:   // TEMP: Trailer section
+            return "Trailers"
         default:
             return nil
         }
@@ -400,6 +413,8 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == SECTION_HEADER {
             return ROWS_HEADER
+        } else if section == 2 {  // TEMP: Trailer section
+            return movie?.trailers?.count ?? 0
         } else {
             return min(10, movie?.team.count ?? 0)
         }
@@ -453,6 +468,23 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
             
             return cell
         }
+        // TEMP: Trailer cell
+        else if indexPath.section == 2 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+            let trailer = movie?.trailers?[indexPath.item]
+            
+            if let titleArr = trailer?.title.split(separator: "-"),
+               let trailerTitle = titleArr.last
+            {
+                cell.textLabel?.text = String(trailerTitle).trimmingCharacters(in: .whitespaces)
+            } else {
+                cell.textLabel?.text = "Unknown \(trailer?.type.rawValue ?? "Trailer")"
+            }
+            
+            cell.selectionStyle = .default
+            
+            return cell
+        }
         // Detail cell
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
@@ -473,6 +505,39 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
                 tableView.endUpdates()
             }
         }
+        
+        // TEMP: Load trailer
+        if indexPath.section == 2 {
+            if let videoURL = movie?.trailers?[indexPath.item].url {
+//                let avPlayerVC = AVPlayerViewController()
+//                print(videoURL)
+//                avPlayerVC.player = AVPlayer(url: videoURL)
+//
+//                self.present(avPlayerVC, animated: true) {
+//                    avPlayerVC.player?.play()
+//                }
+
+//                let webView = SFSafariViewController(url: videoURL)
+//                self.present(webView, animated: true)
+                
+                let presentVC = UIViewController()
+                let webView = WKWebView(frame: self.view.frame)
+                webView.load(URLRequest(url: videoURL))
+                presentVC.view.addSubview(webView)
+                
+                let dismissButton = UIButton(frame: CGRect(x: 0, y: 50, width: self.view.frame.width, height: 50))
+                dismissButton.titleLabel?.text = "Dismiss"
+                dismissButton.tintColor = UIColor.accent
+                dismissButton.addTarget(self, action: #selector(dismissWebView), for: .touchDown)
+                presentVC.view.insertSubview(dismissButton, aboveSubview: webView)
+                
+                self.present(presentVC, animated: true)
+            }
+        }
+    }
+    
+    @objc func dismissWebView() {
+        self.dismiss(animated: true)
     }
 }
 

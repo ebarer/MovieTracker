@@ -48,20 +48,20 @@ extension FeaturedViewController {
         // Get search results table controlleer
 //        let storyboard = UIStoryboard(name: "Main", bundle: nil)
 //        let resultsTableController = storyboard.instantiateViewController(withIdentifier: "resultsTableController") as! GlobalSearchResultsController
-//
+
         // Setup search controller
 //        searchController = UISearchController(searchResultsController: resultsTableController)
 //        searchController.searchResultsUpdater = resultsTableController
-//
-//        searchController.searchBar.barStyle = .blackTranslucent
+//        searchController.obscuresBackgroundDuringPresentation = true
+//        searchController.hidesNavigationBarDuringPresentation = true
+
+        // Setup search bar
+//        searchController.searchBar.barStyle = .black
+//        searchController.searchBar.isTranslucent = true
 //        searchController.searchBar.tintColor = UIColor.accent
 //        searchController.searchBar.keyboardAppearance = .dark
 //        searchController.searchBar.transform = CGAffineTransform(translationX: 0, y: 5.0)
-//
-//        searchController.dimsBackgroundDuringPresentation = true
-//        searchController.obscuresBackgroundDuringPresentation = true
-//        searchController.hidesNavigationBarDuringPresentation = true
-//
+
 //        navigationItem.searchController = searchController
 //        navigationItem.hidesSearchBarWhenScrolling = true
         
@@ -112,6 +112,8 @@ extension FeaturedViewController: UICollectionViewDataSource, UICollectionViewDe
             fatalError("Expected MovieCollectionViewCell type for reuseIdentifier \(MovieCollectionViewCell.reuseIdentifier). Check the configuration in Main.storyboard.")
         }
         
+        cell.backgroundColor = UIColor.bg
+
         if indexPath.item < movies.count {
             cell.tag = movies[indexPath.item].id
             cell.set(movie: movies[indexPath.item])
@@ -127,6 +129,24 @@ extension FeaturedViewController: UICollectionViewDataSource, UICollectionViewDe
         }
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let actionProvider: UIContextMenuActionProvider = { _ in
+            let addAction = UIAction(title: "Want to Watch", image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .on) { (action) in
+                let title = self.movies[indexPath.item].description
+                print("\(title)")
+            }
+            
+            let watchedAction = UIAction(title: "Watched", image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .on) { (action) in
+                let title = self.movies[indexPath.item].description
+                print("\(title)")
+            }
+            
+            return UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [addAction, watchedAction])
+        }
+
+        return UIContextMenuConfiguration(identifier: "\(indexPath)" as NSCopying, previewProvider: nil, actionProvider: actionProvider)
     }
 }
 

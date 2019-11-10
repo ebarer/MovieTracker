@@ -131,18 +131,22 @@ class MovieListTableViewController: UITableViewController {
     
     // MARK: - Table Cell Actions
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        var actions = [UITableViewRowAction]()
-        
-        let addAction = UITableViewRowAction(style: UITableViewRowAction.Style.normal, title: "Add") { (action, indexPath) in
-            print("TEMP: \(self.movies[self.sections[indexPath.section]]?[indexPath.item].description ?? "Unknown movie")")
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let actionProvider: UIContextMenuActionProvider = { _ in
+            let addAction = UIAction(title: "Want to Watch", image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .on) { (action) in
+                let title = self.movies[self.sections[indexPath.section]]?[indexPath.item].description ?? "Unknown movie"
+                print("\(title)")
+            }
+            
+            let watchedAction = UIAction(title: "Watched", image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .on) { (action) in
+                let title = self.movies[self.sections[indexPath.section]]?[indexPath.item].description ?? "Unknown movie"
+                print("\(title)")
+            }
+            
+            return UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [addAction, watchedAction])
         }
-        
-        addAction.backgroundColor = UIColor.accent
 
-        actions.append(addAction)
-        
-        return actions
+        return UIContextMenuConfiguration(identifier: "\(indexPath)" as NSCopying, previewProvider: nil, actionProvider: actionProvider)
     }
     
     // MARK: - Navigation

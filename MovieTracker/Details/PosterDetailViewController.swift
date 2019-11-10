@@ -30,11 +30,8 @@ class PosterDetailViewController: UIViewController, UIScrollViewDelegate {
         blurView.effect = UIBlurEffect(style: UIBlurEffect.Style.dark)
         self.view.insertSubview(blurView, belowSubview: posterView)
 
-        // Configure dismiss button and gesture
+        // Configure dismiss button
         dismissButton.tintColor = self.tintColor ?? UIColor.accent
-        let dismissGesture = UISwipeGestureRecognizer(target: self, action: #selector(dismissView))
-        dismissGesture.direction = .down
-        self.view.addGestureRecognizer(dismissGesture)
         
         // Setup poster view
         posterView.backgroundColor = UIColor.clear

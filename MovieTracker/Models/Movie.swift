@@ -21,7 +21,7 @@ class Movie: NSObject {
     var certification: String?
     var imdbID: String?
     var genres: [String]?
-    var trailers: [String]?
+    var trailers: [MovieTrailer]?
     var bonusCredits: Credits = Credits(during: false, after: false)
     var team: [Person]
     var tracked: Bool = false
@@ -165,5 +165,31 @@ extension Movie {
         case w780  = "w780"
         case w1280 = "w1280"
         case orig  = "original"
+    }
+}
+
+struct MovieTrailer {
+    var id: String
+    var title: String
+    var key: String
+    var type: TrailerType
+    
+    enum TrailerType: String {
+        case Teaser = "Teaser"
+        case Trailer = "Trailer"
+        case Clip = "Clip"
+        case Featurette = "Featurette"
+    }
+    
+    init(id: String, title: String, key: String, type: String) {
+        self.id = id
+        self.title = title
+        self.key = key
+        self.type = TrailerType(rawValue: type) ?? .Trailer
+    }
+    
+    var url: URL? {
+        let trailerURL = URL(string: "https://www.youtube.com/embed")
+        return trailerURL?.appendingPathComponent(key)
     }
 }

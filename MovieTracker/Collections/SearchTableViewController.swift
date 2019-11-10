@@ -27,7 +27,8 @@ class SearchTableViewController: UITableViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.placeholder = scope.placeholder
-        searchController.searchBar.barStyle = .blackTranslucent
+        searchController.searchBar.barStyle = UIBarStyle.black
+        searchController.searchBar.isTranslucent = true
         searchController.searchBar.tintColor = UIColor.accent
         searchController.searchBar.keyboardAppearance = .dark
         

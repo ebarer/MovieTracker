@@ -39,7 +39,7 @@ class PersonTableViewCell: UITableViewCell {
         
         if let role = person.role {
             if person.type == .Cast {
-                let roleString = NSMutableAttributedString(string: "as \(role)", attributes: [.foregroundColor : self.tintColor])
+                let roleString = NSMutableAttributedString(string: "as \(role)", attributes: [.foregroundColor : self.tintColor!])
                 roleString.addAttribute(.foregroundColor, value: UIColor.whiteFaded(a: 0.4), range: NSRange(location: 0, length: 2))
                 roleLabel.attributedText = roleString
             } else {

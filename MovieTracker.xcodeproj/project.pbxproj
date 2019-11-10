@@ -35,6 +35,18 @@
 		CEB88D94219AFC5100F95D4D /* PersonDetailTableViewCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB88D93219AFC5100F95D4D /* PersonDetailTableViewCells.swift */; };
 		CEC07529219BCFA2002A3958 /* GlobalSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC07527219BC1A4002A3958 /* GlobalSearchResultsController.swift */; };
 		CEC19A0920C4BF68003BD653 /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC19A0820C4BF68003BD653 /* MovieCollectionViewCell.swift */; };
+		CECC95B0237781EF00E77B7A /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC021997F2A006BB3CD /* Person.swift */; };
+		CECC95B1237781F000E77B7A /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC021997F2A006BB3CD /* Person.swift */; };
+		CECC95B22377824000E77B7A /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC221997F71006BB3CD /* String+Extension.swift */; };
+		CECC95B32377824100E77B7A /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC221997F71006BB3CD /* String+Extension.swift */; };
+		CECC95B42377824300E77B7A /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */; };
+		CECC95B52377824400E77B7A /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1F628520CFC6A60075B686 /* DateFormatter+Extension.swift */; };
+		CECC95B62377824600E77B7A /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */; };
+		CECC95B72377824700E77B7A /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEBB30C20CD27BF00353320 /* UIButton+Extension.swift */; };
+		CECC95B82377824D00E77B7A /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE59561120CA65840047BC39 /* UIView+Extension.swift */; };
+		CECC95B92377824E00E77B7A /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE59561120CA65840047BC39 /* UIView+Extension.swift */; };
+		CECC95BA2377825000E77B7A /* UIColor+ProjectColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */; };
+		CECC95BB2377825000E77B7A /* UIColor+ProjectColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E37CFD20C2005D00471547 /* UIColor+ProjectColors.swift */; };
 		CED3C39220CC9A6E0024D585 /* FeaturedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED3C39120CC9A6E0024D585 /* FeaturedViewController.swift */; };
 		CEDA8BC121997F2A006BB3CD /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC021997F2A006BB3CD /* Person.swift */; };
 		CEDA8BC321997F71006BB3CD /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEDA8BC221997F71006BB3CD /* String+Extension.swift */; };
@@ -297,16 +309,16 @@
 				TargetAttributes = {
 					CE78BD4E20C087F2001E6DB6 = {
 						CreatedOnToolsVersion = 9.4;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1120;
 					};
 					CE78BD6520C087F4001E6DB6 = {
 						CreatedOnToolsVersion = 9.4;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1120;
 						TestTargetID = CE78BD4E20C087F2001E6DB6;
 					};
 					CE78BD7020C087F4001E6DB6 = {
 						CreatedOnToolsVersion = 9.4;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1120;
 						TestTargetID = CE78BD4E20C087F2001E6DB6;
 					};
 				};
@@ -393,10 +405,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CECC95B1237781F000E77B7A /* Person.swift in Sources */,
 				CE1F628420CFB54C0075B686 /* TMDBWrapperTests.swift in Sources */,
 				CE1F627D20CF70360075B686 /* Movie.swift in Sources */,
+				CECC95B82377824D00E77B7A /* UIView+Extension.swift in Sources */,
+				CECC95B42377824300E77B7A /* DateFormatter+Extension.swift in Sources */,
 				CE78BD6B20C087F4001E6DB6 /* MovieTrackerTests.swift in Sources */,
+				CECC95B62377824600E77B7A /* UIButton+Extension.swift in Sources */,
+				CECC95B22377824000E77B7A /* String+Extension.swift in Sources */,
 				CE1F628220CFA6620075B686 /* TMDBWrapper.swift in Sources */,
+				CECC95BA2377825000E77B7A /* UIColor+ProjectColors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,9 +422,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CECC95BB2377825000E77B7A /* UIColor+ProjectColors.swift in Sources */,
 				CE1F627E20CF70370075B686 /* Movie.swift in Sources */,
 				CE78BD7620C087F4001E6DB6 /* MovieTrackerUITests.swift in Sources */,
+				CECC95B92377824E00E77B7A /* UIView+Extension.swift in Sources */,
+				CECC95B52377824400E77B7A /* DateFormatter+Extension.swift in Sources */,
+				CECC95B0237781EF00E77B7A /* Person.swift in Sources */,
+				CECC95B32377824100E77B7A /* String+Extension.swift in Sources */,
 				CE1F628120CFA6620075B686 /* TMDBWrapper.swift in Sources */,
+				CECC95B72377824700E77B7A /* UIButton+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -567,7 +591,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5ZJB9DN7AQ;
 				INFOPLIST_FILE = MovieTracker/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -575,7 +599,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebarer.MovieTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -588,7 +612,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5ZJB9DN7AQ;
 				INFOPLIST_FILE = MovieTracker/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -596,7 +620,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebarer.MovieTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -609,6 +633,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5ZJB9DN7AQ;
 				INFOPLIST_FILE = MovieTrackerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -616,7 +641,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebarer.MovieTrackerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MovieTracker.app/MovieTracker";
 			};
@@ -630,6 +655,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5ZJB9DN7AQ;
 				INFOPLIST_FILE = MovieTrackerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -637,7 +663,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebarer.MovieTrackerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MovieTracker.app/MovieTracker";
 			};
@@ -650,6 +676,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5ZJB9DN7AQ;
 				INFOPLIST_FILE = MovieTrackerUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -657,7 +684,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebarer.MovieTrackerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = MovieTracker;
 			};
@@ -670,6 +697,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5ZJB9DN7AQ;
 				INFOPLIST_FILE = MovieTrackerUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -677,7 +705,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ebarer.MovieTrackerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = MovieTracker;
 			};

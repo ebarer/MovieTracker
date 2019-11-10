@@ -425,9 +425,11 @@ extension TMDBWrapper {
         movie.genres = mv.genres()
         movie.bonusCredits = Movie.Credits(mv.bonusCredits())
         movie.team = mv.team()
-        
-        // TODO : Get trailers
-        movie.trailers = nil
+        movie.trailers = mv.trailers()
+
+        for trailer in movie.trailers ?? [] {
+            print(trailer.url ?? "No URL")
+        }
         
         return movie
     }
@@ -474,7 +476,7 @@ extension TMDBWrapper {
         var popularity: Double?
         var releaseDates: ReleaseDatesRaw?
         var genresRaw: [GenreRaw]?
-        var trailers: Videos?
+        var trailersRaw: TrailersRaw?
         var imdbID: String?
         var keywords: Keywords?
         var teamRaw: TeamRaw?
@@ -568,6 +570,22 @@ extension TMDBWrapper {
             return team
         }
         
+        func trailers() -> [MovieTrailer]? {
+            guard let trailersRaw = trailersRaw else {
+                return nil
+            }
+            var trailers = [MovieTrailer]()
+            for t in trailersRaw.trailers {
+                let trailer = MovieTrailer(id: t.id,
+                                           title: t.name,
+                                           key: t.key,
+                                           type: t.type)
+                trailers.append(trailer)
+            }
+
+            return trailers
+        }
+        
         enum CodingKeys: String, CodingKey {
             case id, title, overview, runtime, popularity, keywords
             case imdbID = "imdb_id"
@@ -577,7 +595,7 @@ extension TMDBWrapper {
             case rating = "vote_average"
             case releaseDates = "release_dates"
             case genresRaw = "genres"
-            case trailers = "videos"
+            case trailersRaw = "videos"
             case teamRaw = "credits"
         }
 
@@ -663,25 +681,18 @@ extension TMDBWrapper {
             }
         }
 
-        struct Videos: Codable {
-            var videos: [Video]
+        struct TrailersRaw: Codable {
+            var trailers: [Trailer]
             
             enum CodingKeys : String, CodingKey {
-                case videos = "results"
+                case trailers = "results"
             }
-        
-            struct Video: Codable {
+            
+            struct Trailer: Codable {
                 var id: String
                 var name: String
                 var key: String
-                var type: TrailerType
-                
-                enum TrailerType: String, Codable {
-                    case Teaser = "Teaser"
-                    case Trailer = "Trailer"
-                    case Clip = "Clip"
-                    case Featurette = "Featurette"
-                }
+                var type: String
             }
         }
     }

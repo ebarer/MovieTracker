@@ -54,7 +54,7 @@ extension UIImage {
         
         // Find average color
         var bitmap = [UInt8](repeating: 0, count: 4)
-        let context = CIContext(options: [CIContextOption.workingColorSpace: kCFNull])
+        let context = CIContext(options: [CIContextOption.workingColorSpace: kCFNull as Any])
         context.render(outputImage, toBitmap: &bitmap,
                        rowBytes: 4,
                        bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
