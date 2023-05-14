@@ -13,8 +13,8 @@ class TMDBWrapper {
     private static let imageBaseURL = "https://image.tmdb.org/t/p"
     private static let apiVersion = "/3"
     private static let apiKey = "da99299f02cd39e2736c97d08b459731"
-    private static let regionCode = NSLocale.current.regionCode ?? "US"
-    private static let languageCode = NSLocale.current.languageCode ?? "en"
+    private static let regionCode = NSLocale.current.region?.identifier ?? "US"
+    private static let languageCode = NSLocale.current.language.languageCode?.identifier ?? "en"
     
     // Keywords to identify during/after credit extras
     private static let bonusKeywords = ["during" : 179431, "after" : 179430]
@@ -482,7 +482,7 @@ extension TMDBWrapper {
         var teamRaw: TeamRaw?
         
         func certification() -> (certification: String?, releaseDate: Date?) {
-            let regionCode = NSLocale.current.regionCode ?? "US"
+            let regionCode = NSLocale.current.region?.identifier ?? "US"
             
             guard let releases = self.releaseDates?.releases else {
                 return (nil, nil)

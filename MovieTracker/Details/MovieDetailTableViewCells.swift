@@ -67,7 +67,7 @@ class ScrollableCell: UITableViewCell, UICollectionViewDataSource, UICollectionV
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var width: CGFloat
         switch indexPath.item {
-        case 0:
+        case 3:
             width = 105.0
         default:
             width = 100.0
@@ -107,12 +107,6 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
         
         switch indexPath.item {
         case 0:
-            self.headerLabel.text = "GENRE"
-            let genresString = movie.genresString
-            self.detailLabel.text = genresString
-            let size: CGFloat = genresString.contains("&") ? 14.0 : 17.0
-            self.detailLabel.font = UIFont.systemFont(ofSize: size)
-        case 1:
             self.headerLabel.text = "RATING"
             if let certification = movie.certification,
                let certImage = UIImage(named: "Cert-\(certification)")
@@ -125,7 +119,7 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
                 self.detailLabel.text = "N/A"
                 self.detailLabel.font = UIFont.systemFont(ofSize: 17.0)
             }
-        case 2:
+        case 1:
             self.headerLabel.text = "CREDIT CLIPS"
             
             var fontSize: CGFloat = 17.0
@@ -144,7 +138,7 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
             
             self.detailLabel.text = bonusCredits
             self.detailLabel.font = UIFont.systemFont(ofSize: fontSize)
-        case 3:
+        case 2:
             self.headerLabel.text = "TMDB.org"
             if let rating = movie.rating, rating > 0 {
                 self.detailLabel.text = String(format: "%.1f / 5", rating / 2)
@@ -152,6 +146,12 @@ class ScrollableCellMovieDetail: UICollectionViewCell {
                 self.detailLabel.text = "N/A"
             }
             self.detailLabel.font = UIFont.systemFont(ofSize: 17.0)
+        case 3:
+            self.headerLabel.text = "GENRE"
+            let genresString = movie.genresString
+            self.detailLabel.text = genresString
+            let size: CGFloat = genresString.contains("&") ? 14.0 : 17.0
+            self.detailLabel.font = UIFont.systemFont(ofSize: size)
         default: break
         }
         

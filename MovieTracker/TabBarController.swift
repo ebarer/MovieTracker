@@ -16,7 +16,6 @@ class TabBarController: UITabBarController {
         self.tabBar.tintColor = UIColor.accent
         self.delegate = self
     }
-
 }
 
 // MARK: - UITabBarControllerDelegate

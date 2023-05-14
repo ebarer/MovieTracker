@@ -396,7 +396,7 @@ extension MovieDetailViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (section == SECTION_HEADER) ? 0.01 : 45.0
+        return (section == SECTION_HEADER) ? 15 : 45.0
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
